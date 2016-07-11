@@ -137,6 +137,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 sendMessage(WEAR_MESSAGE_PATH,"CLICK");
                 return true;
             }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                sendMessage(WEAR_MESSAGE_PATH,"DOWN");
+                return true;
+            }
         }
         );
 
