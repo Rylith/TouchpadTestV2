@@ -122,7 +122,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 pos.setText("Scroll:\n" +"X: "+ e1.getX()+"\nY: "+e1.getY());
                 board.drawLine(e1.getX(),e1.getY(),e2.getX(),e2.getY(),paint);
                 image.invalidate();
-                sendMessage(WEAR_MESSAGE_PATH,"Scroll,"+distanceX+","+distanceY);
+                sendMessage(WEAR_MESSAGE_PATH,"SCROLL,"+e2.getX()+","+e2.getY()+","+distanceX+","+distanceY);
                 return true;
             }
 
@@ -133,6 +133,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 board.drawPoint(event.getX(),event.getY(),paint);
                 paint.setColor(Color.GREEN);
                 image.invalidate();
+                sendMessage(WEAR_MESSAGE_PATH,"CLICK");
                 return true;
             }
         }
