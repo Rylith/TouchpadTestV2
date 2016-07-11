@@ -140,7 +140,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
             @Override
             public boolean onDown(MotionEvent e) {
-                sendMessage(WEAR_MESSAGE_PATH,"DOWN");
+                sendMessage(WEAR_MESSAGE_PATH,"DOWN,"+e.getX()+","+e.getY());
                 return true;
             }
         }
@@ -149,7 +149,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         //Envoi taille écran"WINDOW,x,y"
         Point screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
-        sendMessage(WEAR_MESSAGE_PATH,"WINDOW"+","+screenSize.x+","+screenSize.y);
+        sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
     }
 
 
