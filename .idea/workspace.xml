@@ -68,11 +68,11 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wear/src/main/java/rylith/touchpadtestv2/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.28045326">
-              <caret line="144" column="71" selection-start-line="144" selection-start-column="71" selection-end-line="144" selection-end-column="71" />
+            <state vertical-scroll-proportion="0.31161472">
+              <caret line="145" column="50" selection-start-line="145" selection-start-column="50" selection-end-line="145" selection-end-column="50" />
               <folding>
-                <element signature="e#6484#6485#0" expanded="true" />
-                <element signature="e#6531#6532#0" expanded="true" />
+                <element signature="e#6488#6489#0" expanded="true" />
+                <element signature="e#6535#6536#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -3656,8 +3656,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="87" column="54" selection-start-line="87" selection-start-column="54" selection-end-line="87" selection-end-column="54" />
           <folding>
-            <element signature="e#6484#6485#0" expanded="true" />
-            <element signature="e#6531#6532#0" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6535#6536#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3737,8 +3737,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="107" column="5" selection-start-line="107" selection-start-column="5" selection-end-line="107" selection-end-column="5" />
           <folding>
-            <element signature="e#6484#6485#0" expanded="true" />
-            <element signature="e#6531#6532#0" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6535#6536#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3810,8 +3810,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#6484#6485#0" expanded="true" />
-            <element signature="e#6531#6532#0" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6535#6536#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3883,8 +3883,8 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="42" column="30" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
           <folding>
-            <element signature="e#6484#6485#0" expanded="true" />
-            <element signature="e#6531#6532#0" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6535#6536#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -4126,11 +4126,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wear/src/main/java/rylith/touchpadtestv2/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.28045326">
-          <caret line="144" column="71" selection-start-line="144" selection-start-column="71" selection-end-line="144" selection-end-column="71" />
+        <state vertical-scroll-proportion="0.31161472">
+          <caret line="145" column="50" selection-start-line="145" selection-start-column="50" selection-end-line="145" selection-end-column="50" />
           <folding>
-            <element signature="e#6484#6485#0" expanded="true" />
-            <element signature="e#6531#6532#0" expanded="true" />
+            <element signature="e#6488#6489#0" expanded="true" />
+            <element signature="e#6535#6536#0" expanded="true" />
           </folding>
         </state>
       </provider>
