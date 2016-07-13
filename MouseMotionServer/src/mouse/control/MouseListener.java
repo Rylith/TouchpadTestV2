@@ -16,7 +16,7 @@ public class MouseListener {
 	private Point prec;
 	
 	private int RAYON;
-	private static final float PERCENTSCREENSIZE = 0.00f;
+	private static final float PERCENTSCREENSIZE = 0.05f;
 	
 	private static double MARGE = 40;
     private double[] bufferX = new double[20];
