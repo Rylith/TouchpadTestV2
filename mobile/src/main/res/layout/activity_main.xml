@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:orientation="vertical">
-
             <EditText
                 android:id="@+id/addressEditText"
                 android:layout_width="match_parent"

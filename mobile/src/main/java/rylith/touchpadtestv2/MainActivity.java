@@ -2,12 +2,17 @@ package rylith.touchpadtestv2;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,11 +42,27 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private EditText editTextAddress;
     private EditText editTextPort;
 
+    private Canvas board;
+    private Bitmap sheet;
+    private Paint paint;
+    private ImageView image;
+    private TextView pos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity=this;
+
+        image = (ImageView) findViewById(R.id.image);
+        pos = (TextView) findViewById(R.id.pos);
+        sheet = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+        board = new Canvas(sheet);
+        paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(1);
+        image.setImageBitmap(sheet);
+
         init();
         initGoogleApiClient();
     }
@@ -111,6 +132,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             public void onClick(View v) {
                 editTextAddress.setText("");
                 editTextPort.setText("");
+                image.setImageBitmap(sheet);
             }
         });
         SharedPreferences settings = getSharedPreferences(PREFS_SERV, 0);
@@ -164,7 +186,16 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             if (mTcpClient != null) {
                 //Log.v("Coordinates",message);
                 //new sendTask().execute(message);
-                new Thread(){public void run() {mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);}}.start();
+                //new Thread(){public void run() {mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);}}.start();
+                mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);
+            }
+
+            String tra = new String(messageEvent.getData());
+            String[] mess = tra.split(",");
+            pos.setText(mess[0]);
+            if (mess.length>1){
+                board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
+                image.invalidate();
             }
         }
     }
@@ -194,7 +225,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 Log.v("Address", address.toString());
                 Log.v("Port",Integer.toString(SERVERPORT));
                 mTcpClient.connect(address,SERVERPORT);
-                mTcpClient.run();
+                mTcpClient.start();
             }
             catch (java.io.IOException e) {
                 e.printStackTrace();

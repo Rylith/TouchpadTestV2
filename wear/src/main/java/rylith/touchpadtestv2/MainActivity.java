@@ -92,9 +92,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 mDismissOverlay.setIntroText("Long Press to dismiss");
                 mDismissOverlay.showIntroIfNecessary();
 
-                //Creating canvas for drawing
-                Point screenSize = new Point();
-                getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+
                 sheet = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
                 board = new Canvas(sheet);
                 paint = new Paint();
@@ -168,6 +166,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         super.onResume();
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
+
+        //Creating canvas for drawing
+        Point screenSize = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+        sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
     }
 
     @Override

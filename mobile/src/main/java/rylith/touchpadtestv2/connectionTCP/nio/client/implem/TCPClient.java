@@ -27,7 +27,7 @@ import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Channel;
 import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.ConnectCallback;
 import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Server;
 
-public class TCPClient{
+public class TCPClient extends Thread{
 
     private String serverMessage;
 
@@ -72,7 +72,9 @@ public class TCPClient{
             Channel channel = mapEntry.getValue();
             channel.send(message, offset, length);
             //Log.v("message send",message);
-            handleWrite(key);
+            key.interestOps(SelectionKey.OP_WRITE|SelectionKey.OP_READ);
+            m_selector.wakeup();
+           //handleWrite(key);
         }
     }
 
