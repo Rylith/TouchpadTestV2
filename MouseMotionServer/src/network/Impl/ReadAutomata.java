@@ -40,7 +40,8 @@ public class ReadAutomata {
 			 }
 			if (lenBuf.remaining() == 0) {
 				//Read the length
-				int length = Util.readInt32(lenBuf.array(), 0);
+				byte[] lenArray = lenBuf.array();
+				int length = Util.readInt32(lenArray, 0);
 				int size = buffers.size();
 				for(int i=0;i<size;i++){
 					if(buffers.get(i).capacity() == length){
