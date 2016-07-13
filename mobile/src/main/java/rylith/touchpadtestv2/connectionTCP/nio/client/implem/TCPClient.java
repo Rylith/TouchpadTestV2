@@ -168,7 +168,7 @@ public class TCPClient extends Thread{
         // request to connect to the server
         activity.runOnUiThread(new Runnable() {
             public void run() {
-
+                response.setTextColor(Color.BLACK);
                 response.setText("Try to connect on server: "+hostAddress.getHostAddress()+" on port: "+port);
             }
         });
