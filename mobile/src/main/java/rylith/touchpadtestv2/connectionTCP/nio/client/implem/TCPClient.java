@@ -29,13 +29,9 @@ import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Server;
 
 public class TCPClient extends Thread{
 
-    private String serverMessage;
-
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
     private byte[] msg="0".getBytes();
-    PrintWriter out;
-    BufferedReader in;
 
     private String connectionState = "";
     private Selector m_selector;

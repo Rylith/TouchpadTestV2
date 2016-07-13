@@ -119,9 +119,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                                     float distanceY) {
                 pos.setText("Scroll:\n" +"X: "+ e1.getX()+"\nY: "+e1.getY());
+                sendMessage(WEAR_MESSAGE_PATH,"SCROLL,"+e2.getX()+","+e2.getY()+","+distanceX+","+distanceY);
                 board.drawLine(e1.getX(),e1.getY(),e2.getX(),e2.getY(),paint);
                 image.invalidate();
-                sendMessage(WEAR_MESSAGE_PATH,"SCROLL,"+e2.getX()+","+e2.getY()+","+distanceX+","+distanceY);
                 return true;
             }
 
