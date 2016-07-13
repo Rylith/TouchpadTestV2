@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -35,7 +36,7 @@ import org.w3c.dom.Text;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks{
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private DismissOverlayView mDismissOverlay;
     private GestureDetector mDetector;
@@ -158,6 +159,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         if(mApiClient != null && !(mApiClient.isConnected() || mApiClient.isConnecting())){
             mApiClient.connect();
+            Log.v("API GOOGLE", "Try to connect");
         }
     }
 
@@ -171,6 +173,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         Point screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
         sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        Log.v("API GOOGLE", "Try to send: "+"WINDOW,"+screenSize.x+","+screenSize.y );
     }
 
     @Override
@@ -194,6 +197,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         sendMessage(START_ACTIVITY, "");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result){
+        Log.v("ERROR","result: "+result.getErrorMessage());
+        if(result.getErrorCode() == ConnectionResult.API_UNAVAILABLE){
+            Log.v("ERROR","Wearable API is unavailable");
+        }
     }
 
     /*@Override
@@ -232,13 +243,17 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     private void sendMessage( final String path, final String text ) {
+        Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
         new Thread( new Runnable() {
             @Override
             public void run() {
+                Log.v("BLUETOOTH","Inside sendMessage");
                 NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                Log.v("BLUETOOTH","get nodes (size): " + nodes.getNodes().size());
                 for(Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
                             mApiClient, node.getId(), path, text.getBytes() ).await();
+                    Log.v("BLUETOOTH","result: "+result);
                 }
                 runOnUiThread( new Runnable() {
                     @Override

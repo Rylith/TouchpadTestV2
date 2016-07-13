@@ -189,7 +189,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 //new Thread(){public void run() {mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);}}.start();
                 mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);
             }
-
+            //Log.v("MOBILE","Receive message via Bluetooth");
             String tra = new String(messageEvent.getData());
             String[] mess = tra.split(",");
             pos.setText(mess[0]);
