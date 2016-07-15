@@ -78,6 +78,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
     }
@@ -97,11 +98,12 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     protected void onDestroy() {
         if( mApiClient != null ){
             Wearable.MessageApi.removeListener( mApiClient, this );
+            Wearable.DataApi.removeListener(mApiClient,this);
+            mApiClient.unregisterConnectionCallbacks(this);
+            mApiClient.unregisterConnectionFailedListener(this);
             if ( mApiClient.isConnected() ) {
                 mApiClient.disconnect();
             }
-
-            mApiClient.unregisterConnectionCallbacks( this );
         }
         if(mTcpClient !=null){
             mTcpClient.closeConnection();

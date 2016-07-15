@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static DismissOverlayView mDismissOverlay;
     private GestureDetector mDetector;
     public static TextView pos;
-    NodeApi.GetConnectedNodesResult nodes;
+    private NodeApi.GetConnectedNodesResult nodes;
 
     public static Canvas board;
     public static Bitmap sheet;
@@ -57,11 +57,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     //private static final String START_ACTIVITY ="/start_activity";
     public static final String WEAR_DATA_PATH = "/message";
+
     private GoogleApiClient mApiClient;
     private ArrayAdapter<String> mAdapter;
     private int i=0;
     private Point screenSize;
-    private boolean run=true;
+    private PutDataRequest request;
     //private ListView mListView;
 
     @Override
@@ -179,7 +180,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
         });
         Log.v("BLUETOOTH","call to OnConnected");
-
     }
 
     @Override
@@ -203,8 +203,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     protected void onDestroy() {
-        if( mApiClient != null )
-            mApiClient.unregisterConnectionCallbacks( this );
+        if( mApiClient != null ) {
+            mApiClient.unregisterConnectionCallbacks(this);
+            mApiClient.unregisterConnectionFailedListener(this);
+            mApiClient.disconnect();
+        }
         super.onDestroy();
     }
 
@@ -219,16 +222,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
 
-    private GoogleApiClient getGoogleApiClient(Context context){
-        return new GoogleApiClient.Builder(context)
-                .addApi(Wearable.API)
-                .build();
-    }
-
     public void sendMessage(final String path, final String text) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
-
-        PutDataRequest request = PutDataRequest.create(path);
+        if(request == null){
+            request = PutDataRequest.create(path);
+        }
         request.setData(text.getBytes()).setUrgent();
         Wearable.DataApi.putDataItem(mApiClient,request);
     }
