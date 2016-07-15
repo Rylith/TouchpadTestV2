@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +16,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
@@ -26,10 +31,10 @@ import java.net.InetAddress;
 
 import rylith.touchpadtestv2.connectionTCP.nio.client.implem.TCPClient;
 
-public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DataApi.DataListener {
 
     private static final String START_ACTIVITY ="/start_activity";
-    private static final String WEAR_MESSAGE_PATH = "/message";
+    private static final String WEAR_DATA_PATH = "/message";
 
     private GoogleApiClient mApiClient;
     public static final String PREFS_SERV = "MyPrefsServ";
@@ -71,6 +76,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
@@ -149,18 +155,20 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
                             mApiClient, node.getId(), path, text.getBytes() ).await();
                 }
-                runOnUiThread( new Runnable() {
+               /* runOnUiThread( new Runnable() {
                     @Override
                     public void run() {
                         //mEditText.setText( "" );
                     }
-                });
+                });*/
             }
         }).start();
     }
     @Override
     public void onConnected(Bundle bundle) {
+        Log.v("BLUETOOTH","Call of onConnected");
         Wearable.MessageApi.addListener( mApiClient, this );
+        Wearable.DataApi.addListener(mApiClient,this);
     }
 
     @Override
@@ -182,7 +190,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     @Override
     public void onMessageReceived(final MessageEvent messageEvent) {
-        if(messageEvent.getPath().equalsIgnoreCase(WEAR_MESSAGE_PATH)){
+        /*if(messageEvent.getPath().equalsIgnoreCase(WEAR_MESSAGE_PATH)){
             if (mTcpClient != null) {
                 //Log.v("Coordinates",message);
                 //new sendTask().execute(message);
@@ -196,6 +204,40 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
             if (mess.length>1){
                 board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
                 image.invalidate();
+            }
+        }*/
+        Log.v("BLUETOOTH","Call of onMessageReceived");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("ERROR","result: "+connectionResult.getErrorMessage());
+        if(connectionResult.getErrorCode() == ConnectionResult.API_UNAVAILABLE){
+            Log.e("ERROR","Wearable API is unavailable");
+        }
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        //Log.v("BLUETOOTH","Call of onDataChanged");
+        for(DataEvent event : dataEventBuffer){
+
+            if(event.getType() == DataEvent.TYPE_CHANGED){
+
+                String path = event.getDataItem().getUri().getPath();
+                if(path.equals(WEAR_DATA_PATH)){
+                    byte[] data = event.getDataItem().getData();
+                    if(mTcpClient != null){
+                        mTcpClient.sendMessage(data,0,data.length);
+                    }
+                    String tra = new String(data);
+                    String[] mess = tra.split(",");
+                    pos.setText(mess[0]);
+                    if (mess.length>1){
+                        board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
+                        image.invalidate();
+                    }
+                }
             }
         }
     }

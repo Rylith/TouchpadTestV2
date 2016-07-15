@@ -26,10 +26,14 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.w3c.dom.Text;
@@ -38,26 +42,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener{
 
-    private DismissOverlayView mDismissOverlay;
+    public static DismissOverlayView mDismissOverlay;
     private GestureDetector mDetector;
-    private TextView pos;
+    public static TextView pos;
     NodeApi.GetConnectedNodesResult nodes;
 
-    private Canvas board;
-    private Bitmap sheet;
-    private Paint paint;
-    private ImageView image;
-    private float downx = 0, downy = 0, upx = 0, upy = 0;
+    public static Canvas board;
+    public static Bitmap sheet;
+    public static Paint paint;
+    public static ImageView image;
+    //private float downx = 0, downy = 0, upx = 0, upy = 0;
 
-    private static final String START_ACTIVITY ="/start_activity";
-    private static final String WEAR_MESSAGE_PATH = "/message";
+    //private static final String START_ACTIVITY ="/start_activity";
+    public static final String WEAR_DATA_PATH = "/message";
     private GoogleApiClient mApiClient;
     private ArrayAdapter<String> mAdapter;
     private int i=0;
-    private List<String> messages = new ArrayList<>();
-    private sendTask send;
     private Point screenSize;
     private boolean run=true;
     //private ListView mListView;
@@ -115,54 +117,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         initGoogleApiClient();
 
         // Configure a gesture detector
-        mDetector = new GestureDetector(MainActivity.this, new GestureDetector.SimpleOnGestureListener() {
-
-            @Override
-            public void onLongPress(MotionEvent event) {
-
-                mDismissOverlay.show();
-            }
-
-            @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                                    float distanceY) {
-                pos.setText("Scroll:\n" +"X: "+ e1.getX()+"\nY: "+e1.getY());
-                sendMessage(WEAR_MESSAGE_PATH,"SCROLL,"+e2.getX()+","+e2.getY()+","+distanceX+","+distanceY);
-                //board.drawLine(e1.getX(),e1.getY(),e2.getX(),e2.getY(),paint);
-                //image.invalidate();
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent event) {
-                pos.setText("Pos:\n" +"X: "+ event.getX()+"\nY: "+event.getY());
-                paint.setColor(Color.BLUE);
-                board.drawPoint(event.getX(),event.getY(),paint);
-                paint.setColor(Color.GREEN);
-                image.invalidate();
-                sendMessage(WEAR_MESSAGE_PATH,"CLICK");
-                return true;
-            }
-
-            @Override
-            public boolean onDown(MotionEvent e) {
-                sendMessage(WEAR_MESSAGE_PATH,"DOWN,"+e.getX()+","+e.getY());
-                return true;
-            }
-        }
-        );
+        mDetector = new GestureDetector(MainActivity.this, new MySimpleGestureDetector(this));
 
         //Envoi taille écran"WINDOW,x,y"
-        send = (sendTask) new sendTask().execute("");
+        //send = (sendTask) new sendTask().execute("");
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
-        sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
     }
+
 
 
     private void initGoogleApiClient(){
         mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
 
         if(mApiClient != null && !(mApiClient.isConnected() || mApiClient.isConnecting())){
@@ -177,7 +147,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
 
-        sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
         //Log.v("API GOOGLE", "Try to send: "+"WINDOW,"+screenSize.x+","+screenSize.y );
     }
 
@@ -201,8 +171,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        sendMessage(START_ACTIVITY, "");
-        nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+        //sendMessage(START_ACTIVITY, "");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+            }
+        });
         Log.v("BLUETOOTH","call to OnConnected");
 
     }
@@ -230,11 +205,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     protected void onDestroy() {
         if( mApiClient != null )
             mApiClient.unregisterConnectionCallbacks( this );
-
-        run=false;
-        synchronized (send){
-            send.notify();
-        }
         super.onDestroy();
     }
 
@@ -255,58 +225,26 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 .build();
     }
 
-    private void sendMessage( final String path, final String text ) {
+    public void sendMessage(final String path, final String text) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
-        messages.add(text);
-        synchronized (send){
-            send.notify();
-        }
-       /* new Thread( new Runnable() {
-            @Override
-            public void run() {
-                //Log.v("BLUETOOTH","Inside sendMessage");
-                //Log.v("BLUETOOTH","get nodes (size): " + nodes.getNodes().size());
 
-                runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        //mEditText.setText( "" );
-                    }
-                });
-            }
-        }).start();*/
+        PutDataRequest request = PutDataRequest.create(path);
+        request.setData(text.getBytes()).setUrgent();
+        Wearable.DataApi.putDataItem(mApiClient,request);
     }
 
-    public class sendTask extends AsyncTask<String,String,Void> {
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        for(DataEvent event : dataEventBuffer){
 
-        @Override
-        protected Void doInBackground(String... params) {
-            synchronized (this) {
-                while (run) {
-                    if (messages.isEmpty()) {
-                        try {
-                            //Log.v("sendTask","Liste des messages vide");
-                            this.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        //Log.v("sendTask","Messqage dans la liste");
-                        if(nodes == null){
-                            nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                        }
-                        for(Node node : nodes.getNodes()) {
-                    /*MessageApi.SendMessageResult result = */
-                            while(!messages.isEmpty()){
-                                Wearable.MessageApi.sendMessage(mApiClient, node.getId(), WEAR_MESSAGE_PATH, messages.get(0).getBytes());
-                                messages.remove(0);
-                            }
-                            //Log.v("BLUETOOTH","result: "+result);
-                        }
-                    }
+            if(event.getType() == DataEvent.TYPE_CHANGED){
+
+                String path = event.getDataItem().getUri().getPath();
+                if(path.equals(WEAR_DATA_PATH)){
+
+                    event.getDataItem().getData();
                 }
             }
-            return null;
         }
     }
 }
