@@ -11,7 +11,7 @@ public class MouseControl {
 	
 	private Robot mouse;
 	private static int COEF = 2;
-	private static final double SUBDIVISION = 50; 
+	private static final double SUBDIVISION = 100; 
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
@@ -22,8 +22,6 @@ public class MouseControl {
 	
 	public void motion(int x, int y){
 		Point current_point = MouseInfo.getPointerInfo().getLocation();
-		
-		
 		int n_x = -x * COEF + current_point.x;
 		int n_y = -y * COEF + current_point.y;
 		//System.out.println("Point to reach: "+ n_x + ", " + n_y);
@@ -39,7 +37,7 @@ public class MouseControl {
 			n_x=(int) (-i + current_point.x);
 			n_y=(int) (-j + current_point.y);
 			//System.out.println("Subdivision: "+ n_x + ", " + n_y);
-			//System.out.println("i et j: "+i+", "+j);
+			//System.out.println("i and j: "+i+", "+j);
 			mouse.mouseMove(n_x, n_y);
 		}
 		//current_point = MouseInfo.getPointerInfo().getLocation();

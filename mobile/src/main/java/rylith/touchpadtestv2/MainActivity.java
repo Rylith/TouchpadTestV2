@@ -225,7 +225,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 Log.v("Address", address.toString());
                 Log.v("Port",Integer.toString(SERVERPORT));
                 mTcpClient.connect(address,SERVERPORT);
-                mTcpClient.start();
+                mTcpClient.run();
             }
             catch (java.io.IOException e) {
                 e.printStackTrace();

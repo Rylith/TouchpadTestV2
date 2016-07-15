@@ -282,13 +282,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 while (true) {
                     if (messages.isEmpty()) {
                         try {
-                            Log.v("sendTask","Liste des messages vide");
+                            //Log.v("sendTask","Liste des messages vide");
                             this.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }else{
-                        Log.v("sendTask","Messqage dans la liste");
+                        //Log.v("sendTask","Messqage dans la liste");
                         if(nodes == null){
                             nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
                         }

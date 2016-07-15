@@ -27,9 +27,9 @@ import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Channel;
 import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.ConnectCallback;
 import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Server;
 
-public class TCPClient extends Thread{
+public class TCPClient{
 
-    private OnMessageReceived mMessageListener = null;
+    //private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
     private byte[] msg="0".getBytes();
 
@@ -46,7 +46,7 @@ public class TCPClient extends Thread{
      *  Constructor of the class. OnMessagedReceived listens for the messages received from server
      */
     public TCPClient(OnMessageReceived listener, TextView response, Activity activity) {
-        mMessageListener = listener;
+        //mMessageListener = listener;
         this.response = response;
         this.activity = activity;
         try {
