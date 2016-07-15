@@ -72,7 +72,7 @@ public class Util {
 	            }
 	            double a = xybar / xxbar;
 	            double b = ybar - a * xbar;
-	            System.out.println("Equation: "+ a+"*x+"+b);
+	            //System.out.println("Equation: "+ a+"*x+"+b);
 	            coefs[0]=a;
 	            coefs[1]=b;
 

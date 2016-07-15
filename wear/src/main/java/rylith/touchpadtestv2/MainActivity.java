@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private List<String> messages = new ArrayList<>();
     private sendTask send;
     private Point screenSize;
+    private boolean run=true;
     //private ListView mListView;
 
     @Override
@@ -175,7 +176,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         super.onResume();
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
-        
+
         sendMessage(WEAR_MESSAGE_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
         //Log.v("API GOOGLE", "Try to send: "+"WINDOW,"+screenSize.x+","+screenSize.y );
     }
@@ -229,6 +230,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     protected void onDestroy() {
         if( mApiClient != null )
             mApiClient.unregisterConnectionCallbacks( this );
+
+        run=false;
+        synchronized (send){
+            send.notify();
+        }
         super.onDestroy();
     }
 
@@ -252,12 +258,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private void sendMessage( final String path, final String text ) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
         messages.add(text);
-        if(i==0){
         synchronized (send){
             send.notify();
         }
-        }
-        i=(i+1)>>1;
        /* new Thread( new Runnable() {
             @Override
             public void run() {
@@ -279,7 +282,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         @Override
         protected Void doInBackground(String... params) {
             synchronized (this) {
-                while (true) {
+                while (run) {
                     if (messages.isEmpty()) {
                         try {
                             //Log.v("sendTask","Liste des messages vide");
@@ -303,6 +306,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     }
                 }
             }
+            return null;
         }
     }
 }
