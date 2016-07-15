@@ -13,13 +13,13 @@ public class MobileMessageListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        if( messageEvent.getPath().equalsIgnoreCase( START_ACTIVITY ) ) {
+       /* if( messageEvent.getPath().equalsIgnoreCase( START_ACTIVITY ) ) {
             Intent intent = new Intent( this, MainActivity.class );
             intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
             startActivity( intent );
         } else {
             super.onMessageReceived(messageEvent);
-        }
+        }*/
     }
 
 }

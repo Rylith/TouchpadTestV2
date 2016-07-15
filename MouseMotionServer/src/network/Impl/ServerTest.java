@@ -47,13 +47,13 @@ public class ServerTest extends Server {
 	
 	private void getIPAddress() throws SocketException{
 		boolean notFind=true;
-		Enumeration e;
+		Enumeration<?> e;
 	    e = NetworkInterface.getNetworkInterfaces();
 	    while (e.hasMoreElements() && notFind) {
 	        NetworkInterface ni = (NetworkInterface) e.nextElement();
 	        if (ni.isLoopback() || !ni.isUp()) continue;
 
-	        for (Enumeration e2 = ni.getInetAddresses(); e2.hasMoreElements(); ) {
+	        for (Enumeration<?> e2 = ni.getInetAddresses(); e2.hasMoreElements(); ) {
 	            InetAddress ip = (InetAddress) e2.nextElement();
 	            if(ip instanceof Inet4Address){
 	            	IP_ADDRESS=ip.getHostAddress();

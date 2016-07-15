@@ -1,5 +1,7 @@
 package network.Impl;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -33,9 +35,14 @@ public class OwnEngine extends Engine implements Runnable{
 	
 	private ConnectCallback connectCallback;
 	private AcceptCallback acceptCallback;
+	public static double width;
+	public static double height;
 	
 	public OwnEngine() throws IOException {
 		 m_selector = SelectorProvider.provider().openSelector();
+		 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		 OwnEngine.width = screenSize.getWidth();
+		 OwnEngine.height = screenSize.getHeight();
 	}
 	//Boucle pour NIO, redirige vers l'action suivant la clé
 	public void mainloop() {
@@ -217,7 +224,7 @@ public class OwnEngine extends Engine implements Runnable{
 	//Use to send to every member of group
 	public void send(String msg, int offset, int length) {
 		for(Entry<SelectionKey, Channel> mapEntry : listKey.entrySet()){
-			SelectionKey key = mapEntry.getKey();		
+			//SelectionKey key = mapEntry.getKey();		
 			Channel channel = mapEntry.getValue();
 			channel.send(msg.getBytes(), offset, length);
 			//handleWrite(key);		

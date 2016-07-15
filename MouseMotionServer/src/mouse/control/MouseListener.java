@@ -1,6 +1,8 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,11 +18,11 @@ public class MouseListener {
 	private Point prec;
 	
 	private int RAYON;
-	private static final float PERCENTSCREENSIZE = 0.05f;
+	private static final float PERCENTSCREENSIZE = 0.20f;
 	
 	private static double MARGE = 40;
-    private double[] bufferX = new double[20];
-    private double[] bufferY = new double[20];
+    private List<Double> bufferX = new ArrayList<>();
+    private List<Double> bufferY = new ArrayList<>();
 
     //To time the event on drag
     private ScheduledFuture<?> timerChangeMode = null;
@@ -40,7 +42,6 @@ public class MouseListener {
     private boolean reglin=false;
     
     private int previousSign=0;
-    private int compteur=0;
     private double lastPointOnstraightLineX;
     private double lastPointOnstraightLineY;
     
@@ -67,18 +68,17 @@ public class MouseListener {
 		double COEF;
 		
 		double distance = Util.distance(center,current);
-		//Log.v("BORDER", "distance: "+distance+" zone: " +(RAYON-MARGE));
+		//System.out.println("distance: "+distance+" zone: " +(RAYON-MARGE));
 		if(distance < (RAYON - MARGE)){
 			if(timerChangeMode != null){
 				timerChangeMode.cancel(false);
 			}
 			dist_x= (int) distanceX;
 			dist_y= (int) distanceY;
-			bufferX[compteur]=x;
-			bufferY[compteur]=y;
-			lastPointOnstraightLineX=bufferX[compteur];
-			lastPointOnstraightLineY=bufferY[compteur];
-			compteur=(compteur+1)% bufferX.length;
+			bufferX.add((double) x);
+			bufferY.add((double) y);
+			lastPointOnstraightLineX=x;
+			lastPointOnstraightLineY=y;
 			borderMode=false;
 			reglin=true;
 			COEF=1;
@@ -107,11 +107,11 @@ public class MouseListener {
 			}
 			COEF=Math.abs(angleCur-angleOr);
 			//Calcul y in function of the new x to stay on the straight line
-			double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-			dist_x= (int) (sign*COEF);
+			double y1=(coefs[0]*(lastPointOnstraightLineX + COEF/10)+coefs[1]);
+			dist_x= (int) (sign*COEF/10);
 			dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
 			
-			lastPointOnstraightLineX+=COEF;
+			lastPointOnstraightLineX+=(COEF/10);
 			lastPointOnstraightLineY=y1;
 			reglin=false;
 		
@@ -128,15 +128,10 @@ public class MouseListener {
 	}
 
 	public void resetBuffers(float x,float y) {
-		compteur=0;
 		borderMode=false;
 		reglin=true;
-        for(int i = 0; i< bufferX.length; i++){
-            bufferX[i]=Integer.MIN_VALUE;
-        }
-        for(int i = 0; i< bufferY.length; i++){
-            bufferX[i]=Integer.MIN_VALUE;
-        }
+        bufferX.clear();
+        bufferY.clear();
         //Init de the prec point before scrolling
         prec=new Point((int)x,(int)y);
 		

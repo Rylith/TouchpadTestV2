@@ -1,6 +1,7 @@
 package network.Impl;
 
 import java.awt.Point;
+import java.util.List;
 
 public class Util {
 
@@ -41,20 +42,20 @@ public class Util {
 	  }
 	    /**
 	     * result linear coef with coef[0]=a and coef[1]=b in a*x+b*/
-	    static public double[] regress(double[] y,double[] x){
+	    static public double[] regress(List<Double> bufferY,List<Double> bufferX){
 	        double[] coefs = new double[2];
 
 	        // first pass: read in data, compute xbar and ybar
-	        double sumx = 0.0, sumy = 0.0, sumx2 = 0.0;
+	        double sumx = 0.0, sumy = 0.0/*, sumx2 = 0.0*/;
 	        int offset=0;
-	        int length = x.length;
+	        int length = bufferX.size();
 	        double R2=0;
-	        while(R2 < 0.50){
+	        while(R2 < 0.01){
 	            for(int i = offset; i<length ; i++){
-	                if(x[i] != Integer.MIN_VALUE && y[i] != Integer.MIN_VALUE){
-	                    sumx  += x[i];
-	                    sumx2 += x[i] * x[i];
-	                    sumy  += y[i];
+	                if(bufferX.get(i) != Integer.MIN_VALUE && bufferY.get(i) != Integer.MIN_VALUE){
+	                    sumx  += bufferX.get(i);
+	                    //sumx2 += x[i] * x[i];
+	                    sumy  += bufferY.get(i);
 	                }
 	            }
 	            double xbar = sumx / length;
@@ -63,35 +64,35 @@ public class Util {
 	            // second pass: compute summary statistics
 	            double xxbar = 0.0, yybar = 0.0, xybar = 0.0;
 	            for (int i = offset; i < length; i++) {
-	                if(x[i] != Integer.MIN_VALUE && y[i] != Integer.MIN_VALUE){
-	                    xxbar += (x[i] - xbar) * (x[i] - xbar);
-	                    yybar += (y[i] - ybar) * (y[i] - ybar);
-	                    xybar += (x[i] - xbar) * (y[i] - ybar);
+	                if(bufferX.get(i) != Integer.MIN_VALUE && bufferY.get(i) != Integer.MIN_VALUE){
+	                    xxbar += (bufferX.get(i) - xbar) * (bufferX.get(i) - xbar);
+	                    yybar += (bufferY.get(i) - ybar) * (bufferY.get(i) - ybar);
+	                    xybar += (bufferX.get(i) - xbar) * (bufferY.get(i) - ybar);
 	                }
 	            }
 	            double a = xybar / xxbar;
 	            double b = ybar - a * xbar;
-
+	            System.out.println("Equation: "+ a+"*x+"+b);
 	            coefs[0]=a;
 	            coefs[1]=b;
 
 	            // analyze results
 
-	            int df = length - 2;
-	            double rss = 0.0;      // residual sum of squares
+	            //int df = length - 2;
+	            //double rss = 0.0;      // residual sum of squares
 	            double ssr = 0.0;      // regression sum of squares
 	            for (int i = offset; i < length; i++) {
-	                if(x[i] != Integer.MIN_VALUE && y[i] != Integer.MIN_VALUE){
-	                    double fit = a*x[i] + b;
-	                    rss += (fit - y[i]) * (fit - y[i]);
+	                if(bufferX.get(i) != Integer.MIN_VALUE && bufferY.get(i) != Integer.MIN_VALUE){
+	                    double fit = a*bufferX.get(i) + b;
+	              //      rss += (fit - y[i]) * (fit - y[i]);
 	                    ssr += (fit - ybar) * (fit - ybar);
 	                }
 	            }
 	            R2    = ssr / yybar;
-	            double svar  = rss / df;
-	            double svar1 = svar / xxbar;
-	            double svar0 = svar/length + xbar*xbar*svar1;
-	            svar0 = svar * sumx2 / (length * xxbar);
+	            //double svar  = rss / df;
+	            //double svar1 = svar / xxbar;
+	            //double svar0 = svar/length + xbar*xbar*svar1;
+	            //svar0 = svar * sumx2 / (length * xxbar);
 	            //Log.v("BORDER", "Coefficient of correlation : " + R2);
 	            offset++;
 	        }
