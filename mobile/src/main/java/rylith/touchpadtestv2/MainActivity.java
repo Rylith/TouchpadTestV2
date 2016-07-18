@@ -230,6 +230,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 if(path.equals(WEAR_DATA_PATH)){
                     byte[] data = event.getDataItem().getData();
                     if(mTcpClient != null){
+                        //Log.v("GESTURE",new String(data));
                         mTcpClient.sendMessage(data,0,data.length);
                     }
                     String tra = new String(data);

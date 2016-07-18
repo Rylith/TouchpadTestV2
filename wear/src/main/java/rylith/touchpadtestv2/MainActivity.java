@@ -11,6 +11,8 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
@@ -45,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener{
 
     public static DismissOverlayView mDismissOverlay;
-    private GestureDetector mDetector;
+    private GestureDetectorCompat mDetector;
     public static TextView pos;
     private NodeApi.GetConnectedNodesResult nodes;
 
@@ -63,6 +65,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private int i=0;
     private Point screenSize;
     private PutDataRequest request;
+    private MySimpleGestureDetector listener;
+    private float[] origin=new float[2],current = new float[2];
     //private ListView mListView;
 
     @Override
@@ -118,7 +122,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         initGoogleApiClient();
 
         // Configure a gesture detector
-        mDetector = new GestureDetector(MainActivity.this, new MySimpleGestureDetector(this));
+        mDetector = new GestureDetectorCompat(MainActivity.this, listener=new MySimpleGestureDetector(this));
 
         //Envoi taille écran"WINDOW,x,y"
         //send = (sendTask) new sendTask().execute("");
@@ -219,6 +223,24 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     // Capture long presses
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        current[0] = ev.getX();
+        current[1] = ev.getY();
+        switch(MotionEventCompat.getActionMasked(ev)){
+            case (MotionEvent.ACTION_DOWN):
+                origin[0]=ev.getX();
+                origin[1]=ev.getY();
+                break;
+            case (MotionEvent.ACTION_MOVE):
+                float distX = - current[0] + origin[0];
+                float distY = - current[1] + origin[1];
+                sendMessage(MainActivity.WEAR_DATA_PATH,"SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
+                //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
+                origin[0]=ev.getX();
+                origin[1]=ev.getY();
+                break;
+            default:
+
+        }
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
 

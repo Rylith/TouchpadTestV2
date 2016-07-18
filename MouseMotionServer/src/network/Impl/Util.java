@@ -42,7 +42,7 @@ public class Util {
 	  }
 	    /**
 	     * result linear coef with coef[0]=a and coef[1]=b in a*x+b*/
-	    static public double[] regress(List<Double> bufferY,List<Double> bufferX){
+	    static public double[] regress(List<Float> bufferY,List<Float> bufferX){
 	        double[] coefs = new double[2];
 
 	        // first pass: read in data, compute xbar and ybar
@@ -72,7 +72,7 @@ public class Util {
 	            }
 	            double a = xybar / xxbar;
 	            double b = ybar - a * xbar;
-	            //System.out.println("Equation: "+ a+"*x+"+b);
+	            System.out.println("Equation: "+ a+"*x+"+b);
 	            coefs[0]=a;
 	            coefs[1]=b;
 
@@ -98,5 +98,15 @@ public class Util {
 	        }
 	        return coefs;
 	    }
+
+
+		public static double fluidity(int x, int y) {
+			int sub = 1;
+			int max = Math.max(Math.abs(x), Math.abs(y));
+			if(max > 6){
+				sub=2*max;
+			}
+			return sub;
+		}
 
 }

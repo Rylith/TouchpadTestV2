@@ -31,7 +31,6 @@ public class TCPClient{
 
     //private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
-    private byte[] msg="0".getBytes();
 
     private String connectionState = "";
     private Selector m_selector;
@@ -68,7 +67,19 @@ public class TCPClient{
             Channel channel = mapEntry.getValue();
             channel.send(message, offset, length);
             //Log.v("message send",message);
-            key.interestOps(SelectionKey.OP_WRITE|SelectionKey.OP_READ);
+            if(key.isValid()){
+                key.interestOps(SelectionKey.OP_WRITE|SelectionKey.OP_READ);
+            }else{
+                listKey.remove(key);
+                connectionState="Connection with server lost";
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        response.setTextColor(Color.RED);
+                        response.setText(connectionState);
+                    }
+                });
+                mRun=false;
+            }
             m_selector.wakeup();
            //handleWrite(key);
         }
@@ -114,7 +125,7 @@ public class TCPClient{
                             } else if (key.isConnectable()) {
                                 handleConnect(key);
                             } else
-                                System.out.println("  ---> unknown key=");
+                                Log.v("TCPClient","  ---> unknown key=");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -146,6 +157,7 @@ public class TCPClient{
     public String getConnectionState() {
         return connectionState;
     }
+
 
     //Declare the interface. The method messageReceived(String message) will must be implemented in the MyActivity
     //class at on asynckTask doInBackground
@@ -207,6 +219,7 @@ public class TCPClient{
 
                 }
             });
+            listKey.remove(key);
             mRun=false;
             return;
         }
@@ -262,8 +275,9 @@ public class TCPClient{
     private void handleRead(SelectionKey key) {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         Channel channel = listKey.get(key);
+        byte[] msg;
         try {
-            msg=((ChannelTest) channel).getReadAutomata().handleRead();
+            msg =((ChannelTest) channel).getReadAutomata().handleRead();
         } catch (IOException e) {
             // the connection as been closed unexpectedly, cancel the selection and close the channel
             key.cancel();

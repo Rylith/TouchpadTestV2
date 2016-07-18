@@ -10,12 +10,13 @@ import network.Interface.DeliverCallback;
 
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	MouseControl mouse = new MouseControl();
-	MouseListener listener = new MouseListener(mouse);
+	private MouseControl mouse = new MouseControl();
+	private MouseListener listener = new MouseListener(mouse);
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);
 		String[] x_y = msg.split(",");
+		//System.out.println(msg);
 		switch (x_y[0]) {
 			case "SCROLL":
 				//Coordinates of current point
