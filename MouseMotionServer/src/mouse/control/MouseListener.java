@@ -18,6 +18,7 @@ public class MouseListener {
 	private Point prec;
 	
 	private int RAYON;
+	private int nbTour=0;
 	private static final float PERCENTSCREENSIZE = 0.20f;
 	
 	private static double MARGE = 40;
@@ -47,6 +48,7 @@ public class MouseListener {
     
     double[] coefs;
 	private MouseControl mouse;
+	private boolean directSens=false;
 	
 	public MouseListener(MouseControl mouse){
 		this.mouse = mouse;
@@ -62,15 +64,11 @@ public class MouseListener {
 
 		int dist_x;
 		int dist_y;
-		 
+		float COEF;
+		
 		int xt = Math.round(x);
 		int yt = Math.round(y);
 		current=new Point(xt,yt);
-		
-		x = x - center.x;
-		y = y - center.y;
-		
-		float COEF;
 		
 		double distance = Util.distance(center,current);
 		//System.out.println("distance: "+distance+" zone: " +(RAYON-MARGE));
@@ -90,7 +88,7 @@ public class MouseListener {
 		}else if(borderMode){
 			
 			double angleCur = Math.abs(Util.angle(center,current));
-			//double anglePrec = Math.abs(Util.angle(center,prec));
+			double anglePrec = Math.abs(Util.angle(center,prec));
 			//System.out.println("Angles [current, precedent]: "+angleCur+", "+anglePrec);
 			
 			/*int sign = (int) Math.signum(angleCur-anglePrec);
@@ -102,10 +100,8 @@ public class MouseListener {
 				}
 			}*/
 			
-			double angleOr = Math.abs(Util.angle(center,origin));
-			//System.out.println("Angle original: "+angleOr);
 			
-			//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
+			double angleOr = Math.abs(Util.angle(center,origin));
 			//sign = (int) Math.signum(angleCur-angleOr);
 			
 			//Log.v("BORDER","signe: "+sign);
@@ -114,9 +110,30 @@ public class MouseListener {
 				coefs = Util.regress(bufferY,bufferX);
 			}
 			
+			if((anglePrec>240 && angleCur<90) || (nbTour > 0 && directSens)){
+				
+				if(anglePrec>240 && angleCur<90){
+					nbTour++;
+					directSens =true;
+					//System.out.println(nbTour);
+				}
+				angleCur+=(360*nbTour);
+				//System.out.println("Sens direct: "+angleCur);
+			}else if((anglePrec<90 && angleCur>240) || (nbTour > 0 && !directSens)){
+				if(anglePrec<90 && angleCur>240){
+					nbTour++;
+					directSens=false;
+					//System.out.println(nbTour);
+				}
+				//System.out.println("One tour or more: " + angleCur);
+				angleCur-=(360*nbTour);	
+			}
+			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
 			COEF=(float) Math.abs(angleCur-angleOr);
+			
 			//System.out.println("Current angle: "+ angleCur);
 			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			
 			//System.out.println(sign);
 			//Calcul y in function of the new x to stay on the straight line
 			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF/10)+coefs[1]);
@@ -145,8 +162,10 @@ public class MouseListener {
 	public void resetBuffers(float x,float y) {
 		borderMode=false;
 		reglin=true;
+		directSens=false;
         bufferX.clear();
         bufferY.clear();
+        nbTour=0;
         //Init de the prec point before scrolling
         prec=new Point((int)x,(int)y);
 		
