@@ -16,7 +16,7 @@ public class DeliverCallbackTest implements DeliverCallback {
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);
 		String[] x_y = msg.split(",");
-		//System.out.println(msg);
+		System.out.println(msg);
 		switch (x_y[0]) {
 			case "SCROLL":
 				//Coordinates of current point
@@ -55,6 +55,13 @@ public class DeliverCallbackTest implements DeliverCallback {
 				float xD = Float.parseFloat(x_y[1]);
 				float yD = Float.parseFloat(x_y[2]);
 				listener.resetBuffers(xD, yD);
+				break;
+			case "DOUBLECLICK":
+				mouse.press();
+				mouse.release();
+				mouse.press();
+				mouse.release();
+				break;
 			default:
 				break;
 		}

@@ -17,6 +17,11 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
     }
 
 
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        activity.sendMessage(MainActivity.WEAR_DATA_PATH,"DOUBLECLICK");
+        return true;
+    }
 
     @Override
     public void onLongPress(MotionEvent event) {
@@ -34,7 +39,7 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
     }*/
 
     @Override
-    public boolean onSingleTapUp(MotionEvent event) {
+    public boolean onSingleTapConfirmed(MotionEvent event) {
         MainActivity.pos.setText("Pos:\n" +"X: "+ event.getX()+"\nY: "+event.getY());
         MainActivity.paint.setColor(Color.BLUE);
         MainActivity.board.drawPoint(event.getX(),event.getY(),MainActivity.paint);
