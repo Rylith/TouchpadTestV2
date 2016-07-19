@@ -2,7 +2,6 @@ package network.Impl;
 
 import java.awt.MouseInfo;
 
-import mouse.control.MouseControl;
 import mouse.control.MouseListener;
 import network.Interface.Channel;
 import network.Interface.DeliverCallback;
@@ -10,13 +9,12 @@ import network.Interface.DeliverCallback;
 
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private MouseControl mouse = new MouseControl();
-	private MouseListener listener = new MouseListener(mouse);
+	private MouseListener listener = new MouseListener();
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);
 		String[] x_y = msg.split(",");
-		System.out.println(msg);
+		//System.out.println(msg);
 		switch (x_y[0]) {
 			case "SCROLL":
 				//Coordinates of current point
@@ -37,16 +35,16 @@ public class DeliverCallbackTest implements DeliverCallback {
 				listener.onScroll(x, y, distanceX, distanceY);
 				break;
 			case "PRESS":
-				mouse.press();
+				listener.press();
 				break;
 			case "RELEASE":
-				mouse.release();
+				listener.release();
 				break;
 			case "CLICK":
-				mouse.press();
-				mouse.release();
+				listener.click();
 				break;
 			case "WINDOW":
+				System.out.println(msg);
 				int xC = Integer.parseInt(x_y[1]);
 				int yC = Integer.parseInt(x_y[2]);
 				listener.setCenter(xC,yC);
@@ -57,10 +55,7 @@ public class DeliverCallbackTest implements DeliverCallback {
 				listener.resetBuffers(xD, yD);
 				break;
 			case "DOUBLECLICK":
-				mouse.press();
-				mouse.release();
-				mouse.press();
-				mouse.release();
+				listener.doubleClick();
 				break;
 			default:
 				break;

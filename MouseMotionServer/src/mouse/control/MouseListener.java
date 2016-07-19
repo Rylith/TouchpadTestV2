@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit;
 import network.Impl.Util;
 
 public class MouseListener {
-
+	
+	private MouseControl mouse = new MouseControl();
 	private Point center,origin;
 	private Point current;
 	private Point prec;
@@ -47,11 +48,9 @@ public class MouseListener {
     private float lastPointOnstraightLineY;
     
     double[] coefs;
-	private MouseControl mouse;
 	private boolean directSens=false;
 	
-	public MouseListener(MouseControl mouse){
-		this.mouse = mouse;
+	public MouseListener(){
 	}
     
     public void setCenter(int x, int y) {
@@ -169,6 +168,26 @@ public class MouseListener {
         //Init de the prec point before scrolling
         prec=new Point((int)x,(int)y);
 		
+	}
+
+	public void press() {
+		mouse.press();
+	}
+
+	public void release() {
+		mouse.release();
+	}
+
+	public void click() {
+		mouse.press();
+		mouse.release();
+	}
+
+	public void doubleClick() {
+		mouse.press();
+		mouse.release();
+		mouse.press();
+		mouse.release();
 	}
 	
 	

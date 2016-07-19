@@ -15,6 +15,7 @@ public class MouseControl {
 	private static int COEF = 2;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1; 
+	
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
