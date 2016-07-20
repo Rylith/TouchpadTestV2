@@ -6,7 +6,7 @@ public interface IMouseListener {
 	public void setCenter(int x, int y);
 	
 	/**Called when a continues movement is done on the screen of the device*/
-	public void onScroll(float x, float y, float distanceX, float distanceY);
+	public float onScroll(float x, float y, float distanceX, float distanceY);
 	
 	/**Reset data to calculate the line*/
 	public void resetBuffers(float x,float y);

@@ -59,12 +59,12 @@ public class MouseListener implements IMouseListener{
         MARGE = center.x*PERCENTSCREENSIZE;
 	}
 	
-	public void onScroll(float x, float y, float distanceX, float distanceY) {
+	public float onScroll(float x, float y, float distanceX, float distanceY) {
 
 		int dist_x;
 		int dist_y;
 		float COEF;
-		
+		float intensity=0;
 		int xt = Math.round(x);
 		int yt = Math.round(y);
 		current=new Point(xt,yt);
@@ -145,6 +145,12 @@ public class MouseListener implements IMouseListener{
 			lastPointOnstraightLineX+=(COEF/10);
 			lastPointOnstraightLineY=y1;
 			reglin=false;
+			//Intensity between 0 & 1;
+			if(COEF<=360){
+				intensity=COEF/360;
+			}else{
+				intensity=1.0f;
+			}
 		
 		}else{
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
@@ -156,6 +162,7 @@ public class MouseListener implements IMouseListener{
 		
 		prec=current;
 		mouse.motion(dist_x, dist_y);
+		return intensity;
 	}
 
 	public void resetBuffers(float x,float y) {
