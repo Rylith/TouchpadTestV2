@@ -33,7 +33,7 @@ import rylith.touchpadtestv2.connectionTCP.nio.client.implem.TCPClient;
 
 public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DataApi.DataListener {
 
-    private static final String START_ACTIVITY ="/start_activity";
+    //private static final String START_ACTIVITY ="/start_activity";
     private static final String WEAR_DATA_PATH = "/message";
 
     private GoogleApiClient mApiClient;

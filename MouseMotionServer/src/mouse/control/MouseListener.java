@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
 
-public class MouseListener {
+public class MouseListener implements IMouseListener{
 	
 	private MouseControl mouse = new MouseControl();
 	private Point center,origin;
@@ -184,10 +184,8 @@ public class MouseListener {
 	}
 
 	public void doubleClick() {
-		mouse.press();
-		mouse.release();
-		mouse.press();
-		mouse.release();
+		click();
+		click();
 	}
 	
 	
