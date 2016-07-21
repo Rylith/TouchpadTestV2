@@ -32,7 +32,10 @@ public class DeliverCallbackTest implements DeliverCallback {
 				if(DEBUG)
 					System.out.println("Before motion : " + MouseInfo.getPointerInfo().getLocation());
 				
-				listener.onScroll(x, y, distanceX, distanceY);
+				float intensity = listener.onScroll(x, y, distanceX, distanceY);
+				if(intensity != 0){
+					channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).length());
+				}
 				break;
 			case "PRESS":
 				listener.press();

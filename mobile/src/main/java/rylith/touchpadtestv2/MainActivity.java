@@ -34,10 +34,11 @@ import rylith.touchpadtestv2.connectionTCP.nio.client.implem.TCPClient;
 public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DataApi.DataListener {
 
     //private static final String START_ACTIVITY ="/start_activity";
-    private static final String WEAR_DATA_PATH = "/message";
+    public static final String WEAR_DATA_PATH = "/message";
+    public static final String MOBILE_DATA_PATH = "/messageMobile";
 
-    private GoogleApiClient mApiClient;
-    public static final String PREFS_SERV = "MyPrefsServ";
+    public static GoogleApiClient mApiClient;
+    private static final String PREFS_SERV = "MyPrefsServ";
 
     private TCPClient mTcpClient;
     public static String SERVERIP = "192.168.43.43"; //your computer IP address
@@ -225,7 +226,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         for(DataEvent event : dataEventBuffer){
 
             if(event.getType() == DataEvent.TYPE_CHANGED){
-
                 String path = event.getDataItem().getUri().getPath();
                 if(path.equals(WEAR_DATA_PATH)){
                     byte[] data = event.getDataItem().getData();
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                     String tra = new String(data);
                     String[] mess = tra.split(",");
                     pos.setText(mess[0]);
-                    if (mess.length>1){
+                    if (mess.length>2){
                         board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
                         image.invalidate();
                     }

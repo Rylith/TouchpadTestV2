@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -48,6 +49,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     public static DismissOverlayView mDismissOverlay;
     private GestureDetectorCompat mDetector;
+    private Vibrator vibrator;
+
     public static TextView pos;
     private NodeApi.GetConnectedNodesResult nodes;
 
@@ -59,6 +62,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     //private static final String START_ACTIVITY ="/start_activity";
     public static final String WEAR_DATA_PATH = "/message";
+    public static final String MOBILE_DATA_PATH = "/messageMobile";
 
     private GoogleApiClient mApiClient;
     private ArrayAdapter<String> mAdapter;
@@ -183,6 +187,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
             }
         });
+        Wearable.DataApi.addListener(mApiClient,this);
         Log.v("BLUETOOTH","call to OnConnected");
     }
 
@@ -256,16 +261,37 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
         for(DataEvent event : dataEventBuffer){
-
             if(event.getType() == DataEvent.TYPE_CHANGED){
-
                 String path = event.getDataItem().getUri().getPath();
-                if(path.equals(WEAR_DATA_PATH)){
-
-                    event.getDataItem().getData();
+                if(path.equals(MOBILE_DATA_PATH)){
+                    String msg = new String (event.getDataItem().getData());
+                    Log.v("CALLBACK",msg);
+                    String[] m = msg.split(",");
+                    long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),1000);
+                    if(vibrator == null){
+                        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                    }
+                    vibrator.vibrate(pattern,-1);
                 }
             }
         }
+    }
+
+    public long[] genVibratorPattern( float intensity, long duration )
+    {
+        float dutyCycle = Math.abs( ( intensity * 2.0f ) - 1.0f );
+        long hWidth = (long) ( dutyCycle * ( duration - 1 ) ) + 1;
+        long lWidth = dutyCycle == 1.0f ? 0 : 1;
+
+        int pulseCount = (int) ( 2.0f * ( (float) duration / (float) ( hWidth + lWidth ) ) );
+        long[] pattern = new long[ pulseCount ];
+
+        for( int i = 0; i < pulseCount; i++ )
+        {
+            pattern[i] = intensity < 0.5f ? ( i % 2 == 0 ? hWidth : lWidth ) : ( i % 2 == 0 ? lWidth : hWidth );
+        }
+
+        return pattern;
     }
 }
 
