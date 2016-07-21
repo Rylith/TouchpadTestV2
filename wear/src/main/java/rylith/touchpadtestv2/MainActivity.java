@@ -243,6 +243,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 origin[0]=ev.getX();
                 origin[1]=ev.getY();
                 break;
+            case (MotionEvent.ACTION_UP):
+                sendMessage(MainActivity.WEAR_DATA_PATH,"RELEASE");
+                break;
             default:
 
         }
