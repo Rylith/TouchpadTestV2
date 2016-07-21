@@ -43,7 +43,7 @@ public abstract class IMouseListener {
     protected float lastPointOnstraightLineY;
     
     protected double[] coefs;
-	
+    protected int sign;
 	
 	/**Initialize the coordinates of the center of the device*/
 	public void setCenter(int x, int y) {

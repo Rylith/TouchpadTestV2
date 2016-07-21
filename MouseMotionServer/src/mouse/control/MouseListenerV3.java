@@ -12,13 +12,14 @@ public class MouseListenerV3 extends IMouseListener {
 	private int dist_y = 0;
 	private static final long TIMER_WAIT_MOVEMENT_THREAD=50;
 	private Future<?> future;
-	Thread movement = new Thread("movement"){
+	
+	private Thread movement = new Thread("movement"){
 		@Override
 		public void run(){
 			while(borderMode){
 				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + 1)+coefs[1]);
-				dist_x= (int) 1;
-				dist_y= (int) ((y1 - lastPointOnstraightLineY));
+				dist_x= (int) sign*1;
+				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
 				lastPointOnstraightLineX+=1;
 				lastPointOnstraightLineY=y1;
 				mouse.motion(dist_x,dist_y);
@@ -54,7 +55,13 @@ public class MouseListenerV3 extends IMouseListener {
 			reglin=true;
 		}else if(borderMode){
 			if(future == null || future.isDone()){
+				if(reglin){
+					coefs = Util.regress(bufferY,bufferX);
+				}
+				double angleOr = Math.abs(Util.angle(center,origin));
+				sign=(int) Math.signum(coefs[0]*(angleOr-180));
 				future = task.submit(movement);
+				reglin=false;
 			}
 		}else {
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){

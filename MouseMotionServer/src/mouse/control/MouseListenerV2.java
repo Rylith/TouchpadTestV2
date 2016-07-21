@@ -13,14 +13,13 @@ public class MouseListenerV2 extends IMouseListener{
     private int nbTour=0;
 	
 	float COEF;
-	int sign;
 	private int dist_x = 0;
 	private int dist_y = 0;
 	
 	//Thread for moving the mouse continuously while in bordermode//
 	private int moveSpeed = 1;
 	private Future<?> future;
-	Thread movement = new Thread("movement"){
+	private Thread movement = new Thread("movement"){
 		@Override
 		public void run(){
 			while(borderMode){
@@ -40,9 +39,6 @@ public class MouseListenerV2 extends IMouseListener{
 			//this.interrupt();
 		}
 	};
-
-	public MouseListenerV2(){
-	}
 	
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
 		
@@ -51,7 +47,7 @@ public class MouseListenerV2 extends IMouseListener{
 		float intensity=0;
 		
 		double distance = Util.distance(center,current);
-		//Log.v("BORDER", "distance: "+distance+" zone: " +(RAYON-MARGE));
+		//System.out.println("distance: "+distance+" zone: " +(RAYON-MARGE));
 		if(distance < (RAYON - MARGE)){
 			if(timerChangeMode != null){
 				timerChangeMode.cancel(false);
@@ -78,6 +74,7 @@ public class MouseListenerV2 extends IMouseListener{
 				coefs = Util.regress(bufferY,bufferX);
 			}
 			
+			//Detect when the current angle reaches 0
 			if((anglePrec>240 && angleCur<90) || (nbTour > 0 && directSens)){
 				
 				if(anglePrec>240 && angleCur<90){
@@ -98,23 +95,15 @@ public class MouseListenerV2 extends IMouseListener{
 			}
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
 			COEF=(float) Math.abs(angleCur-angleOr)/10;
-			
+
 			//System.out.println("Current angle: "+ angleCur);
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
 			if (future == null || future.isDone()){
-				//Calcul y in function of the new x to stay on the straight line
-				/*double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-				dist_x= (int) (sign*COEF);
-				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
-				
-				lastPointOnstraightLineX+=COEF;
-				lastPointOnstraightLineY=y1;*/
 				future = task.submit(movement);
-				//movement.start();
 			}
 			reglin=false;
-		
+			
 			//Intensity between 0 & 1;
 			if(COEF<=36){
 				intensity=COEF/36;

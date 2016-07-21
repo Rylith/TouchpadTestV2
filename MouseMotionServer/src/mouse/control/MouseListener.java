@@ -11,15 +11,14 @@ public class MouseListener extends IMouseListener{
     //private int previousSign=0;
     private boolean directSens=false;
 	
-	public MouseListener(){
-	}
-    
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
 
 		int dist_x;
 		int dist_y;
+		
 		float COEF;
 		float intensity=0;
+		
 		int xt = Math.round(x);
 		int yt = Math.round(y);
 		current=new Point(xt,yt);
@@ -54,7 +53,6 @@ public class MouseListener extends IMouseListener{
 				}
 			}*/
 			
-			
 			double angleOr = Math.abs(Util.angle(center,origin));
 			//sign = (int) Math.signum(angleCur-angleOr);
 			
@@ -86,7 +84,7 @@ public class MouseListener extends IMouseListener{
 			COEF=(float) Math.abs(angleCur-angleOr)/10;
 			
 			//System.out.println("Current angle: "+ angleCur);
-			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
 			//System.out.println(sign);
 			//Calcul y in function of the new x to stay on the straight line
