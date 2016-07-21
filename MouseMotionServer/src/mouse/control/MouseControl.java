@@ -63,4 +63,7 @@ public class MouseControl {
 		mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 	}
 
+	public void setCoeff(int value){
+		this.COEF = value;
+	}
 }

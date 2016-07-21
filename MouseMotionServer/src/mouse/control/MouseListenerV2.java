@@ -77,18 +77,16 @@ public class MouseListenerV2 implements IMouseListener{
         MARGE = center.x*PERCENTSCREENSIZE;
 	}
 	
-	public void onScroll(float x, float y, float distanceX, float distanceY) {
+	public float onScroll(float x, float y, float distanceX, float distanceY) {
 		
 		current=new Point((int)x,(int)y);
 		
-		double COEF;
+		float COEF;
+		float intensity=0;
 		
 		double distance = Util.distance(center,current);
 		//Log.v("BORDER", "distance: "+distance+" zone: " +(RAYON-MARGE));
 		if(distance < (RAYON - MARGE)){
-			if(timerChangeMode != null){
-				timerChangeMode.cancel(false);
-			}
 			if(timerChangeMode != null){
 				timerChangeMode.cancel(false);
 			}
@@ -106,25 +104,40 @@ public class MouseListenerV2 implements IMouseListener{
 			double angleCur = Math.abs(Util.angle(center,current));
 			double anglePrec = Math.abs(Util.angle(center,prec));
 			
-			int sign = (int) Math.signum(angleCur-anglePrec);
-			//Detect reversal of the direction of rotation
-			if(sign != previousSign){
-				previousSign=sign;
-				if(previousSign != 0){
-				    origin=prec;
-				}
-			}
-			
 			double angleOr = Math.abs(Util.angle(center,origin));
 			//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
-			sign = (int) Math.signum(angleCur-angleOr);
 			
 			//Log.v("BORDER","signe: "+sign);
 			//Calcul of coefficients for the straight line
 			if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
 			}
-			COEF=Math.abs(angleCur-angleOr);
+			
+
+			if((anglePrec>240 && angleCur<90) || (nbTour > 0 && directSens)){
+				
+				if(anglePrec>240 && angleCur<90){
+					nbTour++;
+					directSens =true;
+					//System.out.println(nbTour);
+				}
+				angleCur+=(360*nbTour);
+				//System.out.println("Sens direct: "+angleCur);
+			}else if((anglePrec<90 && angleCur>240) || (nbTour > 0 && !directSens)){
+				if(anglePrec<90 && angleCur>240){
+					nbTour++;
+					directSens=false;
+					//System.out.println(nbTour);
+				}
+				//System.out.println("One tour or more: " + angleCur);
+				angleCur-=(360*nbTour);	
+			}
+			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
+			COEF=(float) Math.abs(angleCur-angleOr);
+			
+			//System.out.println("Current angle: "+ angleCur);
+			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			
 			//Calcul y in function of the new x to stay on the straight line
 			double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 			dist_x= (int) (sign*COEF);
@@ -135,6 +148,13 @@ public class MouseListenerV2 implements IMouseListener{
 			reglin=false;
 			movement.start();
 		
+			//Intensity between 0 & 1;
+			if(COEF<=360){
+				intensity=COEF/360;
+			}else{
+				intensity=1.0f;
+			}
+			
 		} else {
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
@@ -145,6 +165,7 @@ public class MouseListenerV2 implements IMouseListener{
 		
 		prec=current;
 		mouse.motion(dist_x, dist_y);
+		return intensity;
 	}
 
 	public void resetBuffers(float x,float y) {
