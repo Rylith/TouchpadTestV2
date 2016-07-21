@@ -2,6 +2,7 @@ package network.Impl;
 
 import java.awt.MouseInfo;
 
+import mouse.control.IMouseListener;
 import mouse.control.MouseListener;
 import network.Interface.Channel;
 import network.Interface.DeliverCallback;
@@ -9,7 +10,7 @@ import network.Interface.DeliverCallback;
 
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private MouseListener listener = new MouseListener();
+	private IMouseListener listener = new MouseListener();
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);
