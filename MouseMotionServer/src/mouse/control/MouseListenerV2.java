@@ -50,6 +50,8 @@ public class MouseListenerV2 implements IMouseListener{
     private boolean directSens=false;
 	private MouseControl mouse;
 	
+	float COEF;
+	int sign;
 	private int dist_x = 0;
 	private int dist_y = 0;
 	
@@ -59,6 +61,10 @@ public class MouseListenerV2 implements IMouseListener{
 		@Override
 		public void run(){
 			while(borderMode){
+				//Calcul y in function of the new x to stay on the straight line
+				double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+				dist_x= (int) (sign*COEF);
+				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
 				mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
 			}
 			//this.interrupt();
@@ -80,7 +86,6 @@ public class MouseListenerV2 implements IMouseListener{
 		
 		current=new Point((int)x,(int)y);
 		
-		float COEF;
 		float intensity=0;
 		
 		double distance = Util.distance(center,current);
@@ -132,10 +137,10 @@ public class MouseListenerV2 implements IMouseListener{
 				angleCur-=(360*nbTour);	
 			}
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-			COEF=(float) Math.abs(angleCur-angleOr);
+			COEF=(float) Math.abs(angleCur-angleOr)/10;
 			
 			//System.out.println("Current angle: "+ angleCur);
-			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
 			//Calcul y in function of the new x to stay on the straight line
 			double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
@@ -145,7 +150,9 @@ public class MouseListenerV2 implements IMouseListener{
 			lastPointOnstraightLineX+=COEF;
 			lastPointOnstraightLineY=y1;
 			reglin=false;
-			movement.start();
+			if (!movement.isAlive()){
+				movement.start();
+			}
 		
 			//Intensity between 0 & 1;
 			if(COEF<=36){
@@ -163,7 +170,7 @@ public class MouseListenerV2 implements IMouseListener{
 		}
 		
 		prec=current;
-		mouse.motion(dist_x, dist_y);
+		//mouse.motion(dist_x, dist_y);
 		return intensity;
 	}
 
