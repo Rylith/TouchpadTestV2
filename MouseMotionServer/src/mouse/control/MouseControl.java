@@ -64,6 +64,6 @@ public class MouseControl {
 	}
 
 	public void setCoeff(int value){
-		this.COEF = value;
+		MouseControl.COEF = value;
 	}
 }

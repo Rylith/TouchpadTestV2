@@ -128,26 +128,27 @@ public class MouseListener implements IMouseListener{
 				angleCur-=(360*nbTour);	
 			}
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-			COEF=(float) Math.abs(angleCur-angleOr);
+			COEF=(float) Math.abs(angleCur-angleOr)/10;
 			
 			//System.out.println("Current angle: "+ angleCur);
 			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
 			//System.out.println(sign);
 			//Calcul y in function of the new x to stay on the straight line
-			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF/10)+coefs[1]);
+			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 			
-			dist_x= Math.round(sign*COEF/10);
+			dist_x= Math.round(sign*COEF);
 			dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
 			
 			//System.out.println("distances : "+ dist_x+", "+dist_y);
 			
-			lastPointOnstraightLineX+=(COEF/10);
+			lastPointOnstraightLineX+=(COEF);
 			lastPointOnstraightLineY=y1;
 			reglin=false;
+			
 			//Intensity between 0 & 1;
-			if(COEF<=360){
-				intensity=COEF/360;
+			if(COEF<=36){
+				intensity=COEF/36;
 			}else{
 				intensity=1.0f;
 			}
@@ -173,7 +174,7 @@ public class MouseListener implements IMouseListener{
         bufferY.clear();
         nbTour=0;
         //Init de the prec point before scrolling
-        prec=new Point((int)x,(int)y);
+        prec=new Point(Math.round(x),Math.round(y));
 		
 	}
 
