@@ -119,7 +119,6 @@ public class MouseListenerV2 implements IMouseListener{
 		
 			double angleCur = Math.abs(Util.angle(center,current));
 			double anglePrec = Math.abs(Util.angle(center,prec));
-			
 			double angleOr = Math.abs(Util.angle(center,origin));
 			//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 			
@@ -129,7 +128,6 @@ public class MouseListenerV2 implements IMouseListener{
 				coefs = Util.regress(bufferY,bufferX);
 			}
 			
-
 			if((anglePrec>240 && angleCur<90) || (nbTour > 0 && directSens)){
 				
 				if(anglePrec>240 && angleCur<90){

@@ -270,11 +270,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     String msg = new String (event.getDataItem().getData());
                     Log.v("CALLBACK",msg);
                     String[] m = msg.split(",");
-                    long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),100);
+
                     if(vibrator == null){
                         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     }
                     if(i%5 == 0){
+                        long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),200);
                         vibrator.vibrate(pattern,-1);
                     }
                     i++;
@@ -286,17 +287,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public long[] genVibratorPattern( float intensity, long duration )
     {
         float dutyCycle = Math.abs( ( intensity * 2.0f ) - 1.0f );
-        long hWidth = (long) ( dutyCycle * ( duration - 1 ) ) + 1;
         long lWidth = dutyCycle == 1.0f ? 0 : 50;
-        //Log.v("PATTERN","hWidth: "+hWidth+", lWidth: "+lWidth);
-        int pulseCount = (int) ( 2.0f * ( (float) duration / (float) ( /*hWidth +*/ lWidth ) ) );
+        long hWidth = (long) Math.abs((( dutyCycle * ( duration - 1 ) ) + 1)-lWidth);
+
+        Log.v("PATTERN","hWidth: "+hWidth+", lWidth: "+lWidth);
+        int pulseCount = (int) ( 2.0f * ( (float) duration / (float) ( hWidth + lWidth ) ) );
         long[] pattern = new long[ pulseCount ];
 
-        //Log.v("PATTERN","======Begin table======");
+        Log.v("PATTERN","======Begin table======");
         for( int i = 0; i < pulseCount; i++ )
         {
             pattern[i] = intensity < 0.5f ? ( i % 2 == 0 ? hWidth : lWidth ) : ( i % 2 == 0 ? lWidth : hWidth );
-            //Log.v("PATTERN",Long.toString(pattern[i]));
+            Log.v("PATTERN",Long.toString(pattern[i]));
         }
 
         return pattern;
