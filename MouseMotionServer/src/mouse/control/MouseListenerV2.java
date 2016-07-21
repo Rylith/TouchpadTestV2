@@ -62,7 +62,7 @@ public class MouseListenerV2 implements IMouseListener{
 			while(borderMode){
 				mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
 			}
-			this.interrupt();
+			//this.interrupt();
 		}
 	};
 	
