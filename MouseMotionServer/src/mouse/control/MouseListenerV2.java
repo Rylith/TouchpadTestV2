@@ -66,6 +66,8 @@ public class MouseListenerV2 implements IMouseListener{
 				double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 				dist_x= (int) (sign*COEF);
 				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
+				lastPointOnstraightLineX+=COEF;
+				lastPointOnstraightLineY=y1;
 				mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
 			}
 			//this.interrupt();
@@ -143,17 +145,17 @@ public class MouseListenerV2 implements IMouseListener{
 			//System.out.println("Current angle: "+ angleCur);
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
-			//Calcul y in function of the new x to stay on the straight line
-			double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-			dist_x= (int) (sign*COEF);
-			dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
-			
-			lastPointOnstraightLineX+=COEF;
-			lastPointOnstraightLineY=y1;
-			reglin=false;
 			if (!movement.isAlive()){
+				//Calcul y in function of the new x to stay on the straight line
+				/*double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+				dist_x= (int) (sign*COEF);
+				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
+				
+				lastPointOnstraightLineX+=COEF;
+				lastPointOnstraightLineY=y1;*/
 				movement.start();
 			}
+			reglin=false;
 		
 			//Intensity between 0 & 1;
 			if(COEF<=360){
@@ -171,7 +173,9 @@ public class MouseListenerV2 implements IMouseListener{
 		}
 		
 		prec=current;
-		//mouse.motion(dist_x, dist_y);
+		if (!movement.isAlive()){
+			mouse.motion(dist_x, dist_y);
+		}
 		return intensity;
 	}
 
