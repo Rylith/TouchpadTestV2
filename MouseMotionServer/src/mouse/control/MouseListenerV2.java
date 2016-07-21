@@ -42,8 +42,7 @@ public class MouseListenerV2 implements IMouseListener{
     private boolean borderMode=false;
     private boolean reglin=false;
     
-    private int previousSign=0;
-    private int compteur=0;
+    //private int previousSign=0;
     private double lastPointOnstraightLineX;
     private double lastPointOnstraightLineY;
     
@@ -158,8 +157,8 @@ public class MouseListenerV2 implements IMouseListener{
 			reglin=false;
 		
 			//Intensity between 0 & 1;
-			if(COEF<=360){
-				intensity=COEF/360;
+			if(COEF<=36){
+				intensity=COEF/36;
 			}else{
 				intensity=1.0f;
 			}
@@ -187,7 +186,7 @@ public class MouseListenerV2 implements IMouseListener{
         bufferY.clear();
         nbTour=0;
         //Init de the prec point before scrolling
-        prec=new Point((int)x,(int)y);
+        prec=new Point(Math.round(x),Math.round(y));
 		
 	}
 
