@@ -4,13 +4,14 @@ import java.awt.MouseInfo;
 
 import mouse.control.IMouseListener;
 import mouse.control.MouseListener;
+import mouse.control.MouseListenerV2;
 import network.Interface.Channel;
 import network.Interface.DeliverCallback;
 
 
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private IMouseListener listener = new MouseListener();
+	private IMouseListener listener = new MouseListenerV2();
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);

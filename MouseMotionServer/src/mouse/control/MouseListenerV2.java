@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -13,15 +14,20 @@ import network.Impl.Util;
 
 public class MouseListenerV2 implements IMouseListener{
 
+	private MouseControl mouse = new MouseControl();
+	
+    private static final long TIMER_AFF = 500 ;
+    private static final long TIMER_WAIT_MOVEMENT_THREAD=50;
+    private static final float PERCENTSCREENSIZE = 0.2f;
+	private static double MARGE = 40;
+	
 	private Point center,origin;
 	private Point current;
 	private Point prec;
 	
 	private int RAYON;
 	private int nbTour=0;
-	private static final float PERCENTSCREENSIZE = 0.00f;
 	
-	private static double MARGE = 40;
 	private List<Float> bufferX = new ArrayList<>();
     private List<Float> bufferY = new ArrayList<>();
 
@@ -29,8 +35,7 @@ public class MouseListenerV2 implements IMouseListener{
     private ScheduledFuture<?> timerChangeMode = null;
     private ScheduledExecutorService task = Executors
             .newSingleThreadScheduledExecutor();
-    
-    private static final long TIMER_AFF = 500 ;
+    	
     private TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
@@ -48,7 +53,6 @@ public class MouseListenerV2 implements IMouseListener{
     
     double[] coefs;
     private boolean directSens=false;
-	private MouseControl mouse;
 	
 	float COEF;
 	int sign;
@@ -62,20 +66,26 @@ public class MouseListenerV2 implements IMouseListener{
 		public void run(){
 			while(borderMode){
 				//Calcul y in function of the new x to stay on the straight line
-				double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-				dist_x= (int) (sign*COEF);
-				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
-				lastPointOnstraightLineX+=COEF;
-				lastPointOnstraightLineY=y1;
-				mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
+					double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+					dist_x= (int) (sign*COEF);
+					dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
+					lastPointOnstraightLineX+=COEF;
+					lastPointOnstraightLineY=y1;
+					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
+				try {
+					sleep(TIMER_WAIT_MOVEMENT_THREAD);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 			//this.interrupt();
 		}
 	};
+
+	private Future<?> future;
 	
 	
-	public MouseListenerV2(MouseControl mouse){
-		this.mouse = mouse;
+	public MouseListenerV2(){
 	}
     
     public void setCenter(int x, int y) {
@@ -144,7 +154,7 @@ public class MouseListenerV2 implements IMouseListener{
 			//System.out.println("Current angle: "+ angleCur);
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
-			if (!movement.isAlive()){
+			if (future == null || future.isDone()){
 				//Calcul y in function of the new x to stay on the straight line
 				/*double y1=(coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 				dist_x= (int) (sign*COEF);
@@ -152,7 +162,8 @@ public class MouseListenerV2 implements IMouseListener{
 				
 				lastPointOnstraightLineX+=COEF;
 				lastPointOnstraightLineY=y1;*/
-				movement.start();
+				future = task.submit(movement);
+				//movement.start();
 			}
 			reglin=false;
 		
@@ -172,7 +183,7 @@ public class MouseListenerV2 implements IMouseListener{
 		}
 		
 		prec=current;
-		if (!movement.isAlive()){
+		if (future == null || future.isDone()){
 			mouse.motion(dist_x, dist_y);
 		}
 		return intensity;
@@ -196,6 +207,7 @@ public class MouseListenerV2 implements IMouseListener{
 
 	public void release() {
 		mouse.release();
+		borderMode=false;
 	}
 
 	public void click() {
