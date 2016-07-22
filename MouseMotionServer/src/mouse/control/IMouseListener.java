@@ -24,6 +24,8 @@ public abstract class IMouseListener {
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();
     
+    protected float COEF;
+    
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
     protected ScheduledExecutorService task = Executors

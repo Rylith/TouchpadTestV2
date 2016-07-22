@@ -21,12 +21,12 @@ public class MouseListenerV3 extends IMouseListener {
 		public void run(){
 			while(borderMode){
 				//Logarithmic increase in function of time
-				double coef = Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.1)*2;
+				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.1)*2;
 				//System.out.println("coef: "+coef);
-				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + coef)+coefs[1]);
-				dist_x= (int) (sign*coef);
+				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+				dist_x= (int) (sign*COEF);
 				dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
-				lastPointOnstraightLineX+=coef;
+				lastPointOnstraightLineX+=COEF;
 				lastPointOnstraightLineY=y1;
 				mouse.motion(dist_x,dist_y);
 				try {

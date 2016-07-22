@@ -12,7 +12,6 @@ public class MouseListenerV2 extends IMouseListener{
     private boolean directSens=false;
     private int nbTour=0;
 	
-	float COEF;
 	private int dist_x = 0;
 	private int dist_y = 0;
 	

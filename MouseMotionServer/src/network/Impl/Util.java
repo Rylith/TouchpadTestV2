@@ -93,7 +93,7 @@ public class Util {
 	            //double svar1 = svar / xxbar;
 	            //double svar0 = svar/length + xbar*xbar*svar1;
 	            //svar0 = svar * sumx2 / (length * xxbar);
-	            //Log.v("BORDER", "Coefficient of correlation : " + R2);
+	            //System.out.println("Coefficient of correlation : " + R2);
 	            offset++;
 	        }
 	        return coefs;

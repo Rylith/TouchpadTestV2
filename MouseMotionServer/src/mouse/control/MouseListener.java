@@ -16,7 +16,6 @@ public class MouseListener extends IMouseListener{
 		int dist_x;
 		int dist_y;
 		
-		float COEF;
 		float intensity=0;
 		
 		int xt = Math.round(x);
