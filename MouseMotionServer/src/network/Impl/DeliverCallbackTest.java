@@ -10,6 +10,7 @@ import network.Interface.Channel;
 import network.Interface.DeliverCallback;
 
 
+@SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
 	private IMouseListener listener = new MouseListenerV3();
