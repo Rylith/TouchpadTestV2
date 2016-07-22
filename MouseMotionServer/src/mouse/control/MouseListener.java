@@ -1,70 +1,24 @@
 package mouse.control;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
 
-public class MouseListener implements IMouseListener{
+public class MouseListener extends IMouseListener{
 	
-	private MouseControl mouse = new MouseControl();
-	private Point center,origin;
-	private Point current;
-	private Point prec;
-	
-	private int RAYON;
 	private int nbTour=0;
-	private static final float PERCENTSCREENSIZE = 0.20f;
-	
-	private static double MARGE = 40;
-    private List<Float> bufferX = new ArrayList<>();
-    private List<Float> bufferY = new ArrayList<>();
-
-    //To time the event on drag
-    private ScheduledFuture<?> timerChangeMode = null;
-    private ScheduledExecutorService task = Executors
-            .newSingleThreadScheduledExecutor();
-    
-    private static final long TIMER_AFF = 500 ;
-    private TimerTask change_mode = new TimerTask() {
-        @Override
-        public void run() {
-            origin = current;
-            borderMode = true;
-        }
-    };
-    
-    private boolean borderMode=false;
-    private boolean reglin=false;
-    
     //private int previousSign=0;
-    private float lastPointOnstraightLineX;
-    private float lastPointOnstraightLineY;
-    
-    double[] coefs;
-	private boolean directSens=false;
-	
-	public MouseListener(){
-	}
-    
-    public void setCenter(int x, int y) {
-		center = new Point(x/2,y/2);
-		RAYON = center.x;
-        MARGE = center.x*PERCENTSCREENSIZE;
-	}
+    private boolean directSens=false;
 	
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
 
 		int dist_x;
 		int dist_y;
+		
 		float COEF;
 		float intensity=0;
+		
 		int xt = Math.round(x);
 		int yt = Math.round(y);
 		current=new Point(xt,yt);
@@ -99,7 +53,6 @@ public class MouseListener implements IMouseListener{
 				}
 			}*/
 			
-			
 			double angleOr = Math.abs(Util.angle(center,origin));
 			//sign = (int) Math.signum(angleCur-angleOr);
 			
@@ -131,7 +84,7 @@ public class MouseListener implements IMouseListener{
 			COEF=(float) Math.abs(angleCur-angleOr)/10;
 			
 			//System.out.println("Current angle: "+ angleCur);
-			int sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 			
 			//System.out.println(sign);
 			//Calcul y in function of the new x to stay on the straight line
@@ -166,36 +119,10 @@ public class MouseListener implements IMouseListener{
 		return intensity;
 	}
 
+	@Override
 	public void resetBuffers(float x,float y) {
-		borderMode=false;
-		reglin=true;
 		directSens=false;
-        bufferX.clear();
-        bufferY.clear();
-        nbTour=0;
-        //Init de the prec point before scrolling
-        prec=new Point(Math.round(x),Math.round(y));
-		
+		nbTour=0;
+		super.resetBuffers(x, y);
 	}
-
-	public void press() {
-		mouse.press();
-	}
-
-	public void release() {
-		mouse.release();
-	}
-
-	public void click() {
-		mouse.press();
-		mouse.release();
-	}
-
-	public void doubleClick() {
-		click();
-		click();
-	}
-	
-	
-
 }
