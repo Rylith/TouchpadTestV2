@@ -42,7 +42,9 @@ public class MouseListenerV2 extends IMouseListener{
 	
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
 		
-		current=new Point((int)x,(int)y);
+		int xt = Math.round(x);
+		int yt = Math.round(y);
+		current=new Point(xt,yt);
 		
 		float intensity=0;
 		
@@ -97,7 +99,7 @@ public class MouseListenerV2 extends IMouseListener{
 			COEF=(float) Math.abs(angleCur-angleOr)/10;
 
 			//System.out.println("Current angle: "+ angleCur);
-			sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			signDetermination();
 			
 			if (future == null || future.isDone()){
 				future = task.submit(movement);

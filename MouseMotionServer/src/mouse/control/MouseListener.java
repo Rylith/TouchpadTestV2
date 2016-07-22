@@ -84,7 +84,7 @@ public class MouseListener extends IMouseListener{
 			COEF=(float) Math.abs(angleCur-angleOr)/10;
 			
 			//System.out.println("Current angle: "+ angleCur);
-			sign=(int) Math.signum(coefs[0]*(angleOr-180));
+			signDetermination();
 			
 			//System.out.println(sign);
 			//Calcul y in function of the new x to stay on the straight line
