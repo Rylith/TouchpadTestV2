@@ -47,6 +47,9 @@ public class MouseListenerV3 extends IMouseListener {
 		
 		float intensity=0;
 		
+		x=x-center.x;
+		y=y-center.y;
+		
 		double distance = Util.distance(center,current);
 		//Log.v("BORDER", "distance: "+distance+" zone: " +(RAYON-MARGE));
 		if(distance < (RAYON - MARGE)){

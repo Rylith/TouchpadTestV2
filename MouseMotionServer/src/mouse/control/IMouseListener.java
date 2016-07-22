@@ -94,21 +94,23 @@ public abstract class IMouseListener {
 	
 	protected void signDetermination(){
 		double angleOr = Math.abs(Util.angle(center,origin));
+		//System.out.println("angle origin: "+angleOr);
 		if(angleOr>=340 && coefs[0]>0 || angleOr<=10 && coefs[0]<0 || angleOr<180 && angleOr>=170 && coefs[0]>0 || angleOr>180 && angleOr<=190 && coefs[0]<0){
 			sign=(int) -Math.signum(coefs[0]*(angleOr-180));
 		}else{
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
-			if(sign == 0 && coefs[0] != 0){
+		}
+		if(sign == 0 && coefs[0] != 0){
+			sign=1;
+		}else if(coefs[0] == 0){
+			if(angleOr >= 180 && angleOr<=190 || angleOr <= 180 && angleOr>=170){
 				sign=1;
-			}else if(coefs[0] == 0){
-				if(angleOr >= 180 && angleOr<=190 || angleOr <= 180 && angleOr>=170){
-					sign=1;
-				}
-				if(angleOr >= 340 || angleOr <=10 ){
-					sign=-1;
-				}
+			}
+			if(angleOr >= 340 || angleOr <=10 ){
+				sign=-1;
 			}
 		}
+		//System.out.println(sign);
 		
 	}
 	
