@@ -13,7 +13,7 @@ import network.Interface.DeliverCallback;
 @SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private IMouseListener listener = new MouseListenerV3();
+	private IMouseListener listener = new MouseListener();
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);
