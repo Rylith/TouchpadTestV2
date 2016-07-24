@@ -80,7 +80,7 @@ public class MouseListener extends IMouseListener{
 				angleCur-=(360*nbTour);	
 			}
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-			COEF=(float) Math.abs(angleCur-angleOr)/10;
+			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
 			
 			//System.out.println("Current angle: "+ angleCur);
 			signDetermination();
@@ -99,8 +99,8 @@ public class MouseListener extends IMouseListener{
 			reglin=false;
 			
 			//Intensity between 0 & 1;
-			if(COEF<=36){
-				intensity=COEF/36;
+			if(COEF<=(360/DIVISION_COEF)){
+				intensity=COEF/(360/DIVISION_COEF);
 			}else{
 				intensity=1.0f;
 			}

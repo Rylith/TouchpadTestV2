@@ -25,6 +25,7 @@ public abstract class IMouseListener {
     protected List<Float> bufferY = new ArrayList<>();
     
     protected float COEF;
+    protected static float DIVISION_COEF=10;
     
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
@@ -32,6 +33,7 @@ public abstract class IMouseListener {
             .newSingleThreadScheduledExecutor();
     
     protected static final long TIMER_AFF = 500 ;
+    protected static final long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {

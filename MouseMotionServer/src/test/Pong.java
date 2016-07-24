@@ -2,6 +2,9 @@ package test;
 
 import java.io.IOException;
 
+import javax.swing.SwingUtilities;
+
+import gui.GraphicalInterface;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
 import network.Interface.Engine;
@@ -26,6 +29,13 @@ public class Pong{
 			}
 			//pong.startEcho();
 			new Thread((OwnEngine)pong).start();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					new GraphicalInterface();
+				}
+			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -3,6 +3,7 @@ package mouse.control;
 import java.awt.Point;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -12,9 +13,24 @@ public class MouseListenerV3 extends IMouseListener {
 	
 	private int dist_x = 0;
 	private int dist_y = 0;
-	private static final long TIMER_WAIT_MOVEMENT_THREAD=50;
+
 	private Future<?> future;
-	Instant start;
+	private Instant start;
+	private TimerTask change_mode = new TimerTask() {
+        @Override
+        public void run() {
+            origin = current;
+            borderMode = true;
+            if(reglin){
+				coefs = Util.regress(bufferY,bufferX);
+			}
+			signDetermination();
+			start=Instant.now();
+			future = task.submit(movement);
+			reglin=false;
+        }
+    };
+	
 	
 	private Thread movement = new Thread("movement"){
 		@Override
@@ -65,16 +81,8 @@ public class MouseListenerV3 extends IMouseListener {
 			borderMode=false;
 			reglin=true;
 		}else if(borderMode){
-			if(future == null || future.isDone()){
-				if(reglin){
-					coefs = Util.regress(bufferY,bufferX);
-				}
-				signDetermination();
-				start=Instant.now();
-				future = task.submit(movement);
-				reglin=false;
-			}
-		}else {
+			//Nothing to do, ignore the movement on screen
+		}else{
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
 			}
