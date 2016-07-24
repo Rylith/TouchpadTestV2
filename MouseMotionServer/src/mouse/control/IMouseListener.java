@@ -19,7 +19,7 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-	protected static final float PERCENTSCREENSIZE = 0.20f;	
+	protected static float PERCENTSCREENSIZE = 0.20f;	
 	
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();
@@ -32,8 +32,8 @@ public abstract class IMouseListener {
     protected ScheduledExecutorService task = Executors
             .newSingleThreadScheduledExecutor();
     
-    protected static final long TIMER_AFF = 500 ;
-    protected static final long TIMER_WAIT_MOVEMENT_THREAD=50;
+    protected static long TIMER_AFF = 500 ;
+    protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
