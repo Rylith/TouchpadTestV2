@@ -10,9 +10,7 @@ public class MouseListenerV2 extends IMouseListener{
 
     //private boolean directSens=false;
     private int nbTour=0;
-	private int dist_x = 0;
-	private int dist_y = 0;
-	
+
 	//Thread for moving the mouse continuously while in bordermode//
 	private int moveSpeed = 1;
 	private Future<?> future;
@@ -22,8 +20,8 @@ public class MouseListenerV2 extends IMouseListener{
 			while(borderMode){
 				//Calcul y in function of the new x to stay on the straight line
 					float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-					dist_x= (int) (sign*COEF);
-					dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
+					dist_x= Math.round(sign*COEF);
+					dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
 					lastPointOnstraightLineX+=COEF;
 					lastPointOnstraightLineY=y1;
 					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);

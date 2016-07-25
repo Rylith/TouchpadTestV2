@@ -123,8 +123,10 @@ public class GraphicalInterface extends JFrame{
 	    sliderCoeffControl.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
+
 				MouseControl.setCoeff(sliderCoeffControl.getValue());
 				labCoeffControl.setText("Multiplicateur déplacement: " + sliderCoeffControl.getValue());
+
 			}
 	    });
 	    

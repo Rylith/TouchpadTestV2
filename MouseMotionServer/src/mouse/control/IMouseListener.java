@@ -21,8 +21,10 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-
 	protected static float PERCENTSCREENSIZE = 0.20f;
+	
+	protected int dist_x = 0;
+	protected int dist_y = 0;
 	
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();
@@ -35,13 +37,21 @@ public abstract class IMouseListener {
     protected ScheduledExecutorService task = Executors
             .newSingleThreadScheduledExecutor();
     
-    protected static long TIMER_AFF = 500 ;
+    protected static long TIMER_AFF = 500;
     protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
             origin = current;
             borderMode = true;
+        }
+    };
+    
+    protected ScheduledFuture<?> timerExitBorderMode;
+    protected TimerTask exitBorderMode = new TimerTask() {
+        @Override
+        public void run() {
+            borderMode = false;
         }
     };
     
@@ -130,7 +140,6 @@ public abstract class IMouseListener {
 			}
 		}
 		//System.out.println(sign);
-		
 	}
 
 	public void setChannel(Channel channel) {
