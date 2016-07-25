@@ -236,7 +236,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 origin[0]=ev.getX();
                 origin[1]=ev.getY();
                 isUp=false;
-                Log.v("CALLBACK","isUp DOWN "+isUp);
                 break;
             case (MotionEvent.ACTION_MOVE):
                 float distX = - current[0] + origin[0];
@@ -249,7 +248,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             case (MotionEvent.ACTION_UP):
                 sendMessage(MainActivity.WEAR_DATA_PATH,"RELEASE");
                 isUp=true;
-                Log.v("CALLBACK","isUp UP "+isUp);
                 if(vibrator != null){
                     vibrator.cancel();
                 }
@@ -276,7 +274,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 String path = event.getDataItem().getUri().getPath();
                 if(path.equals(MOBILE_DATA_PATH)){
                     String msg = new String (event.getDataItem().getData());
-                    Log.v("CALLBACK",msg + "isUP: "+isUp);
+                    Log.v("CALLBACK",msg);
                     String[] m = msg.split(",");
 
                     if(vibrator == null){
@@ -303,7 +301,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         long lWidth = dutyCycle == 1.0f ? 0 : 1;
         long hWidth = (long) ( dutyCycle * ( duration - 1 ) ) + 1;
 
-        Log.v("PATTERN","hWidth: "+hWidth+", lWidth: "+lWidth);
+        //Log.v("PATTERN","hWidth: "+hWidth+", lWidth: "+lWidth);
         int pulseCount = (int) ( 2.0f * ( (float) duration / (float) ( hWidth + lWidth ) ) );
         long[] pattern = new long[ pulseCount ];
 
