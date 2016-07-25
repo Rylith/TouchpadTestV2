@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,6 +15,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import mouse.control.IMouseListener;
+
 public class GraphicalInterface extends JFrame{
 	
 	/**
@@ -28,7 +29,6 @@ public class GraphicalInterface extends JFrame{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	    this.setTitle("Réglage des paramètres");
@@ -38,7 +38,6 @@ public class GraphicalInterface extends JFrame{
 	    
 	    JTextArea text = new JTextArea();
 	    text.setEditable(false);
-	    text.setText("blaaaaaaa");
 	    
 	    JSlider slider1 = new JSlider();
 	    final JSlider slider2 = new JSlider();
@@ -46,11 +45,24 @@ public class GraphicalInterface extends JFrame{
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				slider2.getValue();
+				if(slider2.getValueIsAdjusting()){
+					int value = slider2.getValue();
+					IMouseListener.setDIVISION_COEF(value);
+				}
+				
 			}
 		});
 	    slider1.setMaximum(100);
 	    slider1.setMinimum(0);
+	    
+	    slider2.setMaximum(100);
+	    slider2.setMinimum(1);
+	    slider2.setValue((int) IMouseListener.getDIVISION_COEF());
+	    slider2.setMajorTickSpacing(9);
+	    slider2.setMinorTickSpacing(1);
+	    slider2.setPaintTicks(true);
+	    slider2.setPaintLabels(true);
+	    
 	    
 	    SpinnerModel model = new SpinnerNumberModel();
 	    JSpinner spinner = new JSpinner(model);
@@ -71,5 +83,4 @@ public class GraphicalInterface extends JFrame{
 	    this.setVisible(true);
 	    
 	  }
-	
 }
