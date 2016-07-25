@@ -8,7 +8,7 @@ import network.Impl.Util;
 
 public class MouseListenerV2 extends IMouseListener{
 
-    private boolean directSens=false;
+    //private boolean directSens=false;
     private int nbTour=0;
 	
 	private int dist_x = 0;
@@ -75,24 +75,19 @@ public class MouseListenerV2 extends IMouseListener{
 			}
 			
 			//Detect when the current angle reaches 0
-			if((anglePrec>240 && angleCur<90) || (nbTour > 0 && directSens)){
-				
-				if(anglePrec>240 && angleCur<90){
-					nbTour++;
-					directSens =true;
-					//System.out.println(nbTour);
-				}
-				angleCur+=(360*nbTour);
+			if((anglePrec>270 && angleCur<90)){
+				nbTour++;
+				//System.out.println(nbTour);
 				//System.out.println("Sens direct: "+angleCur);
-			}else if((anglePrec<90 && angleCur>240) || (nbTour > 0 && !directSens)){
-				if(anglePrec<90 && angleCur>240){
-					nbTour++;
-					directSens=false;
-					//System.out.println(nbTour);
-				}
-				//System.out.println("One tour or more: " + angleCur);
-				angleCur-=(360*nbTour);	
 			}
+			
+			if((anglePrec<90 && angleCur>270)){
+				nbTour--;
+				//System.out.println(nbTour);
+				//System.out.println("One tour or more: " + angleCur);
+					
+			}
+			angleCur+=(360*nbTour);
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
 			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
 
@@ -128,7 +123,7 @@ public class MouseListenerV2 extends IMouseListener{
 	
 	@Override
 	public void resetBuffers(float x,float y) {
-		directSens=false;
+		//directSens=false;
 		nbTour=0;
 		super.resetBuffers(x, y);
 	}

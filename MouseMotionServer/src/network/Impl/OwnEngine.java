@@ -167,7 +167,7 @@ public class OwnEngine extends Engine implements Runnable{
 			SelectionKey m_key = socketChannel.register(this.m_selector, SelectionKey.OP_READ /*| SelectionKey.OP_WRITE*/);
 			//Création du channel
 			Channel channel = new ChannelTest(socketChannel);
-			channel.setDeliverCallback(new DeliverCallbackTest());
+			channel.setDeliverCallback(new DeliverCallbackTest(m_key,channel));
 			//Callback d'acceptation
 			Server server = mapServer.get(key);
 			acceptCallback.accepted(server, channel);
@@ -215,7 +215,7 @@ public class OwnEngine extends Engine implements Runnable{
 	    // request to connect to the server
 	    m_ch.connect(new InetSocketAddress(hostAddress, port));
 	    Channel channel = new ChannelTest(m_ch);
-	    channel.setDeliverCallback(new DeliverCallbackTest());
+	    channel.setDeliverCallback(new DeliverCallbackTest(m_key,channel));
 	    listKey.put(m_key, channel);
 	    connectCallback=callback;
 	}

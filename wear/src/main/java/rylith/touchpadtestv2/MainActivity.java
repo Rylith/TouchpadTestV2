@@ -71,6 +71,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private PutDataRequest request;
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
+    private boolean isUp;
     //private ListView mListView;
 
     @Override
@@ -234,6 +235,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             case (MotionEvent.ACTION_DOWN):
                 origin[0]=ev.getX();
                 origin[1]=ev.getY();
+                isUp=false;
+                Log.v("CALLBACK","isUp DOWN "+isUp);
                 break;
             case (MotionEvent.ACTION_MOVE):
                 float distX = - current[0] + origin[0];
@@ -245,6 +248,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 break;
             case (MotionEvent.ACTION_UP):
                 sendMessage(MainActivity.WEAR_DATA_PATH,"RELEASE");
+                isUp=true;
+                Log.v("CALLBACK","isUp UP "+isUp);
                 if(vibrator != null){
                     vibrator.cancel();
                 }
@@ -271,19 +276,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 String path = event.getDataItem().getUri().getPath();
                 if(path.equals(MOBILE_DATA_PATH)){
                     String msg = new String (event.getDataItem().getData());
-                    Log.v("CALLBACK",msg);
+                    Log.v("CALLBACK",msg + "isUP: "+isUp);
                     String[] m = msg.split(",");
 
                     if(vibrator == null){
                         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     }
                     float intensity = Float.parseFloat(m[1]);
-                    if(intensity <= 0.25){
-                        long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),20);
-                        vibrator.vibrate(pattern,0);
-                    }else{
-                        long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),60);
-                        vibrator.vibrate(pattern,0);
+                    if(!isUp){
+                        if(intensity <= 0.25){
+                            long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),20);
+                            vibrator.vibrate(pattern,0);
+                        }else{
+                            long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),60);
+                            vibrator.vibrate(pattern,0);
+                        }
                     }
                 }
             }

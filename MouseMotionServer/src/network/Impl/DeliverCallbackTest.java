@@ -1,6 +1,7 @@
 package network.Impl;
 
 import java.awt.MouseInfo;
+import java.nio.channels.SelectionKey;
 
 import mouse.control.IMouseListener;
 import mouse.control.MouseListener;
@@ -13,7 +14,15 @@ import network.Interface.DeliverCallback;
 @SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private IMouseListener listener = new MouseListener();
+	private IMouseListener listener = new MouseListenerV2();
+	
+	public DeliverCallbackTest(){	
+	}
+	
+	public DeliverCallbackTest(SelectionKey key, Channel channel){
+		listener.setKey(key);
+		listener.setChannel(channel);
+	}
 	
 	public void deliver(Channel channel, byte[] bytes) {
 		String msg=new String(bytes);

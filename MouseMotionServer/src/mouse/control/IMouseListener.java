@@ -1,6 +1,7 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -9,6 +10,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import network.Impl.Util;
+import network.Interface.Channel;
 
 public abstract class IMouseListener {
 	
@@ -50,7 +52,17 @@ public abstract class IMouseListener {
     
     protected double[] coefs;
     protected int sign;
+	protected Channel channel;
+	protected SelectionKey key;
 	
+	public static void setDIVISION_COEF(float dIVISION_COEF) {
+		DIVISION_COEF = dIVISION_COEF;
+	}
+
+	public static float getDIVISION_COEF() {
+		return DIVISION_COEF;
+	}
+
 	/**Initialize the coordinates of the center of the device*/
 	public void setCenter(int x, int y) {
 		center = new Point(x/2,y/2);
@@ -114,6 +126,14 @@ public abstract class IMouseListener {
 		}
 		//System.out.println(sign);
 		
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel=channel;
+	}
+
+	public void setKey(SelectionKey key) {
+		this.key=key;
 	}
 	
 }
