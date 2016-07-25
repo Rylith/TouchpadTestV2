@@ -17,8 +17,8 @@ public class MouseControl {
 	private static double SUBDIVISION = 1; 
 	
 	//Parameters for the fluidity method
-	private static int testF = 6;
-	private static int diviF =2;
+	private static int testFluidity = 6;
+	private static int multiFluidity =2;
 	
 	public MouseControl(){
 		 try {
@@ -45,7 +45,7 @@ public class MouseControl {
 		if(n_y>=OwnEngine.height || n_y<=0){
 			n_x=current_point.x;
 		}*/
-		SUBDIVISION = Util.fluidity(dx,dy,testF,diviF);
+		SUBDIVISION = Util.fluidity(dx,dy,testFluidity,multiFluidity);
 		//System.out.println("Subdivision: " + SUBDIVISION);
 		for(double i=(dx)/SUBDIVISION,j=(dy)/SUBDIVISION,k=0 ; k<=SUBDIVISION ; i+=((dx)/SUBDIVISION),j+=((dy/SUBDIVISION)),k++){
 			n_x=(int) (-i + current_point.x);
@@ -71,11 +71,23 @@ public class MouseControl {
 		COEF = val;
 	}
 	
-	public static void setDiviF(int val){
-		diviF = val;
+	public static int getCoeff(){
+		return COEF;
+	}
+	
+	public static void setMultiF(int val){
+		multiFluidity = val;
+	}
+	
+	public static int getMultiF(){
+		return multiFluidity;
 	}
 	
 	public static void setTestF(int val){
-		testF = val;
+		testFluidity = val;
+	}
+	
+	public static int getTestF(){
+		return testFluidity;
 	}
 }

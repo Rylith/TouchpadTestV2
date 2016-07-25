@@ -154,15 +154,31 @@ public abstract class IMouseListener {
 		PERCENTSCREENSIZE = val;
 	}
 	
+	public static float getPercentScreenSize(){
+		return PERCENTSCREENSIZE;
+	}
+	
 	public static void setDivisionCoeff(float val){
 		DIVISION_COEF = val;
+	}
+	
+	public static float getDivisionCoeff(){
+		return DIVISION_COEF;
 	}
 	
 	public static void setTimerAff(long val){
 		TIMER_AFF = val;
 	}
 	
+	public static long getTimerAff(){
+		return TIMER_AFF;
+	}
+	
 	public static void setTimerMovement(long val){
 		TIMER_WAIT_MOVEMENT_THREAD = val;
+	}
+	
+	public static long getTimerMovement(){
+		return TIMER_WAIT_MOVEMENT_THREAD;
 	}
 }
