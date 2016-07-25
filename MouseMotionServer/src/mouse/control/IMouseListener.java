@@ -35,13 +35,21 @@ public abstract class IMouseListener {
     protected ScheduledExecutorService task = Executors
             .newSingleThreadScheduledExecutor();
     
-    protected static long TIMER_AFF = 500 ;
+    protected static long TIMER_AFF = 500;
     protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
             origin = current;
             borderMode = true;
+        }
+    };
+    
+    protected ScheduledFuture<?> timerExitBorderMode;
+    protected TimerTask exitBorderMode = new TimerTask() {
+        @Override
+        public void run() {
+            borderMode = false;
         }
     };
     
@@ -130,7 +138,6 @@ public abstract class IMouseListener {
 			}
 		}
 		//System.out.println(sign);
-		
 	}
 
 	public void setChannel(Channel channel) {

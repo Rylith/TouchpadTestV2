@@ -1,7 +1,6 @@
 package mouse.control;
 
 import java.awt.Point;
-import java.nio.channels.SelectionKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.TimerTask;
@@ -40,15 +39,15 @@ public class MouseListenerV3 extends IMouseListener {
 				//Logarithmic increase in function of time
 				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.1)*2;
 				//System.out.println("coef: "+coef);
-				float intensity = COEF/20;
+				//float intensity = COEF/20;
 				//System.out.println(intensity);
 				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 				dist_x= (int) (sign*COEF);
 				dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
 				lastPointOnstraightLineX+=COEF;
 				lastPointOnstraightLineY=y1;
-				channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
-				key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+				//channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
+				//key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
 				mouse.motion(dist_x,dist_y);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);
