@@ -1,4 +1,4 @@
-package test;
+package gui;
 
 import mouse.control.*;
 
@@ -14,6 +14,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class GraphicalInterface extends JFrame{
+	
+	private static final long serialVersionUID = -9002852749853545258L;
 	
 	public GraphicalInterface(){
 		

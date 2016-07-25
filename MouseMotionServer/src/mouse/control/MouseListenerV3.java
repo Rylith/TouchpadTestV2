@@ -1,6 +1,10 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.nio.channels.SelectionKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -10,18 +14,41 @@ public class MouseListenerV3 extends IMouseListener {
 	
 	private int dist_x = 0;
 	private int dist_y = 0;
-	private static final long TIMER_WAIT_MOVEMENT_THREAD=50;
+
 	private Future<?> future;
+	private Instant start;
+	private TimerTask change_mode = new TimerTask() {
+        @Override
+        public void run() {
+            origin = current;
+            borderMode = true;
+            if(reglin){
+				coefs = Util.regress(bufferY,bufferX);
+			}
+			signDetermination();
+			start=Instant.now();
+			future = task.submit(movement);
+			reglin=false;
+        }
+    };
+	
 	
 	private Thread movement = new Thread("movement"){
 		@Override
 		public void run(){
 			while(borderMode){
-				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + 1)+coefs[1]);
-				dist_x= (int) sign*1;
-				dist_y= (int) (sign*(y1 - lastPointOnstraightLineY));
-				lastPointOnstraightLineX+=1;
+				//Logarithmic increase in function of time
+				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.1)*2;
+				//System.out.println("coef: "+coef);
+				float intensity = COEF/20;
+				//System.out.println(intensity);
+				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+				dist_x= (int) (sign*COEF);
+				dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
+				lastPointOnstraightLineX+=COEF;
 				lastPointOnstraightLineY=y1;
+				channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
+				key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
 				mouse.motion(dist_x,dist_y);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);
@@ -35,9 +62,14 @@ public class MouseListenerV3 extends IMouseListener {
 	@Override
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
 		
-		current=new Point((int)x,(int)y);
+		int xt = Math.round(x);
+		int yt = Math.round(y);
+		current=new Point(xt,yt);
 		
 		float intensity=0;
+		
+		x=x-center.x;
+		y=y-center.y;
 		
 		double distance = Util.distance(center,current);
 		//Log.v("BORDER", "distance: "+distance+" zone: " +(RAYON-MARGE));
@@ -54,16 +86,8 @@ public class MouseListenerV3 extends IMouseListener {
 			borderMode=false;
 			reglin=true;
 		}else if(borderMode){
-			if(future == null || future.isDone()){
-				if(reglin){
-					coefs = Util.regress(bufferY,bufferX);
-				}
-				double angleOr = Math.abs(Util.angle(center,origin));
-				sign=(int) Math.signum(coefs[0]*(angleOr-180));
-				future = task.submit(movement);
-				reglin=false;
-			}
-		}else {
+			//Nothing to do, ignore the movement on screen
+		}else{
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
 			}

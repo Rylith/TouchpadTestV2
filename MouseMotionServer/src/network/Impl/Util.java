@@ -50,7 +50,7 @@ public class Util {
 	        int offset=0;
 	        int length = bufferX.size();
 	        double R2=0;
-	        while(R2 < 0.01){
+	        while(R2 < 0.5){
 	            for(int i = offset; i<length ; i++){
 	                if(bufferX.get(i) != Integer.MIN_VALUE && bufferY.get(i) != Integer.MIN_VALUE){
 	                    sumx  += bufferX.get(i);
@@ -93,7 +93,7 @@ public class Util {
 	            //double svar1 = svar / xxbar;
 	            //double svar0 = svar/length + xbar*xbar*svar1;
 	            //svar0 = svar * sumx2 / (length * xxbar);
-	            //Log.v("BORDER", "Coefficient of correlation : " + R2);
+	            //System.out.println("Coefficient of correlation : " + R2);
 	            offset++;
 	        }
 	        return coefs;

@@ -1,12 +1,16 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+
+import network.Impl.Util;
+import network.Interface.Channel;
 
 public abstract class IMouseListener {
 	
@@ -17,17 +21,22 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-	protected static final float PERCENTSCREENSIZE = 0.20f;
+
+	protected static float PERCENTSCREENSIZE = 0.20f;
 	
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();
+    
+    protected float COEF;
+    protected static float DIVISION_COEF=10;
     
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
     protected ScheduledExecutorService task = Executors
             .newSingleThreadScheduledExecutor();
     
-    protected static final long TIMER_AFF = 500 ;
+    protected static long TIMER_AFF = 500 ;
+    protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
@@ -44,7 +53,17 @@ public abstract class IMouseListener {
     
     protected double[] coefs;
     protected int sign;
+	protected Channel channel;
+	protected SelectionKey key;
 	
+	public static void setDIVISION_COEF(float dIVISION_COEF) {
+		DIVISION_COEF = dIVISION_COEF;
+	}
+
+	public static float getDIVISION_COEF() {
+		return DIVISION_COEF;
+	}
+
 	/**Initialize the coordinates of the center of the device*/
 	public void setCenter(int x, int y) {
 		center = new Point(x/2,y/2);
@@ -90,5 +109,35 @@ public abstract class IMouseListener {
 	
 	public MouseControl getMC() {
 		return this.mouse;
+	}
+
+	protected void signDetermination(){
+		double angleOr = Math.abs(Util.angle(center,origin));
+		//System.out.println("angle origin: "+angleOr);
+		if(angleOr>=340 && coefs[0]>0 || angleOr<=10 && coefs[0]<0 || angleOr<180 && angleOr>=170 && coefs[0]>0 || angleOr>180 && angleOr<=190 && coefs[0]<0){
+			sign=(int) -Math.signum(coefs[0]*(angleOr-180));
+		}else{
+			sign=(int) Math.signum(coefs[0]*(angleOr-180));
+		}
+		if(sign == 0 && coefs[0] != 0){
+			sign=1;
+		}else if(coefs[0] == 0){
+			if(angleOr >= 180 && angleOr<=190 || angleOr <= 180 && angleOr>=170){
+				sign=1;
+			}
+			if(angleOr >= 340 || angleOr <=10 ){
+				sign=-1;
+			}
+		}
+		//System.out.println(sign);
+		
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel=channel;
+	}
+
+	public void setKey(SelectionKey key) {
+		this.key=key;
 	}
 }
