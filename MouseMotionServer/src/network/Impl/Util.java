@@ -100,11 +100,11 @@ public class Util {
 	    }
 
 
-		public static double fluidity(int x, int y) {
+		public static double fluidity(int x, int y, int test, int divi) {
 			int sub = 1;
 			int max = Math.max(Math.abs(x), Math.abs(y));
-			if(max > 6){
-				sub=2*max;
+			if(max > test){
+				sub=divi*max;
 			}
 			return sub;
 		}

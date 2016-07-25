@@ -9,6 +9,10 @@ import network.Interface.Engine;
 public class Pong{
 
 	public static void main(String[] args) {
+		
+		GraphicalInterface window = new GraphicalInterface();
+		window.setVisible(true);
+		
 		try {
 			int portInitial=4444;
 			//Il est possible de changer le port de départ

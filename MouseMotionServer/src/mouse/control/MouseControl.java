@@ -16,6 +16,10 @@ public class MouseControl {
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1; 
 	
+	//Parameters for the fluidity method
+	private static int testF = 6;
+	private static int diviF =2;
+	
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
@@ -41,7 +45,7 @@ public class MouseControl {
 		if(n_y>=OwnEngine.height || n_y<=0){
 			n_x=current_point.x;
 		}*/
-		SUBDIVISION = Util.fluidity(dx,dy);
+		SUBDIVISION = Util.fluidity(dx,dy,testF,diviF);
 		//System.out.println("Subdivision: " + SUBDIVISION);
 		for(double i=(dx)/SUBDIVISION,j=(dy)/SUBDIVISION,k=0 ; k<=SUBDIVISION ; i+=((dx)/SUBDIVISION),j+=((dy/SUBDIVISION)),k++){
 			n_x=(int) (-i + current_point.x);
@@ -61,5 +65,17 @@ public class MouseControl {
 	
 	public void release(){
 		mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+	}
+	
+	public static void setCoeff(int val){
+		COEF = val;
+	}
+	
+	public static void setDiviF(int val){
+		diviF = val;
+	}
+	
+	public static void setTestF(int val){
+		testF = val;
 	}
 }

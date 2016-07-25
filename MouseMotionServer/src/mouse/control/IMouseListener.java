@@ -17,7 +17,7 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-	protected static final float PERCENTSCREENSIZE = 0.20f;	
+	protected static final float PERCENTSCREENSIZE = 0.20f;
 	
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();
@@ -88,4 +88,7 @@ public abstract class IMouseListener {
 		click();
 	}
 	
+	public MouseControl getMC() {
+		return this.mouse;
+	}
 }

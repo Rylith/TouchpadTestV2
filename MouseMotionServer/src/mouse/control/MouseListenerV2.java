@@ -13,6 +13,7 @@ public class MouseListenerV2 extends IMouseListener{
     private int nbTour=0;
 	
 	float COEF;
+	private int DiviCoef=10;
 	private int dist_x = 0;
 	private int dist_y = 0;
 	
@@ -94,7 +95,7 @@ public class MouseListenerV2 extends IMouseListener{
 				angleCur-=(360*nbTour);	
 			}
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-			COEF=(float) Math.abs(angleCur-angleOr)/10;
+			COEF=(float) Math.abs(angleCur-angleOr)/DiviCoef;
 
 			//System.out.println("Current angle: "+ angleCur);
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
