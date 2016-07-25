@@ -14,7 +14,7 @@ import network.Interface.DeliverCallback;
 @SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private IMouseListener listener = new MouseListener();
+	private IMouseListener listener = new MouseListenerV2();
 	
 	public DeliverCallbackTest(){	
 	}
@@ -47,7 +47,7 @@ public class DeliverCallbackTest implements DeliverCallback {
 				
 				float intensity = listener.onScroll(x, y, distanceX, distanceY);
 				if(intensity != 0){
-					channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).length());
+					//channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).length());
 				}
 				break;
 			case "PRESS":

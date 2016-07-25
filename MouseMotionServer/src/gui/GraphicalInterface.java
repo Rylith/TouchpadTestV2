@@ -3,13 +3,13 @@ package gui;
 import mouse.control.*;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -18,6 +18,13 @@ public class GraphicalInterface extends JFrame{
 	private static final long serialVersionUID = -9002852749853545258L;
 	
 	public GraphicalInterface(){
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
 		
 	    this.setTitle("Réglage des paramètres");
 	    this.setSize(500, 600);
