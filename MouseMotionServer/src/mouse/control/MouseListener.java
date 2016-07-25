@@ -43,7 +43,7 @@ public class MouseListener extends IMouseListener{
 				borderActions();	
 			}
 		}else{
-			if(timerExitBorderMode != null || !timerExitBorderMode.isCancelled()){
+			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
 				timerExitBorderMode.cancel(false);
 			}
 			if(borderMode){
