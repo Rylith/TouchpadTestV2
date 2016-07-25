@@ -28,7 +28,7 @@ public abstract class IMouseListener {
     protected List<Float> bufferY = new ArrayList<>();
     
     protected float COEF;
-    protected static float DIVISION_COEF=10;
+    protected static float DIVISION_COEF=10;//
     
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
@@ -139,5 +139,21 @@ public abstract class IMouseListener {
 
 	public void setKey(SelectionKey key) {
 		this.key=key;
+	}
+	
+	public static void setPercentScreenSize(float val){
+		PERCENTSCREENSIZE = val;
+	}
+	
+	public static void setDivisionCoeff(float val){
+		DIVISION_COEF = val;
+	}
+	
+	public static void setTimerAff(long val){
+		TIMER_AFF = val;
+	}
+	
+	public static void setTimerMovement(long val){
+		TIMER_WAIT_MOVEMENT_THREAD = val;
 	}
 }

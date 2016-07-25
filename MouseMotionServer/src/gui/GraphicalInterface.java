@@ -26,6 +26,7 @@ public class GraphicalInterface extends JFrame{
 
 	    final JSlider sliderPercentScreen = new JSlider();  
 	    final JSlider sliderTimerAff = new JSlider();
+	    final JSlider sliderTimerMovement = new JSlider();
 	    final JSlider sliderCoeffControl = new JSlider();
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderDivFluidity = new JSlider();
@@ -48,6 +49,16 @@ public class GraphicalInterface extends JFrame{
 	    sliderTimerAff.setPaintLabels(true);
 	    sliderTimerAff.setMinorTickSpacing(45);
 	    sliderTimerAff.setMajorTickSpacing(90);
+	    
+	    
+	    sliderTimerMovement.setPreferredSize(new Dimension(400,100));
+	    sliderTimerMovement.setMinimum(10);
+	    sliderTimerMovement.setMaximum(1000);
+	    sliderTimerMovement.setValue(50);
+	    sliderTimerMovement.setPaintTicks(true);
+	    sliderTimerMovement.setPaintLabels(true);
+	    sliderTimerMovement.setMinorTickSpacing(45);
+	    sliderTimerMovement.setMajorTickSpacing(90);
 	    
 	    
 	    sliderCoeffControl.setPreferredSize(new Dimension(400,100));
@@ -84,6 +95,8 @@ public class GraphicalInterface extends JFrame{
 	    labPercentScreen.setPreferredSize(new Dimension(400,50));
 	    final JLabel labTimerAff = new JLabel("Temps pour changer de mode: " + sliderTimerAff.getValue());
 	    labTimerAff.setPreferredSize(new Dimension(400, 50));
+	    final JLabel labTimerMovement = new JLabel("Temps entre deux déplacements: " + sliderTimerMovement.getValue());
+	    labTimerMovement.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labCoeffControl = new JLabel("Multiplicatuer déplacement: " + sliderCoeffControl.getValue());
 	    labCoeffControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTestFluidity = new JLabel("Test fluidity: " + sliderTestFluidity.getValue());
@@ -94,43 +107,42 @@ public class GraphicalInterface extends JFrame{
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
+				IMouseListener.setPercentScreenSize((float)sliderPercentScreen.getValue()/100);
 				labPercentScreen.setText("Taille marge bord: " + (float)sliderPercentScreen.getValue()/100);
 			}
-	    	
 	    });
 	    
 	    sliderTimerAff.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
+				IMouseListener.setTimerAff((long)sliderTimerAff.getValue());
 				labTimerAff.setText("Temps pour changer de mode: " + sliderTimerAff.getValue());
 			}
-	    	
 	    });
 	    
 	    sliderCoeffControl.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				MouseControl.setCoeff(sliderCoeffControl.getValue());
-				labCoeffControl.setText("Multiplicatuer déplacement: " + sliderCoeffControl.getValue());
+				labCoeffControl.setText("Multiplicateur déplacement: " + sliderCoeffControl.getValue());
 			}
-	    	
 	    });
 	    
 	    sliderTestFluidity.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				labTestFluidity.setText("Test fluidity: " + sliderTestFluidity.getValue());
+				MouseControl.setTestF(sliderTestFluidity.getValue());
+				labTestFluidity.setText("Valeur test pour la methode fluidity: " + sliderTestFluidity.getValue());
 				
 			}
-	    	
 	    });
 	    
 	    sliderDivFluidity.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				labDiviFluidity.setText("Valeur fluidity: " + sliderDivFluidity.getValue());
+				MouseControl.setDiviF(sliderDivFluidity.getValue());
+				labDiviFluidity.setText("Valeur pour la methode fluidity: " + sliderDivFluidity.getValue());
 			}
-	    	
 	    });
 	    
 	    //JPanel pan = new JPanel();
@@ -140,6 +152,8 @@ public class GraphicalInterface extends JFrame{
 	    this.getContentPane().add(sliderPercentScreen);
 	    this.getContentPane().add(labTimerAff);
 	    this.getContentPane().add(sliderTimerAff);
+	    this.getContentPane().add(labTimerMovement);
+	    this.getContentPane().add(sliderTimerMovement);
 	    this.getContentPane().add(labCoeffControl);
 	    this.getContentPane().add(sliderCoeffControl);
 	    this.getContentPane().add(labTestFluidity);
