@@ -21,8 +21,10 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-
 	protected static float PERCENTSCREENSIZE = 0.20f;
+	
+	protected int dist_x = 0;
+	protected int dist_y = 0;
 	
     protected List<Float> bufferX = new ArrayList<>();
     protected List<Float> bufferY = new ArrayList<>();

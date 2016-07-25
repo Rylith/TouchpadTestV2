@@ -11,9 +11,6 @@ import network.Impl.Util;
 
 public class MouseListenerV3 extends IMouseListener {
 	
-	private int dist_x = 0;
-	private int dist_y = 0;
-
 	private Future<?> future;
 	private Instant start;
 	private TimerTask change_mode = new TimerTask() {
