@@ -4,6 +4,7 @@ import mouse.control.*;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -31,6 +32,7 @@ public class GraphicalInterface extends JFrame{
 	private static final JTextArea text = new JTextArea();
 	
 	public GraphicalInterface(){
+		
 	}
 
 	public static JTextArea getText() {
@@ -51,7 +53,7 @@ public class GraphicalInterface extends JFrame{
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 	    JComboBox combo = new JComboBox();
-	    HashMap mouseChoice = new HashMap();
+	    Map<String,String> mouseChoice = new HashMap<String,String>();
 	    mouseChoice.put("Blocage avant", "mouse.control.MouseListenerV3");
 	    mouseChoice.put("Gestion Vitesse", "mouse.control.MouseListenerV2");//V2
 	    mouseChoice.put("Gestion déplacement avec vitesse", "mouse.control.MouseListenerV1");//v1
@@ -68,9 +70,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    text.setEditable(true);
 	    //text.setPreferredSize(new Dimension(400,60));
-	    text.setVisible(true);
 	    
-
 	    //sliderPercentScreen.setPreferredSize(new Dimension(400,100));
 	    sliderPercentScreen.setMinimum(0);
 	    sliderPercentScreen.setMaximum(100);
@@ -238,8 +238,6 @@ public class GraphicalInterface extends JFrame{
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-
-	    
 	    pan.setLayout(new BorderLayout());
 	    pan.add(boxpan, BorderLayout.SOUTH);
 	    pan.add(scroll,BorderLayout.CENTER);

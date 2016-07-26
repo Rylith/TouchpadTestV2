@@ -3,7 +3,6 @@ package mouse.control;
 import java.awt.Point;
 import java.util.concurrent.TimeUnit;
 
-import gui.Log;
 import network.Impl.Util;
 
 public class MouseListenerV4 extends IMouseListener {
@@ -62,7 +61,7 @@ public class MouseListenerV4 extends IMouseListener {
 			}
 			angleCur+=(360*nbTour);
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-			Log.println("Precedent angle: "+anglePrec+" Angle courant: "+angleCur);
+			//Log.println("Precedent angle: "+anglePrec+" Angle courant: "+angleCur);
 			COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
 
 			//System.out.println("Current angle: "+ angleCur);
