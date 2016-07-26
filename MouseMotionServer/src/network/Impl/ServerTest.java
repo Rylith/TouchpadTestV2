@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Enumeration;
 
+import gui.Log;
 import network.Interface.Server;
 
 public class ServerTest extends Server {
@@ -23,6 +24,7 @@ public class ServerTest extends Server {
 		if(IP_ADDRESS.equals("")){
 			getIPAddress();
 			System.out.println(IP_ADDRESS);
+			Log.println(IP_ADDRESS);
 		}
 		m_sch.socket().bind(new InetSocketAddress(IP_ADDRESS, port));
 	}
