@@ -22,7 +22,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.DefaultCaret;
 
 public class GraphicalInterface extends JFrame{
 	
@@ -63,7 +62,7 @@ public class GraphicalInterface extends JFrame{
 	    String v4 = "Gestion déplacement mapping";
 	    
 	    JLabel labCombo = new JLabel("Choix du type de Souris:");
-	    JComboBox<String> combo = new JComboBox<String>();
+	    final JComboBox<String> combo = new JComboBox<String>();
 	    final Map<String,String> mouseChoice = new HashMap<String,String>();
 	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
 	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
@@ -75,8 +74,7 @@ public class GraphicalInterface extends JFrame{
 	    combo.addItem(v4);
 	    combo.addActionListener (new ActionListener () {
 	        public void actionPerformed(ActionEvent e) {
-	        	JComboBox<String> cb = (JComboBox<String>) e.getSource();
-	        	DeliverCallbackTest.setListener(mouseChoice.get(cb.getSelectedItem().toString()));
+	        	DeliverCallbackTest.setListener(mouseChoice.get(combo.getSelectedItem().toString()));
 	        }
 	    });
 	    
