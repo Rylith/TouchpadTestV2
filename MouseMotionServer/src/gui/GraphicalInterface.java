@@ -2,11 +2,14 @@ package gui;
 
 import mouse.control.*;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.TextArea;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -16,6 +19,14 @@ import javax.swing.event.ChangeListener;
 public class GraphicalInterface extends JFrame{
 	
 	private static final long serialVersionUID = -9002852749853545258L;
+	private static final String prefixPercentScreen = "Taille marge bord: (En %) ";
+	private static final String prefixTimerAFF = "Temps pour changer de mode: (En ms) ";
+	private static final String prefixTimerMovement = "Temps entre deux déplacements: (En ms) V2 et V3 uniquement ";
+	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1 et V2): ";
+	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
+	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
+	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
+	private static final TextArea text = new TextArea();
 	
 	public GraphicalInterface(){
 		
@@ -27,21 +38,24 @@ public class GraphicalInterface extends JFrame{
 		}
 		
 	    this.setTitle("Réglage des paramètres");
-	    this.setSize(500, 600);
+	    this.setSize(700, 700);
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
 
 	    final JSlider sliderPercentScreen = new JSlider();  
 	    final JSlider sliderTimerAff = new JSlider();
 	    final JSlider sliderTimerMovement = new JSlider();
+	    final JSlider sliderDivisionCOEF = new JSlider();
 	    final JSlider sliderCoeffControl = new JSlider();
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
 	    
+	    text.setEditable(false);
+	    
 	    sliderPercentScreen.setPreferredSize(new Dimension(400,100));
 	    sliderPercentScreen.setMinimum(0);
 	    sliderPercentScreen.setMaximum(100);
-	    sliderPercentScreen.setValue((int)IMouseListener.getPercentScreenSize()*100);
+	    sliderPercentScreen.setValue((int)(IMouseListener.getPercentScreenSize()*100));
 	    sliderPercentScreen.setPaintTicks(true);
 	    sliderPercentScreen.setPaintLabels(true);
 	    sliderPercentScreen.setMinorTickSpacing(10);
@@ -67,6 +81,14 @@ public class GraphicalInterface extends JFrame{
 	    sliderTimerMovement.setMinorTickSpacing(45);
 	    sliderTimerMovement.setMajorTickSpacing(90);
 	    
+	    sliderDivisionCOEF.setPreferredSize(new Dimension(400,100));
+	    sliderDivisionCOEF.setMinimum(1);
+	    sliderDivisionCOEF.setMaximum(100);
+	    sliderDivisionCOEF.setValue((int) IMouseListener.getDIVISION_COEF());
+	    sliderDivisionCOEF.setPaintTicks(true);
+	    sliderDivisionCOEF.setPaintLabels(true);
+	    sliderDivisionCOEF.setMinorTickSpacing(1);
+	    sliderDivisionCOEF.setMajorTickSpacing(10);
 	    
 	    sliderCoeffControl.setPreferredSize(new Dimension(400,100));
 	    sliderCoeffControl.setMinimum(1);
@@ -98,24 +120,26 @@ public class GraphicalInterface extends JFrame{
 	    sliderMultiFluidity.setMajorTickSpacing(1);
 	    
 	    
-	    final JLabel labPercentScreen = new JLabel("Taille marge bord: " + sliderPercentScreen.getValue());
+	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue());
 	    labPercentScreen.setPreferredSize(new Dimension(400,50));
-	    final JLabel labTimerAff = new JLabel("Temps pour changer de mode: " + sliderTimerAff.getValue());
+	    final JLabel labTimerAff = new JLabel(prefixTimerAFF + sliderTimerAff.getValue());
 	    labTimerAff.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labTimerMovement = new JLabel("Temps entre deux déplacements: " + sliderTimerMovement.getValue());
+	    final JLabel labTimerMovement = new JLabel(prefixTimerMovement + sliderTimerMovement.getValue());
 	    labTimerMovement.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labCoeffControl = new JLabel("Multiplicatuer déplacement: " + sliderCoeffControl.getValue());
+	    final JLabel labCoeffControl = new JLabel(prefixCoefControl + sliderCoeffControl.getValue());
 	    labCoeffControl.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labTestFluidity = new JLabel("Test fluidity: " + sliderTestFluidity.getValue());
+	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + sliderDivisionCOEF.getValue());
+	    labDivCoefControl.setPreferredSize(new Dimension(400, 50));
+	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue());
 	    labTestFluidity.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labMultiFluidity = new JLabel("Valeur fluidity: " + sliderMultiFluidity.getValue());
+	    final JLabel labMultiFluidity = new JLabel(prefixMultiFluidity + sliderMultiFluidity.getValue());
 	    labMultiFluidity.setPreferredSize(new Dimension(400, 50));
 	    
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				IMouseListener.setPercentScreenSize((float)sliderPercentScreen.getValue()/100);
-				labPercentScreen.setText("Taille marge bord: (En %)" + IMouseListener.getPercentScreenSize());
+				IMouseListener.setPercentScreenSize(sliderPercentScreen.getValue()/100.0f);
+				labPercentScreen.setText(prefixPercentScreen + (IMouseListener.getPercentScreenSize()*100));
 			}
 	    });
 	    
@@ -123,7 +147,7 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setTimerAff((long)sliderTimerAff.getValue());
-				labTimerAff.setText("Temps pour changer de mode: " + IMouseListener.getTimerAff());
+				labTimerAff.setText(prefixTimerAFF + IMouseListener.getTimerAff());
 			}
 	    });
 	    
@@ -131,16 +155,23 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setTimerMovement(sliderTimerMovement.getValue());
-				labTimerAff.setText("Temps entre deux déplacements: " + IMouseListener.getTimerMovement());
+				labTimerMovement.setText(prefixTimerMovement + IMouseListener.getTimerMovement());
+			}
+	    });
+	    
+	    sliderDivisionCOEF.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				IMouseListener.setDIVISION_COEF(sliderDivisionCOEF.getValue());
+				labDivCoefControl.setText(prefixDivisionCoef + IMouseListener.getDIVISION_COEF());
 			}
 	    });
 	    
 	    sliderCoeffControl.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-
 				MouseControl.setCoeff(sliderCoeffControl.getValue());
-				labCoeffControl.setText("Multiplicateur déplacement: " + MouseControl.getCoeff());
+				labCoeffControl.setText(prefixCoefControl + MouseControl.getCoeff());
 
 			}
 	    });
@@ -149,7 +180,7 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				MouseControl.setTestF(sliderTestFluidity.getValue());
-				labTestFluidity.setText("Valeur test pour la methode fluidity: " + MouseControl.getTestF());
+				labTestFluidity.setText(prefixTestFuildity + MouseControl.getTestF());
 				
 			}
 	    });
@@ -158,26 +189,34 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				MouseControl.setMultiF(sliderMultiFluidity.getValue());
-				labMultiFluidity.setText("Valeur pour la methode fluidity: " + MouseControl.getMultiF());
+				labMultiFluidity.setText(prefixMultiFluidity + MouseControl.getMultiF());
 			}
 	    });
 	    
-	    //JPanel pan = new JPanel();
-	    this.setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
-
-	    this.getContentPane().add(labPercentScreen);
-	    this.getContentPane().add(sliderPercentScreen);
-	    this.getContentPane().add(labTimerAff);
-	    this.getContentPane().add(sliderTimerAff);
-	    this.getContentPane().add(labTimerMovement);
-	    this.getContentPane().add(sliderTimerMovement);
-	    this.getContentPane().add(labCoeffControl);
-	    this.getContentPane().add(sliderCoeffControl);
-	    this.getContentPane().add(labTestFluidity);
-	    this.getContentPane().add(sliderTestFluidity);
-	    this.getContentPane().add(labMultiFluidity);
-	    this.getContentPane().add(sliderMultiFluidity);
+	    JPanel pan = new JPanel();
+	    JPanel boxpan = new JPanel();
+	    boxpan.setLayout(new BoxLayout(boxpan,BoxLayout.Y_AXIS));
+	    boxpan.add(labPercentScreen);
+	    boxpan.add(sliderPercentScreen);
+	    boxpan.add(labTimerAff);
+	    boxpan.add(sliderTimerAff);
+	    boxpan.add(labTimerMovement);
+	    boxpan.add(sliderTimerMovement);
+	    boxpan.add(labDivCoefControl);
+	    boxpan.add(sliderDivisionCOEF);
+	    boxpan.add(labCoeffControl);
+	    boxpan.add(sliderCoeffControl);
+	    boxpan.add(labTestFluidity);
+	    boxpan.add(sliderTestFluidity);
+	    boxpan.add(labMultiFluidity);
+	    boxpan.add(sliderMultiFluidity);
 	    
+	    pan.setLayout(new BorderLayout());
+	    pan.add(boxpan, BorderLayout.SOUTH);
+	    pan.add(text,BorderLayout.CENTER);
+	    
+	    this.add(boxpan);
 	  }
+	
 	
 }
