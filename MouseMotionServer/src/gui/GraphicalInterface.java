@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultCaret;
 
 public class GraphicalInterface extends JFrame{
 	
@@ -36,7 +37,6 @@ public class GraphicalInterface extends JFrame{
 	private static final JTextArea text = new JTextArea();
 	
 	public GraphicalInterface(){
-		
 	}
 
 	public static JTextArea getText() {
@@ -261,7 +261,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
+	    
 	    pan.setLayout(new BorderLayout());
 	    pan.add(boxpan, BorderLayout.SOUTH);
 	    pan.add(scroll,BorderLayout.CENTER);

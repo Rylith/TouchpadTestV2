@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import gui.Log;
 import network.Interface.AcceptCallback;
 import network.Interface.Channel;
 import network.Interface.ConnectCallback;
@@ -134,6 +135,7 @@ public class OwnEngine extends Engine implements Runnable{
 			listKey.remove(key);
 			channel.close();
 			System.out.println("Connection closed by client : "+channel);
+			Log.println("Connection closed by client : "+channel);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
