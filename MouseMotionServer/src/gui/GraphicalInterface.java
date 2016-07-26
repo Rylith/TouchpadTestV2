@@ -1,8 +1,11 @@
 package gui;
 
 import mouse.control.*;
+import network.Impl.DeliverCallbackTest;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 import javax.swing.BoxLayout;
@@ -44,12 +47,28 @@ public class GraphicalInterface extends JFrame{
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-	    JComboBox combo = new JComboBox();
-	    HashMap mouseChoice = new HashMap();
-	    mouseChoice.put("Blocage avant", "mouse.control.MouseListenerV3");
-	    mouseChoice.put("Gestion Vitesse", "mouse.control.MouseListenerV2");//V2
-	    mouseChoice.put("Gestion déplacement avec vitesse", "mouse.control.MouseListenerV1");//v1
-	    mouseChoice.put("Gestion déplacement mapping ", "mouse.control.MouseListenerV4");//V4
+	    String v1 = "Gestion déplacement avec vitesse";
+	    String v2 = "Gestion Vitesse";
+	    String v3 = "Blocage avant";
+	    String v4 = "Gestion déplacement mapping";
+	    
+	    JLabel labCombo = new JLabel("Choix du type de Souris:");
+	    JComboBox<String> combo = new JComboBox<String>();
+	    HashMap<String,String> mouseChoice = new HashMap<String,String>();
+	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
+	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
+	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");
+	    mouseChoice.put(v4, "mouse.control.MouseListenerV4");//V4
+	    combo.addItem(v1);
+	    combo.addItem(v2);
+	    combo.addItem(v3);
+	    combo.addItem(v4);
+	    combo.addActionListener (new ActionListener () {
+	        public void actionPerformed(ActionEvent e) {
+	        	JComboBox<String> cb = (JComboBox)e.getSource();
+	        	DeliverCallbackTest.   cb.getSelectedItem().toString();
+	        }
+	    });
 	    
 
 	    final JSlider sliderPercentScreen = new JSlider();  
@@ -214,6 +233,8 @@ public class GraphicalInterface extends JFrame{
 	    
 	    boxpan.setLayout(new BoxLayout(boxpan,BoxLayout.Y_AXIS));
 	    //boxpan.add(text);
+	    boxpan.add(labCombo);
+	    boxpan.add(combo);
 	    boxpan.add(labPercentScreen);
 	    boxpan.add(sliderPercentScreen);
 	    boxpan.add(labTimerAff);

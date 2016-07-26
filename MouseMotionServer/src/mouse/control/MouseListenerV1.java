@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
 
-public class MouseListener extends IMouseListener{
+public class MouseListenerV1 extends IMouseListener{
 	
 	private int nbTour=0;
     //private int previousSign=0;
