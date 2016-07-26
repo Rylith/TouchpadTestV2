@@ -3,6 +3,7 @@ package gui;
 import mouse.control.*;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +69,8 @@ public class GraphicalInterface extends JFrame{
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
 	    
-	    text.setEditable(true);
+	    text.setEditable(false);
+	    text.setFont(new Font(text.getFont().getFamily(), text.getFont().getStyle(), 20));
 	    //text.setPreferredSize(new Dimension(400,60));
 	    
 	    //sliderPercentScreen.setPreferredSize(new Dimension(400,100));
