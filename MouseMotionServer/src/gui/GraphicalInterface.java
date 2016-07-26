@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Font;
 import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
