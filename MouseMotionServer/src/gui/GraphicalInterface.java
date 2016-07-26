@@ -64,7 +64,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    JLabel labCombo = new JLabel("Choix du type de Souris:");
 	    JComboBox<String> combo = new JComboBox<String>();
-	    final HashMap<String,String> mouseChoice = new HashMap<String,String>();
+	    final Map<String,String> mouseChoice = new HashMap<String,String>();
 	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
 	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
 	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");
@@ -75,7 +75,7 @@ public class GraphicalInterface extends JFrame{
 	    combo.addItem(v4);
 	    combo.addActionListener (new ActionListener () {
 	        public void actionPerformed(ActionEvent e) {
-	        	JComboBox<String> cb = (JComboBox)e.getSource();
+	        	JComboBox<String> cb = (JComboBox<String>) e.getSource();
 	        	DeliverCallbackTest.setListener(mouseChoice.get(cb.getSelectedItem().toString()));
 	        }
 	    });
