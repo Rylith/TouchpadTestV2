@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +27,7 @@ public class GraphicalInterface extends JFrame{
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
-	private static final TextArea text = new TextArea();
+	private static final JTextArea text = new JTextArea("Console:",50,50);
 	
 	public GraphicalInterface(){
 		
@@ -38,7 +39,7 @@ public class GraphicalInterface extends JFrame{
 		}
 		
 	    this.setTitle("Réglage des paramètres");
-	    this.setSize(700, 700);
+	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
 
@@ -50,9 +51,11 @@ public class GraphicalInterface extends JFrame{
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
 	    
-	    text.setEditable(false);
+	    text.setEditable(true);
+	    text.setPreferredSize(new Dimension(400,60));
+	    text.setVisible(true);
 	    
-	    sliderPercentScreen.setPreferredSize(new Dimension(400,100));
+	    sliderPercentScreen.setPreferredSize(new Dimension(400,60));
 	    sliderPercentScreen.setMinimum(0);
 	    sliderPercentScreen.setMaximum(100);
 	    sliderPercentScreen.setValue((int)(IMouseListener.getPercentScreenSize()*100));
@@ -62,7 +65,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderPercentScreen.setMajorTickSpacing(20);
 	    
 	    
-	    sliderTimerAff.setPreferredSize(new Dimension(400,100));
+	    sliderTimerAff.setPreferredSize(new Dimension(400,60));
 	    sliderTimerAff.setMinimum(10);
 	    sliderTimerAff.setMaximum(1000);
 	    sliderTimerAff.setValue((int)IMouseListener.getTimerAff());
@@ -72,7 +75,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderTimerAff.setMajorTickSpacing(90);
 	    
 	    
-	    sliderTimerMovement.setPreferredSize(new Dimension(400,100));
+	    sliderTimerMovement.setPreferredSize(new Dimension(400,60));
 	    sliderTimerMovement.setMinimum(10);
 	    sliderTimerMovement.setMaximum(1000);
 	    sliderTimerMovement.setValue((int)IMouseListener.getTimerMovement());
@@ -81,7 +84,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderTimerMovement.setMinorTickSpacing(45);
 	    sliderTimerMovement.setMajorTickSpacing(90);
 	    
-	    sliderDivisionCOEF.setPreferredSize(new Dimension(400,100));
+	    sliderDivisionCOEF.setPreferredSize(new Dimension(400,60));
 	    sliderDivisionCOEF.setMinimum(1);
 	    sliderDivisionCOEF.setMaximum(100);
 	    sliderDivisionCOEF.setValue((int) IMouseListener.getDIVISION_COEF());
@@ -90,7 +93,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderDivisionCOEF.setMinorTickSpacing(1);
 	    sliderDivisionCOEF.setMajorTickSpacing(10);
 	    
-	    sliderCoeffControl.setPreferredSize(new Dimension(400,100));
+	    sliderCoeffControl.setPreferredSize(new Dimension(400,60));
 	    sliderCoeffControl.setMinimum(1);
 	    sliderCoeffControl.setMaximum(10);
 	    sliderCoeffControl.setValue(MouseControl.getCoeff());
@@ -100,7 +103,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderCoeffControl.setMajorTickSpacing(1);
 	    
 	    
-	    sliderTestFluidity.setPreferredSize(new Dimension(400,100));
+	    sliderTestFluidity.setPreferredSize(new Dimension(400,60));
 	    sliderTestFluidity.setMinimum(1);
 	    sliderTestFluidity.setMaximum(10);
 	    sliderTestFluidity.setValue(MouseControl.getTestF());
@@ -110,7 +113,7 @@ public class GraphicalInterface extends JFrame{
 	    sliderTestFluidity.setMajorTickSpacing(1);
 	    
 	    
-	    sliderMultiFluidity.setPreferredSize(new Dimension(400,100));
+	    sliderMultiFluidity.setPreferredSize(new Dimension(400,60));
 	    sliderMultiFluidity.setMinimum(1);
 	    sliderMultiFluidity.setMaximum(10);
 	    sliderMultiFluidity.setValue(MouseControl.getMultiF());
@@ -213,7 +216,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    pan.setLayout(new BorderLayout());
 	    pan.add(boxpan, BorderLayout.SOUTH);
-	    pan.add(text,BorderLayout.CENTER);
+	    pan.add(text,BorderLayout.NORTH);
 	    
 	    this.add(boxpan);
 	  }
