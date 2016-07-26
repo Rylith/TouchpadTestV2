@@ -2,15 +2,13 @@ package gui;
 
 import mouse.control.*;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.TextArea;
-
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +24,7 @@ public class GraphicalInterface extends JFrame{
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
-	private static final TextArea text = new TextArea();
+	private static final JTextArea text = new JTextArea();
 	
 	public GraphicalInterface(){
 		
@@ -193,9 +191,11 @@ public class GraphicalInterface extends JFrame{
 			}
 	    });
 	    
-	    JPanel pan = new JPanel();
+	    //JPanel pan = new JPanel();
 	    JPanel boxpan = new JPanel();
+	    
 	    boxpan.setLayout(new BoxLayout(boxpan,BoxLayout.Y_AXIS));
+	    boxpan.add(text);
 	    boxpan.add(labPercentScreen);
 	    boxpan.add(sliderPercentScreen);
 	    boxpan.add(labTimerAff);
@@ -211,12 +211,16 @@ public class GraphicalInterface extends JFrame{
 	    boxpan.add(labMultiFluidity);
 	    boxpan.add(sliderMultiFluidity);
 	    
-	    pan.setLayout(new BorderLayout());
-	    pan.add(boxpan, BorderLayout.SOUTH);
-	    pan.add(text,BorderLayout.CENTER);
+	    //pan.setLayout(new BorderLayout());
+	    //pan.add(boxpan, BorderLayout.SOUTH);
+	    //pan.add(text,BorderLayout.CENTER);
 	    
 	    this.add(boxpan);
 	  }
+
+	public static JTextArea getText() {
+		return text;
+	}
 	
 	
 }

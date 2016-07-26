@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.swing.SwingUtilities;
 
 import gui.GraphicalInterface;
+import gui.Log;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
 import network.Interface.Engine;
@@ -29,6 +30,7 @@ public class Pong{
 			for(i=0; i< 10 ;i++){
 				/*Server contract =*/ pong.listen(port, new AcceptCallbackTest());
 				System.out.println("Server is listening on port: "+ port);
+				Log.println("Server is listening on port: "+ port);
 				port++;
 			}
 			//pong.startEcho();
