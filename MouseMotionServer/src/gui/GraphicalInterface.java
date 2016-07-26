@@ -6,7 +6,9 @@ import network.Impl.DeliverCallbackTest;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -26,8 +28,8 @@ public class GraphicalInterface extends JFrame{
 	private static final long serialVersionUID = -9002852749853545258L;
 	private static final String prefixPercentScreen = "Taille marge bord: (En %) ";
 	private static final String prefixTimerAFF = "Temps pour changer de mode: (En ms) ";
-	private static final String prefixTimerMovement = "Temps entre deux déplacements: (En ms) V2 et V3 uniquement ";
-	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1 et V2): ";
+	private static final String prefixTimerMovement = "Temps entre deux déplacements (En ms, V2 et V3):  ";
+	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
@@ -35,6 +37,13 @@ public class GraphicalInterface extends JFrame{
 	
 	public GraphicalInterface(){
 		
+	}
+
+	public static JTextArea getText() {
+		return text;
+	}
+	
+	public void createAndShowGUI(){
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -47,6 +56,7 @@ public class GraphicalInterface extends JFrame{
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
+	    
 	    String v1 = "Gestion déplacement avec vitesse";
 	    String v2 = "Gestion Vitesse";
 	    String v3 = "Blocage avant";
@@ -54,7 +64,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    JLabel labCombo = new JLabel("Choix du type de Souris:");
 	    JComboBox<String> combo = new JComboBox<String>();
-	    HashMap<String,String> mouseChoice = new HashMap<String,String>();
+	    final HashMap<String,String> mouseChoice = new HashMap<String,String>();
 	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
 	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
 	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");
@@ -66,7 +76,7 @@ public class GraphicalInterface extends JFrame{
 	    combo.addActionListener (new ActionListener () {
 	        public void actionPerformed(ActionEvent e) {
 	        	JComboBox<String> cb = (JComboBox)e.getSource();
-	        	DeliverCallbackTest.   cb.getSelectedItem().toString();
+	        	DeliverCallbackTest.setListener(mouseChoice.get(cb.getSelectedItem().toString()));
 	        }
 	    });
 	    
@@ -79,11 +89,10 @@ public class GraphicalInterface extends JFrame{
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
 	    
-	    text.setEditable(true);
+	    text.setEditable(false);
+	    text.setFont(new Font(text.getFont().getFamily(), text.getFont().getStyle(), 20));
 	    //text.setPreferredSize(new Dimension(400,60));
-	    text.setVisible(true);
 	    
-
 	    //sliderPercentScreen.setPreferredSize(new Dimension(400,100));
 	    sliderPercentScreen.setMinimum(0);
 	    sliderPercentScreen.setMaximum(100);
@@ -253,19 +262,12 @@ public class GraphicalInterface extends JFrame{
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-
-	    
 	    pan.setLayout(new BorderLayout());
 	    pan.add(boxpan, BorderLayout.SOUTH);
 	    pan.add(scroll,BorderLayout.CENTER);
 	    
 	    this.add(pan);
 	    this.setVisible(true);
-	  }
-
-	public static JTextArea getText() {
-		return text;
 	}
-	
 	
 }

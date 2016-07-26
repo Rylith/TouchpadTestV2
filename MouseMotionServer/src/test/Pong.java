@@ -13,7 +13,6 @@ import network.Interface.Engine;
 public class Pong{
 
 	public static void main(String[] args) {
-		
 		try {
 			int portInitial=4444;
 			//Il est possible de changer le port de départ
@@ -36,7 +35,7 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					new GraphicalInterface();
+					new GraphicalInterface().createAndShowGUI();
 				}
 			});
 		} catch (IOException e) {

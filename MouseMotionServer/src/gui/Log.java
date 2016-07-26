@@ -6,5 +6,8 @@ public class Log {
 		GraphicalInterface.getText().append(str);
 		GraphicalInterface.getText().append("\n");
 	}
-
+	
+	public static void print(String str){
+		GraphicalInterface.getText().append(str);
+	}
 }
