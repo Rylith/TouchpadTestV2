@@ -67,7 +67,9 @@ public class MouseListenerV4 extends IMouseListener {
 			//System.out.println("Current angle: "+ angleCur);
 			//Log.println("Current angle: "+ angleCur);
 			signDetermination();
-			
+			//Log.println("sign before: " + sign);
+			sign = sign*(int) Math.signum(angleCur-anglePrec);
+			//Log.println("sign after: " + sign);
 			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 			dist_x= Math.round(sign*COEF);
 			dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
