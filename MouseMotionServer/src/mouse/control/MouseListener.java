@@ -99,13 +99,13 @@ public class MouseListener extends IMouseListener{
 		}
 		
 		//Detect when the current angle reaches 0
-		if((anglePrec>270 && angleCur<90)){
+		if((anglePrec>270 && (angleCur+(360*nbTour))<(90+(360*nbTour)))){
 			nbTour++;
 			//System.out.println(nbTour);
 			//System.out.println("Sens direct: "+angleCur);
 		}
 		
-		if((anglePrec<90 && angleCur>270)){
+		if((anglePrec<90 && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
 			nbTour--;
 			//System.out.println(nbTour);
 			//System.out.println("One tour or more: " + angleCur);

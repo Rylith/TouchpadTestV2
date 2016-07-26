@@ -1,42 +1,17 @@
 package mouse.control;
 
 import java.awt.Point;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import gui.Log;
 import network.Impl.Util;
 
-public class MouseListenerV2 extends IMouseListener{
-
-    //private boolean directSens=false;
-    private int nbTour=0;
-
-	//Thread for moving the mouse continuously while in bordermode//
-	private int moveSpeed = 1;
-	private Future<?> future;
-	private Thread movement = new Thread("movement"){
-		@Override
-		public void run(){
-			while(borderMode){
-				//Calcul y in function of the new x to stay on the straight line
-					float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-					dist_x= Math.round(sign*COEF);
-					dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
-					lastPointOnstraightLineX+=COEF;
-					lastPointOnstraightLineY=y1;
-					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
-				try {
-					sleep(TIMER_WAIT_MOVEMENT_THREAD);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			//this.interrupt();
-		}
-	};
+public class MouseListenerV4 extends IMouseListener {
 	
+	private int nbTour=0;
+	
+	@Override
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
-		
 		int xt = Math.round(x);
 		int yt = Math.round(y);
 		current=new Point(xt,yt);
@@ -62,7 +37,7 @@ public class MouseListenerV2 extends IMouseListener{
 		
 			double angleCur = Math.abs(Util.angle(center,current));
 			double anglePrec = Math.abs(Util.angle(center,prec));
-			double angleOr = Math.abs(Util.angle(center,origin));
+			//double angleOr = Math.abs(Util.angle(center,origin));
 			//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 			
 			//Log.v("BORDER","signe: "+sign);
@@ -71,14 +46,15 @@ public class MouseListenerV2 extends IMouseListener{
 				coefs = Util.regress(bufferY,bufferX);
 			}
 			
+			anglePrec+=(360*nbTour);
 			//Detect when the current angle reaches 0
-			if((anglePrec>270 && (angleCur+(360*nbTour))<(90+(360*nbTour)))){
+			if( anglePrec>(270+(360*nbTour)) && (angleCur+(360*nbTour))<(90+(360*nbTour)) ){
 				nbTour++;
 				//System.out.println(nbTour);
 				//System.out.println("Sens direct: "+angleCur);
 			}
 			
-			if((anglePrec<90 && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
+			if((anglePrec<(90+(360*nbTour)) && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
 				nbTour--;
 				//System.out.println(nbTour);
 				//System.out.println("One tour or more: " + angleCur);
@@ -86,15 +62,22 @@ public class MouseListenerV2 extends IMouseListener{
 			}
 			angleCur+=(360*nbTour);
 			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-
-			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+			Log.println("Precedent angle: "+anglePrec+" Angle courant: "+angleCur);
+			COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
 
 			//System.out.println("Current angle: "+ angleCur);
+			//Log.println("Current angle: "+ angleCur);
 			signDetermination();
 			
-			if (future == null || future.isDone()){
-				future = task.submit(movement);
-			}
+			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+			dist_x= Math.round(sign*COEF);
+			dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
+			
+			//System.out.println("distances : "+ dist_x+", "+dist_y);
+			
+			lastPointOnstraightLineX+=(COEF);
+			lastPointOnstraightLineY=y1;
+			
 			reglin=false;
 			
 			//Intensity between 0 & 1;
@@ -113,9 +96,7 @@ public class MouseListenerV2 extends IMouseListener{
 		}
 		
 		prec=current;
-		if (future == null || future.isDone()){
-			mouse.motion(dist_x, dist_y);
-		}
+		mouse.motion(dist_x, dist_y);
 		return intensity;
 	}
 	
@@ -125,5 +106,5 @@ public class MouseListenerV2 extends IMouseListener{
 		nbTour=0;
 		super.resetBuffers(x, y);
 	}
-	
+
 }

@@ -14,8 +14,8 @@ public class Pong{
 
 	public static void main(String[] args) {
 		
-		GraphicalInterface window = new GraphicalInterface();
-		window.setVisible(true);
+		//GraphicalInterface window = new GraphicalInterface();
+		//window.setVisible(true);
 		
 		try {
 			int portInitial=4444;
@@ -39,7 +39,7 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					new GraphicalInterface();
+					new GraphicalInterface().createAndShowGUI();
 				}
 			});
 		} catch (IOException e) {

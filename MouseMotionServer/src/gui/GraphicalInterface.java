@@ -20,8 +20,8 @@ public class GraphicalInterface extends JFrame{
 	private static final long serialVersionUID = -9002852749853545258L;
 	private static final String prefixPercentScreen = "Taille marge bord: (En %) ";
 	private static final String prefixTimerAFF = "Temps pour changer de mode: (En ms) ";
-	private static final String prefixTimerMovement = "Temps entre deux déplacements: (En ms) V2 et V3 uniquement ";
-	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1 et V2): ";
+	private static final String prefixTimerMovement = "Temps entre deux déplacements (En ms, V2 et V3):  ";
+	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
@@ -29,6 +29,13 @@ public class GraphicalInterface extends JFrame{
 	
 	public GraphicalInterface(){
 		
+	}
+
+	public static JTextArea getText() {
+		return text;
+	}
+	
+	public void createAndShowGUI(){
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -37,7 +44,7 @@ public class GraphicalInterface extends JFrame{
 		}
 		
 	    this.setTitle("Réglage des paramètres");
-	    this.setSize(700, 700);
+	    this.setSize(700, 900);
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);             
 
@@ -223,11 +230,6 @@ public class GraphicalInterface extends JFrame{
 	    
 	    this.add(pan);
 	    this.setVisible(true);
-	  }
-
-	public static JTextArea getText() {
-		return text;
 	}
-	
 	
 }
