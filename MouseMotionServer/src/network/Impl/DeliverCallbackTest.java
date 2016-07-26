@@ -16,7 +16,9 @@ import network.Interface.DeliverCallback;
 @SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private static IMouseListener listener = new MouseListenerV4();
+	private static IMouseListener listener = new MouseListenerV1();
+	private int xC=0;
+	private int yC=0;
 	
 	public DeliverCallbackTest(){	
 	}
@@ -64,8 +66,8 @@ public class DeliverCallbackTest implements DeliverCallback {
 			case "WINDOW":
 				System.out.println(msg);
 				Log.println(msg);
-				int xC = Integer.parseInt(x_y[1]);
-				int yC = Integer.parseInt(x_y[2]);
+				xC = Integer.parseInt(x_y[1]);
+				yC = Integer.parseInt(x_y[2]);
 				listener.setCenter(xC,yC);
 				break;
 			case "DOWN":
