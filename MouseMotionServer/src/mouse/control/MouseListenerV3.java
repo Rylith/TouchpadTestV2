@@ -1,6 +1,7 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.nio.channels.SelectionKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.TimerTask;
@@ -16,6 +17,9 @@ public class MouseListenerV3 extends IMouseListener {
 	private TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
+        	channel.send(("VIBRATION,"+1).getBytes(), 0, ("VIBRATION,"+1).getBytes().length);
+        	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+        	key.selector().wakeup();
             origin = current;
             borderMode = true;
             if(reglin){
