@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
 import network.Interface.Channel;
@@ -55,6 +56,9 @@ public abstract class IMouseListener {
         @Override
         public void run() {
             borderMode = false;
+            channel.send(("VIBRATION,"+0.9).getBytes(), 0, ("VIBRATION,"+0.9).getBytes().length);
+            key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+        	key.selector().wakeup();
         }
     };
     
@@ -104,11 +108,11 @@ public abstract class IMouseListener {
 	
 	/**Simulate the release of left click*/
 	public void release() {
-		if(borderMode){
-			channel.send(("VIBRATION,"+0.9).getBytes(), 0, ("VIBRATION,"+0.9).getBytes().length);
-    	}
 		mouse.release();
-		borderMode=false;
+		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
+			timerExitBorderMode = task.schedule(exitBorderMode, 50, TimeUnit.MILLISECONDS);
+		}
+		//borderMode=false;
 	}
 	
 	/**Simulation of a click (press then release)*/
