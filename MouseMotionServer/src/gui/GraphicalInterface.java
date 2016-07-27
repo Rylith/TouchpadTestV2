@@ -22,11 +22,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -35,14 +37,18 @@ import javax.swing.event.ChangeListener;
 public class GraphicalInterface extends JFrame{
 	
 	private static final long serialVersionUID = -9002852749853545258L;
-	private static final String prefixPercentScreen = "Taille marge bord: (En %) ";
-	private static final String prefixTimerAFF = "Temps pour changer de mode: (En ms) ";
-	private static final String prefixTimerMovement = "Temps entre deux déplacements (En ms, V2 et V3):  ";
+	private static final String prefixPercentScreen = "Taille marge bord: ";
+	private static final String prefixTimerAFF = "Temps pour changer de mode: ";
+	private static final String prefixTimerMovement = "Temps entre deux déplacements (V2 et V3):  ";
 	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
 	private static final JTextArea text = new JTextArea();
+	private static final String prefixListLabel = "Choix du type de Souris: ";
+	private static final String suffixPercent="%";
+	private static final String suffixMS="ms";
+	private static final String suffixPixel= "px";
 	private Engine engine;
 	
 	public GraphicalInterface(){
@@ -75,7 +81,10 @@ public class GraphicalInterface extends JFrame{
 	    String v3 = "Blocage avant";
 	    String v4 = "Gestion déplacement mapping";
 	    
-	    JLabel labCombo = new JLabel("Choix du type de Souris:");
+	    JLabel labCombo = new JLabel(prefixListLabel);
+	    Font fontTitle = new Font(labCombo.getFont().getFamily(), Font.BOLD, labCombo.getFont().getSize()+3);
+	    labCombo.setFont(fontTitle);
+	    
 	    final JComboBox<String> combo = new JComboBox<String>();
 	    final Map<String,String> mouseChoice = new HashMap<String,String>();
 	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
@@ -182,26 +191,33 @@ public class GraphicalInterface extends JFrame{
 	    sliderMultiFluidity.setMajorTickSpacing(1);
 	    
 	    
-	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue());
+	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
+	    labPercentScreen.setFont(fontTitle);
 	    //labPercentScreen.setPreferredSize(new Dimension(400,50));
-	    final JLabel labTimerAff = new JLabel(prefixTimerAFF + sliderTimerAff.getValue());
+	    final JLabel labTimerAff = new JLabel(prefixTimerAFF + sliderTimerAff.getValue()+suffixMS);
+	    labTimerAff.setFont(fontTitle);
 	    //labTimerAff.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labTimerMovement = new JLabel(prefixTimerMovement + sliderTimerMovement.getValue());
+	    final JLabel labTimerMovement = new JLabel(prefixTimerMovement + sliderTimerMovement.getValue()+suffixMS);
+	    labTimerMovement.setFont(fontTitle);
 	    //labTimerMovement.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labCoeffControl = new JLabel(prefixCoefControl + sliderCoeffControl.getValue());
+	    labCoeffControl.setFont(fontTitle);
 	    //labCoeffControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + spinnerDivisionCOEF.getValue());
+	    labDivCoefControl.setFont(fontTitle);
 	    //labDivCoefControl.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue());
+	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue()+suffixPixel);
+	    labTestFluidity.setFont(fontTitle);
 	    //labTestFluidity.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labMultiFluidity = new JLabel(prefixMultiFluidity + sliderMultiFluidity.getValue());
+	    labMultiFluidity.setFont(fontTitle);
 	    //labMultiFluidity.setPreferredSize(new Dimension(400, 50));
 	    
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setPercentScreenSize(sliderPercentScreen.getValue()/100.0f);
-				labPercentScreen.setText(prefixPercentScreen + (IMouseListener.getPercentScreenSize()*100));
+				labPercentScreen.setText(prefixPercentScreen + (IMouseListener.getPercentScreenSize()*100) +suffixPercent);
 				for(Entry<SelectionKey, Channel> entry : ((OwnEngine) engine).getDelivers()){
 	        		((DeliverCallbackTest) ((ChannelTest)entry.getValue()).getCallback()).resetMarge();
 	        	}
@@ -212,7 +228,7 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setTimerAff((long)sliderTimerAff.getValue());
-				labTimerAff.setText(prefixTimerAFF + IMouseListener.getTimerAff());
+				labTimerAff.setText(prefixTimerAFF + IMouseListener.getTimerAff()+suffixMS);
 			}
 	    });
 	    
@@ -220,7 +236,7 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setTimerMovement(sliderTimerMovement.getValue());
-				labTimerMovement.setText(prefixTimerMovement + IMouseListener.getTimerMovement());
+				labTimerMovement.setText(prefixTimerMovement + IMouseListener.getTimerMovement()+suffixMS);
 			}
 	    });
 	    
@@ -254,7 +270,7 @@ public class GraphicalInterface extends JFrame{
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				MouseControl.setTestF(sliderTestFluidity.getValue());
-				labTestFluidity.setText(prefixTestFuildity + MouseControl.getTestF());
+				labTestFluidity.setText(prefixTestFuildity + MouseControl.getTestF()+suffixPixel);
 				
 			}
 	    });
@@ -274,18 +290,25 @@ public class GraphicalInterface extends JFrame{
 	    //boxpan.add(text);
 	    boxpan.add(labCombo);
 	    boxpan.add(combo);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labPercentScreen);
 	    boxpan.add(sliderPercentScreen);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labTimerAff);
 	    boxpan.add(sliderTimerAff);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labTimerMovement);
 	    boxpan.add(sliderTimerMovement);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labDivCoefControl);
 	    boxpan.add(spinnerDivisionCOEF);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labCoeffControl);
 	    boxpan.add(sliderCoeffControl);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labTestFluidity);
 	    boxpan.add(sliderTestFluidity);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labMultiFluidity);
 	    boxpan.add(sliderMultiFluidity);
 	    
