@@ -23,7 +23,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.NumberEditor;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -99,6 +102,10 @@ public class GraphicalInterface extends JFrame{
 	    final JSlider sliderCoeffControl = new JSlider();
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
+	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
+	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
+	    NumberEditor editor = new JSpinner.NumberEditor(spinnerDivisionCOEF);
+	    spinnerDivisionCOEF.setEditor(editor);
 	    
 	    text.setEditable(false);
 	    text.setFont(new Font(text.getFont().getFamily(), text.getFont().getStyle(), 20));
@@ -183,7 +190,7 @@ public class GraphicalInterface extends JFrame{
 	    //labTimerMovement.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labCoeffControl = new JLabel(prefixCoefControl + sliderCoeffControl.getValue());
 	    //labCoeffControl.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + sliderDivisionCOEF.getValue());
+	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + spinnerDivisionCOEF.getValue());
 	    //labDivCoefControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue());
 	    //labTestFluidity.setPreferredSize(new Dimension(400, 50));
@@ -220,10 +227,19 @@ public class GraphicalInterface extends JFrame{
 	    sliderDivisionCOEF.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				IMouseListener.setDIVISION_COEF(sliderDivisionCOEF.getValue());
+				IMouseListener.setDIVISION_COEF(sliderDivisionCOEF.getValue()/10.0f);
 				labDivCoefControl.setText(prefixDivisionCoef + IMouseListener.getDIVISION_COEF());
 			}
 	    });
+	    
+	    spinnerDivisionCOEF.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				IMouseListener.setDIVISION_COEF(((Number) spinnerDivisionCOEF.getValue()).floatValue());
+				labDivCoefControl.setText(prefixDivisionCoef + IMouseListener.getDIVISION_COEF());
+			}
+		});
 	    
 	    sliderCoeffControl.addChangeListener(new ChangeListener(){
 			@Override
@@ -265,7 +281,7 @@ public class GraphicalInterface extends JFrame{
 	    boxpan.add(labTimerMovement);
 	    boxpan.add(sliderTimerMovement);
 	    boxpan.add(labDivCoefControl);
-	    boxpan.add(sliderDivisionCOEF);
+	    boxpan.add(spinnerDivisionCOEF);
 	    boxpan.add(labCoeffControl);
 	    boxpan.add(sliderCoeffControl);
 	    boxpan.add(labTestFluidity);
