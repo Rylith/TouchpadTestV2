@@ -101,7 +101,7 @@ public class GraphicalInterface extends JFrame{
 	        	}
 	        }
 	    });
-	    combo.setFont(new Font(combo.getFont().getFamily(),combo.getFont().getStyle(),combo.getFont().getSize()+5));
+	    combo.setFont(new Font(combo.getFont().getFamily(),combo.getFont().getStyle(),combo.getFont().getSize()+4));
 	    combo.setAlignmentX(LEFT_ALIGNMENT);
 
 	    final JSlider sliderPercentScreen = new JSlider();
