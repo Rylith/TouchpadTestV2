@@ -281,15 +281,15 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     }
                     float intensity = Float.parseFloat(m[1]);
-                    if(!isUp){
+                    //if(!isUp){
                         if(intensity <= 0.25){
                             long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),20);
-                            vibrator.vibrate(pattern,0);
+                            vibrator.vibrate(pattern,-1);
                         }else{
                             long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),60);
-                            vibrator.vibrate(pattern,0);
+                            vibrator.vibrate(pattern,-1);
                         }
-                    }
+                    //}
                 }
             }
         }

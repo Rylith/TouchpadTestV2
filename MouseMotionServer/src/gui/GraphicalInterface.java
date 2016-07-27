@@ -1,14 +1,20 @@
 package gui;
 
 import mouse.control.*;
+import network.Impl.ChannelTest;
 import network.Impl.DeliverCallbackTest;
+import network.Impl.OwnEngine;
+import network.Interface.Channel;
+import network.Interface.Engine;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.channels.SelectionKey;
 import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -34,8 +40,13 @@ public class GraphicalInterface extends JFrame{
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
 	private static final JTextArea text = new JTextArea();
+	private Engine engine;
 	
 	public GraphicalInterface(){
+	}
+	
+	public GraphicalInterface(Engine engine){
+		this.engine=engine;
 	}
 
 	public static JTextArea getText() {
@@ -73,8 +84,10 @@ public class GraphicalInterface extends JFrame{
 	    combo.addItem(v3);
 	    combo.addItem(v4);
 	    combo.addActionListener (new ActionListener () {
-	        public void actionPerformed(ActionEvent e) {
-	        	DeliverCallbackTest.setListener(mouseChoice.get(combo.getSelectedItem().toString()));
+			public void actionPerformed(ActionEvent e) {
+	        	for(Entry<SelectionKey, Channel> entry : ((OwnEngine) engine).getDelivers()){
+	        		((DeliverCallbackTest) ((ChannelTest)entry.getValue()).getCallback()).setListener(mouseChoice.get(combo.getSelectedItem().toString()));
+	        	}
 	        }
 	    });
 	    
@@ -182,6 +195,9 @@ public class GraphicalInterface extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				IMouseListener.setPercentScreenSize(sliderPercentScreen.getValue()/100.0f);
 				labPercentScreen.setText(prefixPercentScreen + (IMouseListener.getPercentScreenSize()*100));
+				for(Entry<SelectionKey, Channel> entry : ((OwnEngine) engine).getDelivers()){
+	        		((DeliverCallbackTest) ((ChannelTest)entry.getValue()).getCallback()).resetMarge();
+	        	}
 			}
 	    });
 	    

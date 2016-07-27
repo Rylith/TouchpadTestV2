@@ -42,6 +42,9 @@ public abstract class IMouseListener {
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
+        	channel.send(("VIBRATION,"+1).getBytes(), 0, ("VIBRATION,"+1).getBytes().length);
+        	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+        	key.selector().wakeup();
             origin = current;
             borderMode = true;
         }
@@ -66,8 +69,8 @@ public abstract class IMouseListener {
 	protected Channel channel;
 	protected SelectionKey key;
 	
-	public static void setDIVISION_COEF(float dIVISION_COEF) {
-		DIVISION_COEF = dIVISION_COEF;
+	public static void setDIVISION_COEF(float DIVISION_COEF) {
+		IMouseListener.DIVISION_COEF = DIVISION_COEF;
 	}
 
 	public static float getDIVISION_COEF() {
@@ -78,7 +81,7 @@ public abstract class IMouseListener {
 	public void setCenter(int x, int y) {
 		center = new Point(x/2,y/2);
 		RAYON = center.x;
-        MARGE = center.x*PERCENTSCREENSIZE;
+        MARGE = RAYON*PERCENTSCREENSIZE;
 	}
 	
 	/**Called when a continues movement is done on the screen of the device*/
@@ -101,6 +104,9 @@ public abstract class IMouseListener {
 	
 	/**Simulate the release of left click*/
 	public void release() {
+		if(borderMode){
+			channel.send(("VIBRATION,"+0.9).getBytes(), 0, ("VIBRATION,"+0.9).getBytes().length);
+    	}
 		mouse.release();
 		borderMode=false;
 	}
@@ -115,10 +121,6 @@ public abstract class IMouseListener {
 	public void doubleClick() {
 		click();
 		click();
-	}
-	
-	public MouseControl getMC() {
-		return this.mouse;
 	}
 
 	protected void signDetermination(){
