@@ -49,6 +49,10 @@ public class GraphicalInterface extends JFrame{
 	private static final String suffixPercent="%";
 	private static final String suffixMS="ms";
 	private static final String suffixPixel= "px";
+	private static final String v1="Gestion déplacement avec vitesse";
+	private static final String v2="Gestion Vitesse";
+	private static final String v3="Blocage avant";
+	private static final String v4="Gestion déplacement mapping";
 	private Engine engine;
 	
 	public GraphicalInterface(){
@@ -75,15 +79,9 @@ public class GraphicalInterface extends JFrame{
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
-	    
-	    String v1 = "Gestion déplacement avec vitesse";
-	    String v2 = "Gestion Vitesse";
-	    String v3 = "Blocage avant";
-	    String v4 = "Gestion déplacement mapping";
-	    
 	    JLabel labCombo = new JLabel(prefixListLabel);
-	    Font fontTitle = new Font(labCombo.getFont().getFamily(), Font.BOLD, labCombo.getFont().getSize()+3);
-	    labCombo.setFont(fontTitle);
+	    Font fontOptionTitle = new Font(labCombo.getFont().getFamily(), Font.BOLD, labCombo.getFont().getSize()+3);
+	    labCombo.setFont(fontOptionTitle);
 	    labCombo.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    final JComboBox<String> combo = new JComboBox<String>();
@@ -202,30 +200,30 @@ public class GraphicalInterface extends JFrame{
 	    
 	    
 	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
-	    labPercentScreen.setFont(fontTitle);
+	    labPercentScreen.setFont(fontOptionTitle);
 	    labPercentScreen.setAlignmentX(LEFT_ALIGNMENT);
 	    //labPercentScreen.setPreferredSize(new Dimension(400,50));
 	    final JLabel labTimerAff = new JLabel(prefixTimerAFF + sliderTimerAff.getValue()+suffixMS);
-	    labTimerAff.setFont(fontTitle);
+	    labTimerAff.setFont(fontOptionTitle);
 	    labTimerAff.setAlignmentX(LEFT_ALIGNMENT);
 	    //labTimerAff.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTimerMovement = new JLabel(prefixTimerMovement + sliderTimerMovement.getValue()+suffixMS);
-	    labTimerMovement.setFont(fontTitle);
+	    labTimerMovement.setFont(fontOptionTitle);
 	    labTimerMovement.setAlignmentX(LEFT_ALIGNMENT);
 	    //labTimerMovement.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labCoeffControl = new JLabel(prefixCoefControl + sliderCoeffControl.getValue());
-	    labCoeffControl.setFont(fontTitle);
+	    labCoeffControl.setFont(fontOptionTitle);
 	    labCoeffControl.setAlignmentX(LEFT_ALIGNMENT);
 	    //labCoeffControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + spinnerDivisionCOEF.getValue());
-	    labDivCoefControl.setFont(fontTitle);
+	    labDivCoefControl.setFont(fontOptionTitle);
 	    labDivCoefControl.setAlignmentX(LEFT_ALIGNMENT);
 	    //labDivCoefControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue()+suffixPixel);
-	    labTestFluidity.setFont(fontTitle);
+	    labTestFluidity.setFont(fontOptionTitle);
 	    //labTestFluidity.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labMultiFluidity = new JLabel(prefixMultiFluidity + sliderMultiFluidity.getValue());
-	    labMultiFluidity.setFont(fontTitle);
+	    labMultiFluidity.setFont(fontOptionTitle);
 	    labMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
 	    //labMultiFluidity.setPreferredSize(new Dimension(400, 50));
 	    
