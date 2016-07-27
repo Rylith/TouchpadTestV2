@@ -84,6 +84,7 @@ public class GraphicalInterface extends JFrame{
 	    JLabel labCombo = new JLabel(prefixListLabel);
 	    Font fontTitle = new Font(labCombo.getFont().getFamily(), Font.BOLD, labCombo.getFont().getSize()+3);
 	    labCombo.setFont(fontTitle);
+	    labCombo.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    final JComboBox<String> combo = new JComboBox<String>();
 	    final Map<String,String> mouseChoice = new HashMap<String,String>();
@@ -102,25 +103,29 @@ public class GraphicalInterface extends JFrame{
 	        	}
 	        }
 	    });
-	    
+	    combo.setFont(new Font(combo.getFont().getFamily(),combo.getFont().getStyle(),combo.getFont().getSize()+5));
+	    combo.setAlignmentX(LEFT_ALIGNMENT);
 
-	    final JSlider sliderPercentScreen = new JSlider();  
+	    final JSlider sliderPercentScreen = new JSlider();
 	    final JSlider sliderTimerAff = new JSlider();
 	    final JSlider sliderTimerMovement = new JSlider();
 	    final JSlider sliderDivisionCOEF = new JSlider();
 	    final JSlider sliderCoeffControl = new JSlider();
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
+	    
 	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
 	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
 	    NumberEditor editor = new JSpinner.NumberEditor(spinnerDivisionCOEF);
 	    spinnerDivisionCOEF.setEditor(editor);
+	    spinnerDivisionCOEF.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    text.setEditable(false);
 	    text.setFont(new Font(text.getFont().getFamily(), text.getFont().getStyle(), 20));
 	    //text.setPreferredSize(new Dimension(400,60));
 	    
 	    //sliderPercentScreen.setPreferredSize(new Dimension(400,100));
+	    sliderPercentScreen.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderPercentScreen.setMinimum(0);
 	    sliderPercentScreen.setMaximum(100);
 	    sliderPercentScreen.setValue((int)(IMouseListener.getPercentScreenSize()*100));
@@ -131,6 +136,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    
 	    //sliderTimerAff.setPreferredSize(new Dimension(400,100));
+	    sliderTimerAff.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderTimerAff.setMinimum(10);
 	    sliderTimerAff.setMaximum(1000);
 	    sliderTimerAff.setValue((int)IMouseListener.getTimerAff());
@@ -141,6 +147,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    
 	    //sliderTimerMovement.setPreferredSize(new Dimension(400,100));
+	    sliderTimerMovement.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderTimerMovement.setMinimum(10);
 	    sliderTimerMovement.setMaximum(1000);
 	    sliderTimerMovement.setValue((int)IMouseListener.getTimerMovement());
@@ -151,6 +158,7 @@ public class GraphicalInterface extends JFrame{
 	    
 
 	    //sliderDivisionCOEF.setPreferredSize(new Dimension(400,100));
+	    sliderDivisionCOEF.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderDivisionCOEF.setMinimum(1);
 	    sliderDivisionCOEF.setMaximum(100);
 	    sliderDivisionCOEF.setValue((int) IMouseListener.getDIVISION_COEF());
@@ -161,6 +169,7 @@ public class GraphicalInterface extends JFrame{
 	    
 
 	    //sliderCoeffControl.setPreferredSize(new Dimension(400,100));
+	    sliderCoeffControl.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderCoeffControl.setMinimum(1);
 	    sliderCoeffControl.setMaximum(10);
 	    sliderCoeffControl.setValue(MouseControl.getCoeff());
@@ -171,9 +180,9 @@ public class GraphicalInterface extends JFrame{
 	    
 	    
 	    //sliderTestFluidity.setPreferredSize(new Dimension(400,100));
-
+	    sliderTestFluidity.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderTestFluidity.setMinimum(1);
-	    sliderTestFluidity.setMaximum(10);
+	    sliderTestFluidity.setMaximum(30);
 	    sliderTestFluidity.setValue(MouseControl.getTestF());
 	    sliderTestFluidity.setPaintTicks(true);
 	    sliderTestFluidity.setPaintLabels(true);
@@ -182,6 +191,7 @@ public class GraphicalInterface extends JFrame{
 	    
 	    
 	    //sliderMultiFluidity.setPreferredSize(new Dimension(400,100));
+	    sliderMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
 	    sliderMultiFluidity.setMinimum(1);
 	    sliderMultiFluidity.setMaximum(10);
 	    sliderMultiFluidity.setValue(MouseControl.getMultiF());
@@ -193,24 +203,30 @@ public class GraphicalInterface extends JFrame{
 	    
 	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
 	    labPercentScreen.setFont(fontTitle);
+	    labPercentScreen.setAlignmentX(LEFT_ALIGNMENT);
 	    //labPercentScreen.setPreferredSize(new Dimension(400,50));
 	    final JLabel labTimerAff = new JLabel(prefixTimerAFF + sliderTimerAff.getValue()+suffixMS);
 	    labTimerAff.setFont(fontTitle);
+	    labTimerAff.setAlignmentX(LEFT_ALIGNMENT);
 	    //labTimerAff.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTimerMovement = new JLabel(prefixTimerMovement + sliderTimerMovement.getValue()+suffixMS);
 	    labTimerMovement.setFont(fontTitle);
+	    labTimerMovement.setAlignmentX(LEFT_ALIGNMENT);
 	    //labTimerMovement.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labCoeffControl = new JLabel(prefixCoefControl + sliderCoeffControl.getValue());
 	    labCoeffControl.setFont(fontTitle);
+	    labCoeffControl.setAlignmentX(LEFT_ALIGNMENT);
 	    //labCoeffControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + spinnerDivisionCOEF.getValue());
 	    labDivCoefControl.setFont(fontTitle);
+	    labDivCoefControl.setAlignmentX(LEFT_ALIGNMENT);
 	    //labDivCoefControl.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue()+suffixPixel);
 	    labTestFluidity.setFont(fontTitle);
 	    //labTestFluidity.setPreferredSize(new Dimension(400, 50));
 	    final JLabel labMultiFluidity = new JLabel(prefixMultiFluidity + sliderMultiFluidity.getValue());
 	    labMultiFluidity.setFont(fontTitle);
+	    labMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
 	    //labMultiFluidity.setPreferredSize(new Dimension(400, 50));
 	    
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
@@ -284,12 +300,21 @@ public class GraphicalInterface extends JFrame{
 	    });
 	    
 	    JPanel pan = new JPanel();
+	    JPanel southEastList = new JPanel(new BorderLayout());
+	    JPanel southEastCOEF = new JPanel(new BorderLayout());
 	    JPanel boxpan = new JPanel();
+	    
+	    southEastList.add(combo,BorderLayout.WEST);
+	    southEastList.setAlignmentX(LEFT_ALIGNMENT);
+	    
+	    southEastCOEF.add(spinnerDivisionCOEF,BorderLayout.WEST);
+	    southEastCOEF.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    boxpan.setLayout(new BoxLayout(boxpan,BoxLayout.Y_AXIS));
 	    //boxpan.add(text);
 	    boxpan.add(labCombo);
-	    boxpan.add(combo);
+	    //boxpan.add(combo);
+	    boxpan.add(southEastList);
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labPercentScreen);
 	    boxpan.add(sliderPercentScreen);
@@ -301,7 +326,7 @@ public class GraphicalInterface extends JFrame{
 	    boxpan.add(sliderTimerMovement);
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labDivCoefControl);
-	    boxpan.add(spinnerDivisionCOEF);
+	    boxpan.add(southEastCOEF);
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labCoeffControl);
 	    boxpan.add(sliderCoeffControl);
@@ -316,7 +341,7 @@ public class GraphicalInterface extends JFrame{
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	    
 	    pan.setLayout(new BorderLayout());
-	    pan.add(boxpan, BorderLayout.SOUTH);
+	    pan.add(boxpan, BorderLayout.NORTH);
 	    pan.add(scroll,BorderLayout.CENTER);
 	    
 	    this.add(pan);
