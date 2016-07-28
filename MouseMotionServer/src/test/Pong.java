@@ -35,7 +35,9 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					new GraphicalInterface(pong).createAndShowGUI();
+					GraphicalInterface graph = new GraphicalInterface(pong);
+					graph.createAndShowGUI();
+					//GraphicalInterface.showOnScreen(0, graph);
 				}
 			});
 		} catch (IOException e) {

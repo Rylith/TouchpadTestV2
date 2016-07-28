@@ -58,17 +58,17 @@ public class GraphicalInterface extends JFrame{
 	private Engine engine;
 	
 	public GraphicalInterface(){
+		init();
+		//createAndShowGUI();
 	}
 	
-	public GraphicalInterface(Engine engine){
-		this.engine=engine;
-	}
-
-	public static JTextArea getText() {
-		return text;
+	public GraphicalInterface(Engine e){
+		this.engine=e;
+		init();
+		//createAndShowGUI();
 	}
 	
-	public void createAndShowGUI(){
+	private void init(){
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -80,7 +80,14 @@ public class GraphicalInterface extends JFrame{
 	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    
+	}
+
+	public static JTextArea getText() {
+		return text;
+	}
+	
+	public void createAndShowGUI(){
+		
 	    JLabel labCombo = new JLabel(prefixListLabel);
 	    Font fontOptionTitle = new Font(labCombo.getFont().getFamily(), Font.BOLD, labCombo.getFont().getSize()+3);
 	    labCombo.setFont(fontOptionTitle);
@@ -365,6 +372,10 @@ public class GraphicalInterface extends JFrame{
 	    {
 	        throw new RuntimeException( "No Screens Found" );
 	    }
+	}
+	
+	public void createAndShowOrderedPictureFrame(){
+		this.setVisible(true);
 	}
 }
 

@@ -50,69 +50,44 @@ public class MouseListenerV2 extends IMouseListener{
 			if(timerChangeMode != null){
 				timerChangeMode.cancel(false);
 			}
-			dist_x= Math.round(distanceX);
-			dist_y= Math.round(distanceY);
-			bufferX.add(x);
-			bufferY.add(y);
-			lastPointOnstraightLineX=x;
-			lastPointOnstraightLineY=y;
-			borderMode=false;
-			reglin=true;
-			COEF=1;
-		}else if(borderMode){
-		
-			double angleCur = Math.abs(Util.angle(center,current));
-			double anglePrec = Math.abs(Util.angle(center,prec));
-			double angleOr = Math.abs(Util.angle(center,origin));
-			//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
-			
-			//Log.v("BORDER","signe: "+sign);
-			//Calcul of coefficients for the straight line
-			if(reglin){
-				coefs = Util.regress(bufferY,bufferX);
-			}
-			
-			//Detect when the current angle reaches 0
-			if((anglePrec>270 && (angleCur+(360*nbTour))<(90+(360*nbTour)))){
-				nbTour++;
-				//System.out.println(nbTour);
-				//System.out.println("Sens direct: "+angleCur);
-			}
-			
-			if((anglePrec<90 && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
-				nbTour--;
-				//System.out.println(nbTour);
-				//System.out.println("One tour or more: " + angleCur);
-					
-			}
-			angleCur+=(360*nbTour);
-			//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-
-			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
-
-			//System.out.println("Current angle: "+ angleCur);
-			signDetermination();
-			
-			if (future == null || future.isDone()){
-				future = task.submit(movement);
-			}
-			reglin=false;
-			
-			//Intensity between 0 & 1;
-			if(COEF<=(360/DIVISION_COEF)){
-				intensity=COEF/(360/DIVISION_COEF);
+			if(!borderMode){
+				dist_x= Math.round(distanceX);
+				dist_y= Math.round(distanceY);
+				bufferX.add(x);
+				bufferY.add(y);
+				lastPointOnstraightLineX=x;
+				lastPointOnstraightLineY=y;
+				reglin=true;
+				COEF=1;
 			}else{
-				intensity=1.0f;
+				//To delay when the bordermode finish (prevent some false detection)
+				if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
+					timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
+				}
+				borderActions();	
 			}
-			
-		} else {
-			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
-				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
+		}else{
+			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
+				timerExitBorderMode.cancel(false);
+			} 
+			if(borderMode){
+				borderActions();
+				reglin=false;
+				
+				//Intensity between 0 & 1;
+				if(COEF<=(360/DIVISION_COEF)){
+					intensity=COEF/(360/DIVISION_COEF);
+				}else{
+					intensity=1.0f;
+				}
+			}else {
+				if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
+					timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
+				}
+				dist_x= /*(int) distanceX*/0;
+				dist_y= /*(int) distanceY*/0;
 			}
-			dist_x= /*(int) distanceX*/0;
-			dist_y= /*(int) distanceY*/0;
 		}
-		
 		prec=current;
 		if (future == null || future.isDone()){
 			mouse.motion(dist_x, dist_y);
@@ -120,6 +95,44 @@ public class MouseListenerV2 extends IMouseListener{
 		return intensity;
 	}
 	
+	private void borderActions() {
+		double angleCur = Math.abs(Util.angle(center,current));
+		double anglePrec = Math.abs(Util.angle(center,prec));
+		double angleOr = Math.abs(Util.angle(center,origin));
+		//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
+		
+		//Log.v("BORDER","signe: "+sign);
+		//Calcul of coefficients for the straight line
+		if(reglin){
+			coefs = Util.regress(bufferY,bufferX);
+		}
+		
+		//Detect when the current angle reaches 0
+		if((anglePrec>270 && (angleCur+(360*nbTour))<(90+(360*nbTour)))){
+			nbTour++;
+			//System.out.println(nbTour);
+			//System.out.println("Sens direct: "+angleCur);
+		}
+		
+		if((anglePrec<90 && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
+			nbTour--;
+			//System.out.println(nbTour);
+			//System.out.println("One tour or more: " + angleCur);
+				
+		}
+		angleCur+=(360*nbTour);
+		//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
+
+		COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+
+		//System.out.println("Current angle: "+ angleCur);
+		signDetermination();
+		
+		if (future == null || future.isDone()){
+			future = task.submit(movement);
+		}
+	}
+
 	@Override
 	public void resetBuffers(float x,float y) {
 		//directSens=false;

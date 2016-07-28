@@ -248,9 +248,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             case (MotionEvent.ACTION_UP):
                 sendMessage(MainActivity.WEAR_DATA_PATH,"RELEASE");
                 isUp=true;
-                if(vibrator != null){
-                    vibrator.cancel();
-                }
+                //if(vibrator != null){
+                //    vibrator.cancel();
+                //}
                 break;
             default:
 
