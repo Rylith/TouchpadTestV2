@@ -31,6 +31,7 @@ public class MouseListenerV2 extends IMouseListener{
 					e.printStackTrace();
 				}
 			}
+			//Log.println("fin du thread de déplacement");
 			//this.interrupt();
 		}
 	};

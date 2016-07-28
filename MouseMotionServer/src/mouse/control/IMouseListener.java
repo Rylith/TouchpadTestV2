@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,18 +37,20 @@ public abstract class IMouseListener {
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
     protected ScheduledExecutorService task = Executors
-            .newSingleThreadScheduledExecutor();
+            .newScheduledThreadPool(2);
     
     protected static long TIMER_AFF = 500;
     protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
-        	channel.send(("VIBRATION,"+1).getBytes(), 0, ("VIBRATION,"+1).getBytes().length);
+        	float rand =0.9f+(new Random().nextFloat()/10.0f);
+            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
         	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
         	key.selector().wakeup();
             origin = current;
             borderMode = true;
+            //Log.println("changement de mode: "+borderMode);
         }
     };
     
@@ -56,7 +59,9 @@ public abstract class IMouseListener {
         @Override
         public void run() {
             borderMode = false;
-            channel.send(("VIBRATION,"+0.9).getBytes(), 0, ("VIBRATION,"+0.9).getBytes().length);
+            //Log.println("Appel au thread de changement de mode: "+ borderMode);
+            float rand =0.9f+(new Random().nextFloat()/10.0f);
+            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
             key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
         	key.selector().wakeup();
         }
@@ -93,7 +98,7 @@ public abstract class IMouseListener {
 	
 	/**Reset data to calculate the line*/
 	public void resetBuffers(float x,float y) {
-		borderMode=false;
+		//borderMode=false;
 		reglin=true;
         bufferX.clear();
         bufferY.clear();
@@ -111,7 +116,12 @@ public abstract class IMouseListener {
 		mouse.release();
 		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
 			timerExitBorderMode = task.schedule(exitBorderMode, 50, TimeUnit.MILLISECONDS);
+			//Log.println("release in border mode");
 		}
+		if(timerChangeMode != null){
+			timerChangeMode.cancel(false);
+		}
+		//Log.println("release");
 		//borderMode=false;
 	}
 	

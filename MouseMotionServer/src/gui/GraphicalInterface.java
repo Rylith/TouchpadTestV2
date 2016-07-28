@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.channels.SelectionKey;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -346,4 +348,24 @@ public class GraphicalInterface extends JFrame{
 	    this.setVisible(true);
 	}
 	
+	public static void showOnScreen( int screen, JFrame frame )
+	{
+	    GraphicsEnvironment ge = GraphicsEnvironment
+	        .getLocalGraphicsEnvironment();
+	    GraphicsDevice[] gs = ge.getScreenDevices();
+	    if( screen > -1 && screen < gs.length )
+	    {
+	        gs[screen].setFullScreenWindow( frame );
+	    }
+	    else if( gs.length > 0 )
+	    {
+	        gs[0].setFullScreenWindow( frame );
+	    }
+	    else
+	    {
+	        throw new RuntimeException( "No Screens Found" );
+	    }
+	}
 }
+
+
