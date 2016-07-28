@@ -8,6 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -72,7 +74,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
     private boolean isUp;
-    //private ListView mListView;
+    private boolean PositionMode = true;//To decide if it needs to ask the user position
+    private Rect rectN, rectS,rectE,rectO;
+    private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
+    private boolean InversionX=false,InversionY = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +124,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 paint.setColor(Color.RED);
                 paint.setStrokeWidth(10);
                 image.setImageBitmap(sheet);
+                initZone();
 
             }
         });
@@ -229,31 +235,68 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     // Capture long presses
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        current[0] = ev.getX();
-        current[1] = ev.getY();
-        switch(MotionEventCompat.getActionMasked(ev)){
-            case (MotionEvent.ACTION_DOWN):
-                origin[0]=ev.getX();
-                origin[1]=ev.getY();
-                isUp=false;
-                break;
-            case (MotionEvent.ACTION_MOVE):
-                float distX = - current[0] + origin[0];
-                float distY = - current[1] + origin[1];
-                sendMessage(MainActivity.WEAR_DATA_PATH,"SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
-                //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
-                origin[0]=ev.getX();
-                origin[1]=ev.getY();
-                break;
-            case (MotionEvent.ACTION_UP):
-                sendMessage(MainActivity.WEAR_DATA_PATH,"RELEASE");
-                isUp=true;
-                if(vibrator != null){
-                    vibrator.cancel();
-                }
-                break;
-            default:
+        if(PositionMode){
 
+            int evX = (int)ev.getX();
+            int evY = (int)ev.getY();
+
+            if(rectN.contains(evX,evY)){
+                pos.setText("Position Nord selectionnée");
+                //Inverser x et y
+                InversionX = true;
+                InversionY = true;
+
+            } else if(rectS.contains(evX,evY)){
+                pos.setText("Position Sud selectionnée");
+                //Default position, no need for change
+            }
+            else if(rectO.contains(evX,evY)){
+                pos.setText("Position Ouest selectionnée");
+                //Inverser x + switch
+                InversionX = true;
+                InversionAxe = true;
+            }
+            else if(rectE.contains(evX,evY)){
+                pos.setText("Position Est selectionnée");
+                //Inverser y + switch
+                InversionY = true;
+                InversionAxe = true;
+            }
+            PositionMode=false;
+            board.drawColor(0, PorterDuff.Mode.CLEAR);
+        }
+        else {
+
+            setCoord(ev);
+
+            //current[0] = ev.getX();
+            //current[1] = ev.getY();
+            switch (MotionEventCompat.getActionMasked(ev)) {
+                case (MotionEvent.ACTION_DOWN):
+                    setCoord(ev);
+                    //origin[0] = ev.getX();
+                    //origin[1] = ev.getY();
+                    isUp = false;
+                    break;
+                case (MotionEvent.ACTION_MOVE):
+                    float distX = -current[0] + origin[0];
+                    float distY = -current[1] + origin[1];
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
+                    //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
+                    setCoord(ev);
+                    //origin[0] = ev.getX();
+                    //origin[1] = ev.getY();
+                    break;
+                case (MotionEvent.ACTION_UP):
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
+                    isUp = true;
+                    if (vibrator != null) {
+                        vibrator.cancel();
+                    }
+                    break;
+                default:
+
+            }
         }
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
@@ -313,6 +356,60 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         return pattern;
+    }
+
+
+    public void initZone(){
+
+        int ecartX = (int)(0.25*screenSize.x);
+        int ecartY = (int)(0.30*screenSize.y);
+
+        Paint rectPaint = new Paint();
+
+        rectPaint.setColor(Color.GREEN);
+        rectN = new Rect(ecartX,0,screenSize.x-ecartX,ecartY);
+        board.drawRect(rectN,rectPaint);
+
+        rectPaint.setColor(Color.RED);
+        rectS = new Rect(ecartX,screenSize.y-ecartY,screenSize.x-ecartX,screenSize.x);
+        board.drawRect(rectS,rectPaint);
+
+        rectPaint.setColor(Color.BLUE);
+        rectO = new Rect(0,ecartY,ecartX,screenSize.y-ecartY);
+        board.drawRect(rectO,rectPaint);
+
+        rectPaint.setColor(Color.BLACK);
+        rectE = new Rect(screenSize.x-ecartX,ecartY,screenSize.x,screenSize.y-ecartY);
+        board.drawRect(rectE,rectPaint);
+    }
+
+    public void setCoord(MotionEvent ev){
+        if(InversionAxe){
+            if(InversionX){
+                current[1] = -ev.getX();
+            }
+            else {
+                current[1] = ev.getX();
+            }
+            if(InversionY){
+                current[0] = -ev.getY();
+            }else {
+                current[0] = ev.getY();
+            }
+        }else{
+            if(InversionX){
+                current[0] = -ev.getX();
+            }
+            else {
+                current[0] = ev.getX();
+            }
+            if(InversionY){
+                current[1] = -ev.getY();
+            }else {
+                current[1] = ev.getY();
+            }
+        }
+
     }
 }
 
