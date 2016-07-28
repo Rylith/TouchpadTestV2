@@ -4,10 +4,12 @@ import java.awt.Point;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
 import network.Interface.Channel;
@@ -35,23 +37,34 @@ public abstract class IMouseListener {
   //To time the event on drag
     protected ScheduledFuture<?> timerChangeMode = null;
     protected ScheduledExecutorService task = Executors
-            .newSingleThreadScheduledExecutor();
+            .newScheduledThreadPool(2);
     
     protected static long TIMER_AFF = 500;
     protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
+        	float rand =0.9f+(new Random().nextFloat()/10.0f);
+            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
+        	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+        	key.selector().wakeup();
             origin = current;
             borderMode = true;
+            //Log.println("changement de mode: "+borderMode);
         }
     };
     
     protected ScheduledFuture<?> timerExitBorderMode;
+    protected static long TIMER_EXIT_MODE = 50;
     protected TimerTask exitBorderMode = new TimerTask() {
         @Override
         public void run() {
             borderMode = false;
+            //Log.println("Appel au thread de changement de mode: "+ borderMode);
+            float rand =0.9f+(new Random().nextFloat()/10.0f);
+            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
+            key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+        	key.selector().wakeup();
         }
     };
     
@@ -66,8 +79,8 @@ public abstract class IMouseListener {
 	protected Channel channel;
 	protected SelectionKey key;
 	
-	public static void setDIVISION_COEF(float dIVISION_COEF) {
-		DIVISION_COEF = dIVISION_COEF;
+	public static void setDIVISION_COEF(float DIVISION_COEF) {
+		IMouseListener.DIVISION_COEF = DIVISION_COEF;
 	}
 
 	public static float getDIVISION_COEF() {
@@ -78,7 +91,7 @@ public abstract class IMouseListener {
 	public void setCenter(int x, int y) {
 		center = new Point(x/2,y/2);
 		RAYON = center.x;
-        MARGE = center.x*PERCENTSCREENSIZE;
+        MARGE = RAYON*PERCENTSCREENSIZE;
 	}
 	
 	/**Called when a continues movement is done on the screen of the device*/
@@ -86,7 +99,7 @@ public abstract class IMouseListener {
 	
 	/**Reset data to calculate the line*/
 	public void resetBuffers(float x,float y) {
-		borderMode=false;
+		//borderMode=false;
 		reglin=true;
         bufferX.clear();
         bufferY.clear();
@@ -102,7 +115,15 @@ public abstract class IMouseListener {
 	/**Simulate the release of left click*/
 	public void release() {
 		mouse.release();
-		borderMode=false;
+		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
+			timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
+			//Log.println("release in border mode");
+		}
+		if(timerChangeMode != null){
+			timerChangeMode.cancel(false);
+		}
+		//Log.println("release");
+		//borderMode=false;
 	}
 	
 	/**Simulation of a click (press then release)*/
@@ -115,10 +136,6 @@ public abstract class IMouseListener {
 	public void doubleClick() {
 		click();
 		click();
-	}
-	
-	public MouseControl getMC() {
-		return this.mouse;
 	}
 
 	protected void signDetermination(){

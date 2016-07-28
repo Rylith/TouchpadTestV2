@@ -38,7 +38,7 @@ public class MouseListenerV1 extends IMouseListener{
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
 				if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
-					timerExitBorderMode = task.schedule(exitBorderMode, 50, TimeUnit.MILLISECONDS);
+					timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
 				}
 				borderActions();	
 			}

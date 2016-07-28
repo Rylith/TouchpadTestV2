@@ -21,7 +21,7 @@ public class Pong{
 			}
 			int port = portInitial;
 			
-			Engine pong = new OwnEngine();
+			final Engine pong = new OwnEngine();
 			int i;
 			for(i=0; i< 10 ;i++){
 				/*Server contract =*/ pong.listen(port, new AcceptCallbackTest());
@@ -35,7 +35,9 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					new GraphicalInterface().createAndShowGUI();
+					GraphicalInterface graph = new GraphicalInterface(pong);
+					graph.createAndShowGUI();
+					//GraphicalInterface.showOnScreen(0, graph);
 				}
 			});
 		} catch (IOException e) {

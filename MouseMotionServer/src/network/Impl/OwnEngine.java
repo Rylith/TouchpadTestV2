@@ -14,7 +14,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import gui.Log;
 import network.Interface.AcceptCallback;
 import network.Interface.Channel;
 import network.Interface.ConnectCallback;
@@ -134,6 +136,7 @@ public class OwnEngine extends Engine implements Runnable{
 			listKey.remove(key);
 			channel.close();
 			System.out.println("Connection closed by client : "+channel);
+			Log.println("Connection closed by client : "+channel);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -233,6 +236,10 @@ public class OwnEngine extends Engine implements Runnable{
 			key.interestOps(SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 			m_selector.wakeup();
 		}
+	}
+	
+	public Set<Entry<SelectionKey, Channel>> getDelivers(){
+		return listKey.entrySet();
 	}
 
 }

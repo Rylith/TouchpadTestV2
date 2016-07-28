@@ -145,6 +145,5 @@ public abstract class Engine {
    */
   public abstract void connect(InetAddress hostAddress, int port,
       ConnectCallback callback) throws UnknownHostException, SecurityException, IOException;
-  
 
 }
