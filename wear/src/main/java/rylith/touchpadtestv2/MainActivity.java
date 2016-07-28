@@ -13,7 +13,6 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.wearable.view.DismissOverlayView;
@@ -186,7 +185,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }*/
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onConnected(Bundle bundle) {
         //sendMessage(START_ACTIVITY, "");
         new Thread(new Runnable() {
             @Override
@@ -238,8 +237,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
         if(PositionMode){
 
-            int evX = (int)ev.getX();
-            int evY = (int)ev.getY();
+            int evX = Math.round(ev.getX());
+            int evY = Math.round(ev.getY());
 
             if(rectN.contains(evX,evY)){
                 pos.setText("Position Nord selectionnée");
@@ -269,7 +268,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         else {
 
             setCoord(ev);
-
             //current[0] = ev.getX();
             //current[1] = ev.getY();
             switch (MotionEventCompat.getActionMasked(ev)) {
