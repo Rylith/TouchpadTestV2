@@ -51,7 +51,6 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public boolean onDown(MotionEvent e) {
-        activity.sendMessage(MainActivity.WEAR_DATA_PATH,"DOWN,"+e.getX()+","+e.getY());
         return true;
     }
 }

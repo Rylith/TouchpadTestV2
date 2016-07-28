@@ -72,7 +72,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private PutDataRequest request;
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
-    private boolean isUp;
     private boolean PositionMode = true;//To decide if it needs to ask the user position
     private Rect rectN, rectS,rectE,rectO;
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
@@ -245,24 +244,29 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 //Inverser x et y
                 InversionX = true;
                 InversionY = true;
-
+                PositionMode=false;
             } else if(rectS.contains(evX,evY)){
                 pos.setText("Position Sud selectionnée");
                 //Default position, no need for change
+                PositionMode=false;
             }
             else if(rectO.contains(evX,evY)){
                 pos.setText("Position Ouest selectionnée");
-                //Inverser x + switch
-                InversionX = true;
+                //Inverser y + switch
+                //Log.v("Inverse","Position Ouest selectionnée");
+                InversionY = true;
                 InversionAxe = true;
+                PositionMode=false;
             }
             else if(rectE.contains(evX,evY)){
                 pos.setText("Position Est selectionnée");
-                //Inverser y + switch
-                InversionY = true;
+                //Log.v("Inverse","Position Est selectionnée");
+                //Inverser x + switch
+                InversionX=true;
                 InversionAxe = true;
+                PositionMode=false;
             }
-            PositionMode=false;
+
             board.drawColor(0, PorterDuff.Mode.CLEAR);
         }
         else {
@@ -276,7 +280,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     //origin[1] = ev.getY();
                     origin[0] = current[0];
                     origin[1] = current[1];
-                    isUp = false;
+                    sendMessage(MainActivity.WEAR_DATA_PATH,"DOWN,"+current[0]+","+current[1]);
                     break;
                 case (MotionEvent.ACTION_MOVE):
                     float distX = -current[0] + origin[0];
@@ -288,7 +292,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     break;
                 case (MotionEvent.ACTION_UP):
                     sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
-                    isUp = true;
+                    //isUp = true;
                     /*if (vibrator != null) {
                         vibrator.cancel();
                     }*/
@@ -385,25 +389,25 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void setCoord(MotionEvent ev){
         if(InversionAxe){
             if(InversionX){
-                current[1] = -ev.getX();
+                current[1] = screenSize.x-ev.getX();
             }
             else {
                 current[1] = ev.getX();
             }
             if(InversionY){
-                current[0] = -ev.getY();
+                current[0] = screenSize.y-ev.getY();
             }else {
                 current[0] = ev.getY();
             }
         }else{
             if(InversionX){
-                current[0] = -ev.getX();
+                current[0] = screenSize.x-ev.getX();
             }
             else {
                 current[0] = ev.getX();
             }
             if(InversionY){
-                current[1] = -ev.getY();
+                current[1] = screenSize.y-ev.getY();
             }else {
                 current[1] = ev.getY();
             }
