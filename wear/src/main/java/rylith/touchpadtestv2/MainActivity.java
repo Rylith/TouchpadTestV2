@@ -274,9 +274,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             //current[1] = ev.getY();
             switch (MotionEventCompat.getActionMasked(ev)) {
                 case (MotionEvent.ACTION_DOWN):
-                    setCoord(ev);
                     //origin[0] = ev.getX();
                     //origin[1] = ev.getY();
+                    origin[0] = current[0];
+                    origin[1] = current[1];
                     isUp = false;
                     break;
                 case (MotionEvent.ACTION_MOVE):
@@ -284,9 +285,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     float distY = -current[1] + origin[1];
                     sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
                     //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
-                    setCoord(ev);
-                    //origin[0] = ev.getX();
-                    //origin[1] = ev.getY();
+                    origin[0] = current[0];
+                    origin[1] = current[1];
                     break;
                 case (MotionEvent.ACTION_UP):
                     sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
