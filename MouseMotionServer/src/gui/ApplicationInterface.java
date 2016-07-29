@@ -63,6 +63,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.input.MouseEvent;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -86,7 +87,7 @@ public class ApplicationInterface extends JFrame {
 
 	private static boolean DEMO = false;
  
-    private JDesktopPane dp = new JDesktopPane();
+    private static JDesktopPane dp = new JDesktopPane();
     private DefaultListModel<Doc> listModel = new DefaultListModel<Doc>();
     private JList<Doc> list = new JList<Doc>(listModel);
     private static int left;
@@ -267,6 +268,8 @@ public class ApplicationInterface extends JFrame {
             return true;
         }
     };
+
+	private static JMenuBar men;
  
     private static void incr() {
         left += 30;
@@ -279,8 +282,8 @@ public class ApplicationInterface extends JFrame {
     public ApplicationInterface() {
         super("TopLevelTransferHandlerDemo");
         setJMenuBar(createDummyMenuBar());
-        getContentPane().add(createDummyToolBar(), BorderLayout.NORTH);
-        getContentPane().getHeight();
+        //getContentPane().add(createDummyToolBar(), BorderLayout.NORTH);
+
         final JFXPanel fxPanel = new JFXPanel();
         dp.addComponentListener(new ComponentAdapter() {
         	public void componentResized(ComponentEvent e) {
@@ -346,14 +349,38 @@ public class ApplicationInterface extends JFrame {
         } catch (Exception e) {
         }
  
-        ApplicationInterface test = new ApplicationInterface();
+        final ApplicationInterface test = new ApplicationInterface();
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         if (DEMO) {
             test.setSize(493, 307);
         } else {
-            test.setSize(800, 600);
+        	test.setSize(800, 600);
         }
         test.setLocationRelativeTo(null);
+        /*dp.addMouseListener(new MouseAdapter(){
+			
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+				if (e.getClickCount() == 2) {
+				    System.out.println("double clicked");
+					if(test.getExtendedState() != JFrame.MAXIMIZED_BOTH){
+						test.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+						test.dispose();
+						test.setUndecorated(true);
+						test.setJMenuBar(null);
+						//test.remove(toolbar);
+						test.setVisible(true);
+					}else{
+						test.setSize(800, 600);
+						test.dispose();
+						test.setJMenuBar(men);
+						//test.getContentPane().add(toolbar, BorderLayout.NORTH);
+						test.setUndecorated(false);
+						test.setVisible(true);
+					}
+				}
+			}
+		});*/
         test.setVisible(true);
         test.list.requestFocus();
     }
@@ -423,7 +450,8 @@ public class ApplicationInterface extends JFrame {
         copyItem.setMnemonic(KeyEvent.VK_C);
         copyItem.setSelected(true);
         demo.add(copyItem);
- 
+        
+        men = mb;
         return mb;
     }
      
@@ -445,6 +473,31 @@ public class ApplicationInterface extends JFrame {
 		Group root = new Group();
 		Group circles = new Group();
 		Scene scene = new Scene(root, width, height, Color.BLACK);
+		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+		    @Override
+		    public void handle(MouseEvent mouseEvent) {
+		    	if(mouseEvent.getClickCount() >=2 ){
+		    		System.out.println("double clicked");
+					if(getExtendedState() != JFrame.MAXIMIZED_BOTH){
+						setExtendedState(JFrame.MAXIMIZED_BOTH); 
+						dispose();
+						setUndecorated(true);
+						setJMenuBar(null);
+						//test.remove(toolbar);
+						setVisible(true);
+					}else{
+						setSize(800, 600);
+						dispose();
+						setJMenuBar(men);
+						//test.getContentPane().add(toolbar, BorderLayout.NORTH);
+						setUndecorated(false);
+						setVisible(true);
+					}
+		    		
+		    	}
+		    		//System.out.println("mouse click detected! " + mouseEvent.getSource());
+		    }
+		});		
 		scene.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {

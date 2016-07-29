@@ -372,10 +372,6 @@ public class GraphicalInterface extends JFrame{
 	        throw new RuntimeException( "No Screens Found" );
 	    }
 	}
-	
-	public void createAndShowOrderedPictureFrame(){
-		this.setVisible(true);
-	}
 }
 
 

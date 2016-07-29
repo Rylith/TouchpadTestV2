@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.swing.SwingUtilities;
 
-import gui.GraphicalInterface;
 import gui.Log;
 import gui.ApplicationInterface;
 import network.Impl.AcceptCallbackTest;
