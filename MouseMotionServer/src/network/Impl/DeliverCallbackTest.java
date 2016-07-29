@@ -1,20 +1,15 @@
 package network.Impl;
 
 import java.awt.MouseInfo;
-import java.lang.reflect.Constructor;
 import java.nio.channels.SelectionKey;
 
 import gui.Log;
 import mouse.control.IMouseListener;
 import mouse.control.MouseListenerV1;
-import mouse.control.MouseListenerV2;
-import mouse.control.MouseListenerV3;
-import mouse.control.MouseListenerV4;
 import network.Interface.Channel;
 import network.Interface.DeliverCallback;
 
 
-@SuppressWarnings("unused")
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
 	private IMouseListener listener = new MouseListenerV1();
