@@ -60,57 +60,19 @@ public class TopLevelTransferHandlerDemo extends JFrame {
 	private static boolean DEMO = false;
  
     private JDesktopPane dp = new JDesktopPane();
-    private DefaultListModel listModel = new DefaultListModel();
-    private JList list = new JList(listModel);
+    private DefaultListModel<Doc> listModel = new DefaultListModel<Doc>();
+    private JList<Doc> list = new JList<Doc>(listModel);
     private static int left;
     private static int top;
     private JCheckBoxMenuItem copyItem;
     private JCheckBoxMenuItem nullItem;
     private JCheckBoxMenuItem thItem;
  
-    private class Doc extends InternalFrameAdapter implements ActionListener {
+    public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
         JInternalFrame frame;
         TransferHandler th;
         JTextArea area;
-        
-        public class DragListener extends MouseInputAdapter
-        {
-            Point location;
-            MouseEvent pressed;
-         
-            public void mousePressed(MouseEvent me)
-            {
-                pressed = me;
-            }
-         
-            public void mouseDragged(MouseEvent me)
-            {
-                Component component = me.getComponent();
-                location = component.getLocation(location);
-                int x = location.x - pressed.getX() + me.getX();
-                int y = location.y - pressed.getY() + me.getY();
-                component.setLocation(x, y);
-             }
-        }
-        
-        private class ImagePanel extends JPanel{
-        	/**
-			 * 
-			 */
-			private static final long serialVersionUID = 7858895L;
-			private Image image;
-        	
-        	public ImagePanel(Image pic){
-        		this.image=pic;
-        	}
-        	
-        	@Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters            
-            }
-        }
  
         public Doc(File file) {
             this.name = file.getName();
@@ -135,8 +97,8 @@ public class TopLevelTransferHandlerDemo extends JFrame {
             area.setMargin(new Insets(5, 5, 5, 5));
             ImagePanel im;
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                String in;
+                //BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                //String in;
                 BufferedImage image = null;
                 InputStream is = new FileInputStream(url.getFile());
                 ImageInputStream iis = ImageIO.createImageInputStream(is);
@@ -147,7 +109,7 @@ public class TopLevelTransferHandlerDemo extends JFrame {
                     area.append(in);
                     area.append("\n");
                 }*/
-                reader.close();
+                //reader.close();
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -176,7 +138,7 @@ public class TopLevelTransferHandlerDemo extends JFrame {
             //frame.setClosable(true);
             //frame.setIconifiable(true);
             //frame.setMaximizable(true);
-            //frame.setLocation(left, top);
+            frame.setLocation(left, top);
             frame.setBorder(null);
             bi.setNorthPane(null);
             incr();
@@ -229,7 +191,12 @@ public class TopLevelTransferHandlerDemo extends JFrame {
     }
  
     private TransferHandler handler = new TransferHandler() {
-        public boolean canImport(TransferHandler.TransferSupport support) {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public boolean canImport(TransferHandler.TransferSupport support) {
             if (!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 return false;
             }
@@ -255,7 +222,8 @@ public class TopLevelTransferHandlerDemo extends JFrame {
             Transferable t = support.getTransferable();
  
             try {
-                java.util.List<File> l =
+                @SuppressWarnings("unchecked")
+				java.util.List<File> l =
                     (java.util.List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
  
                 for (File f : l) {
@@ -402,6 +370,7 @@ public class TopLevelTransferHandlerDemo extends JFrame {
  
         copyItem = new JCheckBoxMenuItem("Use COPY Action");
         copyItem.setMnemonic(KeyEvent.VK_C);
+        copyItem.setSelected(true);
         demo.add(copyItem);
  
         return mb;
