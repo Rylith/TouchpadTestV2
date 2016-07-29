@@ -269,6 +269,8 @@ public class ApplicationInterface extends JFrame {
         }
     };
 
+	private JToolBar toolBar;
+
 	private static JMenuBar men;
  
     private static void incr() {
@@ -282,7 +284,8 @@ public class ApplicationInterface extends JFrame {
     public ApplicationInterface() {
         super("TopLevelTransferHandlerDemo");
         setJMenuBar(createDummyMenuBar());
-        //getContentPane().add(createDummyToolBar(), BorderLayout.NORTH);
+        toolBar = createDummyToolBar();
+        getContentPane().add(toolBar, BorderLayout.NORTH);
 
         final JFXPanel fxPanel = new JFXPanel();
         dp.addComponentListener(new ComponentAdapter() {
@@ -357,30 +360,6 @@ public class ApplicationInterface extends JFrame {
         	test.setSize(800, 600);
         }
         test.setLocationRelativeTo(null);
-        /*dp.addMouseListener(new MouseAdapter(){
-			
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-				if (e.getClickCount() == 2) {
-				    System.out.println("double clicked");
-					if(test.getExtendedState() != JFrame.MAXIMIZED_BOTH){
-						test.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-						test.dispose();
-						test.setUndecorated(true);
-						test.setJMenuBar(null);
-						//test.remove(toolbar);
-						test.setVisible(true);
-					}else{
-						test.setSize(800, 600);
-						test.dispose();
-						test.setJMenuBar(men);
-						//test.getContentPane().add(toolbar, BorderLayout.NORTH);
-						test.setUndecorated(false);
-						test.setVisible(true);
-					}
-				}
-			}
-		});*/
         test.setVisible(true);
         test.list.requestFocus();
     }
@@ -483,14 +462,15 @@ public class ApplicationInterface extends JFrame {
 						dispose();
 						setUndecorated(true);
 						setJMenuBar(null);
-						//test.remove(toolbar);
+						remove(toolBar);
 						setVisible(true);
 					}else{
 						setSize(800, 600);
 						dispose();
 						setJMenuBar(men);
-						//test.getContentPane().add(toolbar, BorderLayout.NORTH);
+						getContentPane().add(toolBar, BorderLayout.NORTH);
 						setUndecorated(false);
+						setLocationRelativeTo(null);
 						setVisible(true);
 					}
 		    		
