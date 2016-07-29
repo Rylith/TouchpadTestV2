@@ -78,7 +78,7 @@ public class GraphicalInterface extends JFrame{
 	    this.setTitle("Réglage des paramètres");
 	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public static JTextArea getText() {

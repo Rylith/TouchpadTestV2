@@ -30,12 +30,39 @@
  */
  
 package gui;
+
+import static java.lang.Math.random;
  
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle; 
+import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
+import network.Interface.Engine;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,7 +77,7 @@ import java.awt.datatransfer.*;
  *
  * @author Shannon Hickey
  */
-public class TopLevelTransferHandlerDemo extends JFrame {
+public class ApplicationInterface extends JFrame {
      
     /**
 	 * 
@@ -67,13 +94,15 @@ public class TopLevelTransferHandlerDemo extends JFrame {
     private JCheckBoxMenuItem copyItem;
     private JCheckBoxMenuItem nullItem;
     private JCheckBoxMenuItem thItem;
- 
+    private static Engine engine;
+    private Timeline timeline;
+  
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
         JInternalFrame frame;
         TransferHandler th;
         JTextArea area;
- 
+        File file;
         public Doc(File file) {
             this.name = file.getName();
             try {
@@ -177,7 +206,7 @@ public class TopLevelTransferHandlerDemo extends JFrame {
             } catch (java.beans.PropertyVetoException e) {}
         }
          
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(java.awt.event.ActionEvent ae) {
             setNullTH();
         }
          
@@ -247,14 +276,28 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         }
     }
  
-    public TopLevelTransferHandlerDemo() {
+    public ApplicationInterface() {
         super("TopLevelTransferHandlerDemo");
         setJMenuBar(createDummyMenuBar());
         getContentPane().add(createDummyToolBar(), BorderLayout.NORTH);
- 
+        getContentPane().getHeight();
+        final JFXPanel fxPanel = new JFXPanel();
+        dp.addComponentListener(new ComponentAdapter() {
+        	public void componentResized(ComponentEvent e) {
+        		fxPanel.setSize(getWidth(), getHeight());
+        		Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        initFX(fxPanel);
+                    }
+                });
+        	}
+        });
+        dp.add(fxPanel);
         JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list, dp);
         sp.setDividerLocation(120);
         getContentPane().add(sp);
+        
         //new Doc("sample.txt");
         //new Doc("sample.txt");
         //new Doc("sample.txt");
@@ -266,7 +309,6 @@ public class TopLevelTransferHandlerDemo extends JFrame {
                 if (e.getValueIsAdjusting()) {
                     return;
                 }
-                 
                 Doc val = (Doc)list.getSelectedValue();
                 if (val != null) {
                     val.select();
@@ -277,7 +319,7 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         final TransferHandler th = list.getTransferHandler();
  
         nullItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
+            public void actionPerformed(java.awt.event.ActionEvent ae) {
                 if (nullItem.isSelected()) {
                     list.setTransferHandler(null);
                 } else {
@@ -286,8 +328,9 @@ public class TopLevelTransferHandlerDemo extends JFrame {
             }
         });
         thItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                if (thItem.isSelected()) {
+        	@Override
+			public void actionPerformed(java.awt.event.ActionEvent arg0) {
+			    if (thItem.isSelected()) {
                     setTransferHandler(handler);
                 } else {
                     setTransferHandler(null);
@@ -297,13 +340,13 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         dp.setTransferHandler(handler);
     }
  
-    private static void createAndShowGUI(String[] args) {
+    public static void createAndShowGUI(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
  
-        TopLevelTransferHandlerDemo test = new TopLevelTransferHandlerDemo();
+        ApplicationInterface test = new ApplicationInterface();
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         if (DEMO) {
             test.setSize(493, 307);
@@ -313,16 +356,6 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         test.setLocationRelativeTo(null);
         test.setVisible(true);
         test.list.requestFocus();
-    }
-     
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                //Turn off metal's use of bold fonts
-            UIManager.put("swing.boldMetal", Boolean.FALSE);
-                createAndShowGUI(args);
-            }
-        });
     }
      
     private JToolBar createDummyToolBar() {
@@ -353,7 +386,25 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         mb.add(createDummyMenu("Edit"));
         mb.add(createDummyMenu("Search"));
         mb.add(createDummyMenu("View"));
-        mb.add(createDummyMenu("Tools"));
+        JMenu menu = new JMenu("Tools");
+        JMenuItem item = new JMenuItem("Preference");
+        item.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						new GraphicalInterface(engine).createAndShowGUI();
+						
+					}
+				});
+				
+			}
+		});
+        menu.add(item);
+        mb.add(menu);
         mb.add(createDummyMenu("Help"));
          
         JMenu demo = new JMenu("Demo");
@@ -383,4 +434,96 @@ public class TopLevelTransferHandlerDemo extends JFrame {
         menu.add(item);
         return menu;
     }
+    
+    private void initFX(JFXPanel fxPanel) {
+        // This method is invoked on the JavaFX thread
+        Scene scene = createScene(fxPanel.getWidth(),fxPanel.getHeight());
+        fxPanel.setScene(scene);
+    }
+
+	private Scene createScene(double width,double height) {
+		Group root = new Group();
+		Group circles = new Group();
+		Scene scene = new Scene(root, width, height, Color.BLACK);
+		scene.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                if (db.hasFiles()) {
+                    event.acceptTransferModes(TransferMode.COPY);
+                } else {
+                    event.consume();
+                }
+            }
+        });
+		// Dropping over surface
+        scene.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasFiles()) {
+                    success = true;
+                    for (File file:db.getFiles()) {
+                    	new Doc(file);
+                    }
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            }
+        });
+		for (int i = 0; i < 30; i++) {
+			   Circle circle = new Circle(150, Color.web("white", 0.05));
+			   circle.setStrokeType(StrokeType.OUTSIDE);
+			   circle.setStroke(Color.web("white", 0.16));
+			   circle.setStrokeWidth(4);
+			   circles.getChildren().add(circle);
+			}
+		circles.setEffect(new BoxBlur(10, 10, 3));
+		Rectangle colors = new Rectangle(scene.getWidth(), scene.getHeight(),
+			     new LinearGradient(0f, 1f, 1f, 0f, true, CycleMethod.NO_CYCLE, new 
+			         Stop[]{
+			            new Stop(0, Color.web("#f8bd55")),
+			            new Stop(0.14, Color.web("#c0fe56")),
+			            new Stop(0.28, Color.web("#5dfbc1")),
+			            new Stop(0.43, Color.web("#64c2f8")),
+			            new Stop(0.57, Color.web("#be4af7")),
+			            new Stop(0.71, Color.web("#ed5fc2")),
+			            new Stop(0.85, Color.web("#ef504c")),
+			            new Stop(1, Color.web("#f2660f")),}));
+		colors.widthProperty().bind(scene.widthProperty());
+		colors.heightProperty().bind(scene.heightProperty());
+		Group blendModeGroup = 
+			    new Group(new Group(new Rectangle(scene.getWidth(), scene.getHeight(),
+			        Color.BLACK), circles), colors);
+		colors.setBlendMode(BlendMode.OVERLAY);
+		
+		root.getChildren().add(blendModeGroup);
+		if(timeline !=null){
+			timeline.stop();
+		}
+		timeline = new Timeline();
+		
+		for (Node circle: circles.getChildren()) {
+			timeline.getKeyFrames().addAll(
+			        new KeyFrame(Duration.ZERO, // set start position at 0
+			            new KeyValue(circle.translateXProperty(), random() * scene.getWidth()),
+			            new KeyValue(circle.translateYProperty(), random() * scene.getHeight())
+			        ),
+			        new KeyFrame(new Duration(8000), // set end position at 8
+			            new KeyValue(circle.translateXProperty(), random() * scene.getWidth()),
+			            new KeyValue(circle.translateYProperty(), random() * scene.getHeight())
+			        )
+			    );
+		}
+		// play 40s of animation
+		timeline.setCycleCount(Animation.INDEFINITE);
+		//timeline.setAutoReverse(true);
+		timeline.play();
+		return scene;
+	}
+
+	public static void setEngine(Engine engine) {
+		ApplicationInterface.engine = engine;
+	}
 }

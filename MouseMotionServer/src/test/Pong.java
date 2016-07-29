@@ -6,13 +6,14 @@ import javax.swing.SwingUtilities;
 
 import gui.GraphicalInterface;
 import gui.Log;
+import gui.ApplicationInterface;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
 import network.Interface.Engine;
 
 public class Pong{
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		try {
 			int portInitial=4444;
 			//Il est possible de changer le port de départ
@@ -35,8 +36,10 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					GraphicalInterface graph = new GraphicalInterface(pong);
-					graph.createAndShowGUI();
+					//GraphicalInterface graph = new GraphicalInterface(pong);
+					//graph.createAndShowGUI();
+					ApplicationInterface.createAndShowGUI(args);
+					ApplicationInterface.setEngine(pong);
 					//GraphicalInterface.showOnScreen(0, graph);
 				}
 			});
