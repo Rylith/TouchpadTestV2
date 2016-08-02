@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <SplitPane dividerPositions="0.25" opacity="0.86">
+         <items>
+            <VBox prefHeight="320.0" prefWidth="128.0">
+               <children>
+                  <TitledPane expanded="false" text="Vacances" textOverrun="WORD_ELLIPSIS">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" text="Montagnes">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" text="Plages">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+               </children>
+            </VBox>
+            <Pane />
+         </items>
+      </SplitPane>
+   </center>
+</BorderPane>

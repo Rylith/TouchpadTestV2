@@ -39,21 +39,31 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle; 
 import javafx.scene.shape.StrokeType;
@@ -64,12 +74,16 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.datatransfer.*;
  
 /**
@@ -86,24 +100,31 @@ public class ApplicationInterface extends JFrame {
 	private static final long serialVersionUID = -3733033957725377148L;
 
 	private static boolean DEMO = false;
- 
+	
+	private static final int NB_DIVISION=3;
+	
     private static JDesktopPane dp = new JDesktopPane();
     private DefaultListModel<Doc> listModel = new DefaultListModel<Doc>();
     private JList<Doc> list = new JList<Doc>(listModel);
-    private static int left;
+    private List<TitledPane> listTitle = new ArrayList<TitledPane>();
+    private List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
+    private static int left=0;
     private static int top;
     private JCheckBoxMenuItem copyItem;
     private JCheckBoxMenuItem nullItem;
     private JCheckBoxMenuItem thItem;
     private static Engine engine;
     private Timeline timeline;
+    private JToolBar toolBar;
+	private static JMenuBar men;
+	private static VBox box;
+
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
         JInternalFrame frame;
         TransferHandler th;
-        JTextArea area;
-        File file;
+ 
         public Doc(File file) {
             this.name = file.getName();
             try {
@@ -119,81 +140,64 @@ public class ApplicationInterface extends JFrame {
         }
          
         private void init(URL url) {
+        	int index=0;
             frame = new JInternalFrame(name);
             frame.addInternalFrameListener(this);
             listModel.add(listModel.size(), this);
- 
-            area = new JTextArea();
-            area.setMargin(new Insets(5, 5, 5, 5));
-            ImagePanel im;
+            listViews.get(index).getItems().add(this);
+            listTitle.get(index).setExpanded(true);
+            ImagePanel im = null;
             try {
                 //BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                //String in;
                 BufferedImage image = null;
-                InputStream is = new FileInputStream(url.getFile());
+                InputStream is = new FileInputStream(URLDecoder.decode(url.getFile(), "UTF-8"));
+                //System.out.println(URLDecoder.decode(url.getFile(), "UTF-8"));
                 ImageInputStream iis = ImageIO.createImageInputStream(is);
                 image = ImageIO.read(iis);
                 Image pic = image.getScaledInstance(400, 300, Image.SCALE_DEFAULT);
                 im = new ImagePanel(pic); 
-                /*while ((in = reader.readLine()) != null) {
-                    area.append(in);
-                    area.append("\n");
-                }*/
-                //reader.close();
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
             }
- 
             th = im.getTransferHandler();
-            area.setFont(new Font("monospaced", Font.PLAIN, 12));
-            area.setCaretPosition(0);
-            area.setDragEnabled(true);
-            area.setDropMode(DropMode.INSERT);
-			//frame.getContentPane().add(new JScrollPane(area));
             BasicInternalFrameUI bi = (BasicInternalFrameUI)frame.getUI();
             DragListener drag = new DragListener();
             frame.addMouseMotionListener(drag);
             frame.addMouseListener(drag);
             frame.getContentPane().add(im);
             dp.add(frame);
-            frame.show();
             if (DEMO) {
                 frame.setSize(300, 200);
             } else {
                 frame.setSize(400, 300);
             }
-            //frame.setResizable(true);
-            //frame.setClosable(true);
-            //frame.setIconifiable(true);
-            //frame.setMaximizable(true);
+            
+            incr();
             frame.setLocation(left, top);
             frame.setBorder(null);
             bi.setNorthPane(null);
-            incr();
+            frame.show();
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     select();
                 }
             });
-            nullItem.addActionListener(this);
-            setNullTH();
         }
  
         public void internalFrameClosing(InternalFrameEvent event) {
-            listModel.removeElement(this);
-            nullItem.removeActionListener(this);
+        	listViews.get(0).getItems().remove(this);
         }
  
         public void internalFrameOpened(InternalFrameEvent event) {
-            int index = listModel.indexOf(this);
-            list.getSelectionModel().setSelectionInterval(index, index);
+            listViews.get(0).getSelectionModel().select(this);
+            listTitle.get(0).setExpanded(true);
         }
  
         public void internalFrameActivated(InternalFrameEvent event) {
-            int index = listModel.indexOf(this);
-            list.getSelectionModel().setSelectionInterval(index, index);
+            listViews.get(0).getSelectionModel().select(this);
+            listTitle.get(0).setExpanded(true);
         }
  
         public String toString() {
@@ -208,16 +212,8 @@ public class ApplicationInterface extends JFrame {
         }
          
         public void actionPerformed(java.awt.event.ActionEvent ae) {
-            setNullTH();
         }
          
-        public void setNullTH() {
-            if (nullItem.isSelected()) {
-                area.setTransferHandler(null);
-            } else {
-                area.setTransferHandler(th);
-            }
-        }
     }
  
     private TransferHandler handler = new TransferHandler() {
@@ -268,21 +264,21 @@ public class ApplicationInterface extends JFrame {
             return true;
         }
     };
-
-	private JToolBar toolBar;
-
-	private static JMenuBar men;
- 
+    
     private static void incr() {
-        left += 30;
-        top += 30;
+    	if(left == 0){
+    		left = (int)Math.round(box.getWidth())+12;
+    	}else{
+    		left += 30;
+    		top += 30;
+        }
         if (top == 150) {
             top = 0;
         }
     }
  
     public ApplicationInterface() {
-        super("TopLevelTransferHandlerDemo");
+        super("Pictures Sort");
         setJMenuBar(createDummyMenuBar());
         toolBar = createDummyToolBar();
         getContentPane().add(toolBar, BorderLayout.NORTH);
@@ -290,38 +286,29 @@ public class ApplicationInterface extends JFrame {
         final JFXPanel fxPanel = new JFXPanel();
         dp.addComponentListener(new ComponentAdapter() {
         	public void componentResized(ComponentEvent e) {
-        		fxPanel.setSize(getWidth(), getHeight());
+        		JDesktopPane desktop = (JDesktopPane) e.getComponent();
+        		fxPanel.setSize(desktop.getWidth(), desktop.getHeight());
         		Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         initFX(fxPanel);
-                    }
-                });
-        	}
+                        ChangeListener<Doc> chListener = new ChangeListener<Doc>(){
+            				@Override
+            				public void changed(ObservableValue<? extends Doc> observable, Doc oldValue, Doc newValue) {
+            					newValue.select();
+            				}
+                    	};
+                        for(ListView<Doc> lis : listViews){
+                        	lis.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                        	lis.getSelectionModel().selectedItemProperty().addListener(chListener);
+                        }
+                  }
+        		});
+        	}	
         });
         dp.add(fxPanel);
-        JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, list, dp);
-        sp.setDividerLocation(120);
-        getContentPane().add(sp);
-        
-        //new Doc("sample.txt");
-        //new Doc("sample.txt");
-        //new Doc("sample.txt");
- 
-        list.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
- 
-        list.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-                Doc val = (Doc)list.getSelectedValue();
-                if (val != null) {
-                    val.select();
-                }
-             }
-        });
-         
+        getContentPane().add(dp); 
+       
         final TransferHandler th = list.getTransferHandler();
  
         nullItem.addActionListener(new ActionListener() {
@@ -343,7 +330,7 @@ public class ApplicationInterface extends JFrame {
                 }
             }
         });
-        dp.setTransferHandler(handler);
+        //dp.setTransferHandler(handler);
     }
  
     public static void createAndShowGUI(String[] args) {
@@ -352,7 +339,10 @@ public class ApplicationInterface extends JFrame {
         } catch (Exception e) {
         }
  
-        final ApplicationInterface test = new ApplicationInterface();
+        ApplicationInterface test = new ApplicationInterface();
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Image img = kit.createImage("watch_2-512.png");
+		test.setIconImage(img);
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         if (DEMO) {
             test.setSize(493, 307);
@@ -399,14 +389,11 @@ public class ApplicationInterface extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SwingUtilities.invokeLater(new Runnable() {
-					
 					@Override
 					public void run() {
 						new GraphicalInterface(engine).createAndShowGUI();
-						
 					}
 				});
-				
 			}
 		});
         menu.add(item);
@@ -449,8 +436,56 @@ public class ApplicationInterface extends JFrame {
     }
 
 	private Scene createScene(double width,double height) {
-		Group root = new Group();
+		Group dropArea = new Group();
 		Group circles = new Group();
+		BorderPane root=null;
+		try {
+			root = FXMLLoader.load(getClass().getResource("Sample.fxml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SplitPane split = null;
+		
+		for(Node node : root.getChildren()){
+			if(node instanceof SplitPane){
+				 split = (SplitPane) node;
+			}
+		}
+		
+		Pane stack =  null;
+		for(Node node : split.getItems()){
+			if(node instanceof Pane){
+				stack = (Pane) node;
+				stack.getChildren().add(dropArea);
+			}
+			if(node instanceof VBox){
+				box=(VBox) node;
+			}
+		}
+		
+		for(Node node : box.getChildren()){
+			if(listTitle.size() >= NB_DIVISION){
+				if(listTitle.get(0).isExpanded()){
+					((TitledPane) node).setExpanded(true);
+				}
+				listTitle.remove(0);
+			}
+			listTitle.add((TitledPane) node);
+		}
+		
+		for(TitledPane title : listTitle){
+			@SuppressWarnings("unchecked")
+			ListView<Doc> list = (ListView<Doc>) title.getContent();
+			if(listViews.size()>=NB_DIVISION){
+				list.setItems(listViews.get(0).getItems());
+				listViews.remove(0);
+			}else{
+				ObservableList<Doc> obsvervableList = FXCollections.observableArrayList();
+				list.setItems(obsvervableList);
+			}
+			listViews.add(list);
+		}
+		
 		Scene scene = new Scene(root, width, height, Color.BLACK);
 		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    @Override
@@ -531,7 +566,7 @@ public class ApplicationInterface extends JFrame {
 			        Color.BLACK), circles), colors);
 		colors.setBlendMode(BlendMode.OVERLAY);
 		
-		root.getChildren().add(blendModeGroup);
+		dropArea.getChildren().add(blendModeGroup);
 		if(timeline !=null){
 			timeline.stop();
 		}
@@ -543,7 +578,7 @@ public class ApplicationInterface extends JFrame {
 			            new KeyValue(circle.translateXProperty(), random() * scene.getWidth()),
 			            new KeyValue(circle.translateYProperty(), random() * scene.getHeight())
 			        ),
-			        new KeyFrame(new Duration(8000), // set end position at 8
+			        new KeyFrame(new Duration(40000), // set end position at 40
 			            new KeyValue(circle.translateXProperty(), random() * scene.getWidth()),
 			            new KeyValue(circle.translateYProperty(), random() * scene.getHeight())
 			        )
@@ -551,7 +586,6 @@ public class ApplicationInterface extends JFrame {
 		}
 		// play 40s of animation
 		timeline.setCycleCount(Animation.INDEFINITE);
-		//timeline.setAutoReverse(true);
 		timeline.play();
 		return scene;
 	}

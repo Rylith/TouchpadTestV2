@@ -134,8 +134,13 @@ public abstract class IMouseListener {
 	
 	/**Simulation of double click*/
 	public void doubleClick() {
-		click();
-		click();
+		//click();
+		//click();
+		if(mouse.isPressed()){
+			mouse.release();
+		}else{
+			press();
+		}
 	}
 
 	protected void signDetermination(){
