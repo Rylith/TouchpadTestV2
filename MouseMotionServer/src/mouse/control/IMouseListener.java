@@ -114,7 +114,7 @@ public abstract class IMouseListener {
 	
 	/**Simulate the release of left click*/
 	public void release() {
-		mouse.release();
+		//mouse.release();
 		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
 			timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
 			//Log.println("release in border mode");

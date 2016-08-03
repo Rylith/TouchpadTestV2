@@ -31,7 +31,7 @@
                   </TitledPane>
                </children>
             </VBox>
-            <Pane />
+            <StackPane />
          </items>
       </SplitPane>
    </center>

@@ -49,8 +49,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingNode;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -63,6 +65,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle; 
@@ -103,7 +106,7 @@ public class ApplicationInterface extends JFrame {
 	
 	private static final int NB_DIVISION=3;
 	
-    private static JDesktopPane dp = new JDesktopPane();
+    private static JDesktopPane dp = new TransparentDesktopPane();
     private DefaultListModel<Doc> listModel = new DefaultListModel<Doc>();
     private JList<Doc> list = new JList<Doc>(listModel);
     private List<TitledPane> listTitle = new ArrayList<TitledPane>();
@@ -117,7 +120,7 @@ public class ApplicationInterface extends JFrame {
     private Timeline timeline;
     private JToolBar toolBar;
 	private static JMenuBar men;
-	private static VBox box;
+	private SwingNode swingNode=null;
 
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
@@ -174,7 +177,6 @@ public class ApplicationInterface extends JFrame {
                 frame.setSize(400, 300);
             }
             
-            incr();
             frame.setLocation(left, top);
             frame.setBorder(null);
             bi.setNorthPane(null);
@@ -184,6 +186,7 @@ public class ApplicationInterface extends JFrame {
                     select();
                 }
             });
+            incr();
         }
  
         public void internalFrameClosing(InternalFrameEvent event) {
@@ -266,12 +269,8 @@ public class ApplicationInterface extends JFrame {
     };
     
     private static void incr() {
-    	if(left == 0){
-    		left = (int)Math.round(box.getWidth())+12;
-    	}else{
-    		left += 30;
-    		top += 30;
-        }
+    	left += 30;
+    	top += 30;
         if (top == 150) {
             top = 0;
         }
@@ -282,12 +281,10 @@ public class ApplicationInterface extends JFrame {
         setJMenuBar(createDummyMenuBar());
         toolBar = createDummyToolBar();
         getContentPane().add(toolBar, BorderLayout.NORTH);
-
+        
         final JFXPanel fxPanel = new JFXPanel();
-        dp.addComponentListener(new ComponentAdapter() {
+        fxPanel.addComponentListener(new ComponentAdapter() {
         	public void componentResized(ComponentEvent e) {
-        		JDesktopPane desktop = (JDesktopPane) e.getComponent();
-        		fxPanel.setSize(desktop.getWidth(), desktop.getHeight());
         		Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -306,8 +303,7 @@ public class ApplicationInterface extends JFrame {
         		});
         	}	
         });
-        dp.add(fxPanel);
-        getContentPane().add(dp); 
+        getContentPane().add(fxPanel); 
        
         final TransferHandler th = list.getTransferHandler();
  
@@ -452,11 +448,12 @@ public class ApplicationInterface extends JFrame {
 			}
 		}
 		
-		Pane stack =  null;
+		StackPane stack =  null;
+		Pane pane = new Pane();
+		VBox box=null;
 		for(Node node : split.getItems()){
-			if(node instanceof Pane){
-				stack = (Pane) node;
-				stack.getChildren().add(dropArea);
+			if(node instanceof StackPane){
+				stack = (StackPane) node;
 			}
 			if(node instanceof VBox){
 				box=(VBox) node;
@@ -567,6 +564,15 @@ public class ApplicationInterface extends JFrame {
 		colors.setBlendMode(BlendMode.OVERLAY);
 		
 		dropArea.getChildren().add(blendModeGroup);
+		pane.getChildren().add(dropArea);
+		Bounds bounds = dropArea.getBoundsInLocal();
+		if(swingNode == null){
+			swingNode = new SwingNode();
+			swingNode.setContent(dp);
+		}
+		stack.getChildren().addAll(pane,swingNode);
+		dp.setSize((int) bounds.getWidth(), (int) bounds.getHeight());
+		
 		if(timeline !=null){
 			timeline.stop();
 		}
