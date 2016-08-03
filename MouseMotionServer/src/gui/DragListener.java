@@ -23,12 +23,14 @@ public class DragListener extends MouseInputAdapter {
 		rectList = list;
 	}
 
-	
+	@Override
     public void mousePressed(MouseEvent me)
     {
         pressed = me;
+        
     }
- 
+	
+	@Override
     public void mouseDragged(MouseEvent me)
     {
         Component component = me.getComponent();

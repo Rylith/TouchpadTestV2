@@ -194,7 +194,7 @@ public class ApplicationInterface extends JFrame {
                 frame.setSize(x_size, y_size);
             }
             
-            frame.setLocation(left, top);
+            frame.setLocation(left-(x_size/2), top-(y_size/2));
             frame.setBorder(null);
             bi.setNorthPane(null);
             frame.show();
