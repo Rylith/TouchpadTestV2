@@ -161,9 +161,10 @@ public class ApplicationInterface extends JFrame {
             area.setDropMode(DropMode.INSERT);
 			//frame.getContentPane().add(new JScrollPane(area));
             BasicInternalFrameUI bi = (BasicInternalFrameUI)frame.getUI();
-            DragListener drag = new DragListener();
+            DragListener drag = new DragListener(rectList);
             frame.addMouseMotionListener(drag);
             frame.addMouseListener(drag);
+            
             frame.getContentPane().add(im);
             dp.add(frame);
             frame.show();
@@ -460,7 +461,7 @@ public class ApplicationInterface extends JFrame {
 	private Scene createScene(double width,double height) {
 		Group root = new Group();
 		Group circles = new Group();
-		Scene scene = new Scene(root, width, height, Color.BLACK);
+		final Scene scene = new Scene(root, width, height, Color.BLACK);
 		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
@@ -492,9 +493,9 @@ public class ApplicationInterface extends JFrame {
 		/*100+250*/
 		Group rectGroup = new Group();
 		double rectWidth = (int)(width-(ECART+COL*ECART))/COL;
-		System.out.println("LONGUEUR: " + rectWidth);
+		//System.out.println("LONGUEUR: " + rectWidth);
 		double rectHeight = (int)(height-(ECART+LIGNE*ECART))/LIGNE;
-		System.out.println("HAUTEUR: " + rectHeight);
+		//System.out.println("HAUTEUR: " + rectHeight);
 		double x = 0;
 		double y = 0;
 		for (int c = 1; c <= COL; c++) {
@@ -503,29 +504,18 @@ public class ApplicationInterface extends JFrame {
 				//System.out.println("LIGNE: " + l);
 				//x y
 				x = c*ECART+((c-1)*rectWidth);
-				System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
-				System.out.println("X: " + x);
+				//System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
+				//System.out.println("X: " + x);
 				y = l*ECART+((l-1)*rectHeight);
-				System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
-				System.out.println("Y: " + y);
-				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectWidth);
+				//System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
+				//System.out.println("Y: " + y);
+				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
 				tempRect.setVisible(true);
 				tempRect.setFill(Color.RED);
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
 			}
-		}
-		System.out.println("----------DONE----------");
-		/*Première ligne
-        Rectangle rectVac = new Rectangle(ECART,ECART,rectWidth,rectHeight);
-        Rectangle rectMountain = new Rectangle(2*ECART+rectWidth,ECART,rectWidth,rectHeight);
-        Rectangle rectBeach = new Rectangle(3*ECART+2*rectWidth,ECART,rectWidth,rectHeight);
-        */
-    	/*Deuxième ligne
-        Rectangle rectHouse = new Rectangle(ECART,2*ECART+rectHeight,rectWidth,rectHeight);
-        Rectangle rectPeople = new Rectangle(2*ECART+rectWidth,2*ECART+rectHeight,rectWidth,rectHeight);
-        Rectangle rectCar = new Rectangle(3*ECART+2*rectWidth,2*ECART+rectHeight,rectWidth,rectHeight);
-        */        
+		}       
 		
 		scene.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -563,36 +553,6 @@ public class ApplicationInterface extends JFrame {
                 event.consume();
             }
         });
-        
-        
-        scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				// TODO Auto-generated method stub
-				System.out.println("----------RELEASE----------");
-                event.consume();
-			}
-        	
-		});
-        
-        /*scene.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, new EventHandler<MouseDragEvent>() {
-			    @Override
-			    public void handle(MouseDragEvent mouseEvent) {
-			    	System.out.println("----------DRAG OVER----------");
-			    	mouseEvent.consume();
-			    }
-        	}
-        );
-        
-        scene.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
-			@Override
-			public void handle(MouseDragEvent event) {
-				// TODO Auto-generated method stub
-				System.out.println("----------DRAG OVER----------");
-                event.consume();
-			}
-        	
-		});*/
         
 		for (int i = 0; i < 30; i++) {
 			   Circle circle = new Circle(150, Color.web("white", 0.05));
