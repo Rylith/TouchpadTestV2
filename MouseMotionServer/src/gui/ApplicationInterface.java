@@ -57,7 +57,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -607,12 +609,20 @@ public class ApplicationInterface extends JFrame {
 				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
 				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
-				tempRect.setFill(Color.RED);
+				//tempRect.setFill(Color.RED);
+				tempRect.setFill(Color.TRANSPARENT);
+				tempRect.setStroke(Color.WHITE);
+				tempRect.setArcHeight(15);
+		        tempRect.setArcWidth(15);
+				tempRect.setStrokeWidth(5);
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
 			}
-		}       
-
+		}
+		final Color shadowColor = Color.WHITE.deriveColor(1, 1, 1, 1); 
+        final DropShadow dropShadow = new DropShadow(BlurType.THREE_PASS_BOX, shadowColor, 20, 0, 10, 10); 
+        
+        rectGroup.setEffect(dropShadow);
 		
 		scene.setOnDragOver(new EventHandler<DragEvent>() {
             @Override

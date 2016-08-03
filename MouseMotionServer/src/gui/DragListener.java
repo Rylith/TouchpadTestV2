@@ -3,7 +3,6 @@ package gui;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.event.MouseInputAdapter;
