@@ -15,14 +15,17 @@ public class DragListener extends MouseInputAdapter {
 	
 	Point location;
     MouseEvent pressed;
+	private Doc doc;
     ArrayList<Rectangle> rectList;
  
-    public DragListener(ArrayList<Rectangle> list) {
+    public DragListener(Doc doc,ArrayList<Rectangle> list) {
 		super();
+		this.doc=doc;
 		rectList = list;
 	}
 
-	public void mousePressed(MouseEvent me)
+	
+    public void mousePressed(MouseEvent me)
     {
         pressed = me;
     }
@@ -32,13 +35,14 @@ public class DragListener extends MouseInputAdapter {
         Component component = me.getComponent();
         location = component.getLocation(location);
         int x = location.x - pressed.getX() + me.getX();
-        int y = location.y - pressed.getY() + me.getY();
-        
+        int y = location.y - pressed.getY() + me.getY();    
         for (int i = 0; i < rectList.size(); i++) {
         	Rectangle rectCurr = rectList.get(i);
         	if(rectCurr.contains(x,y)){
                 component.setLocation(x, y);
         	}
 		}
+        //component.setLocation(x, y);
+        this.doc.setPercent();
      }
 }

@@ -12,6 +12,7 @@ import network.Impl.Util;
 public class MouseControl {
 	
 	private Robot mouse;
+	private boolean pressed=false;
 	private static int COEF = 2;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1; 
@@ -61,10 +62,12 @@ public class MouseControl {
 	
 	public void press(){
 		mouse.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+		pressed=true;
 	}
 	
 	public void release(){
 		mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+		pressed=false;
 	}
 	
 	public static void setCoeff(int val){
@@ -89,5 +92,9 @@ public class MouseControl {
 	
 	public static int getTestF(){
 		return testFluidity;
+	}
+
+	public boolean isPressed() {
+		return pressed;
 	}
 }

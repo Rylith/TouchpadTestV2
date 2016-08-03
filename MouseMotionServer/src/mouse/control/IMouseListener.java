@@ -114,7 +114,7 @@ public abstract class IMouseListener {
 	
 	/**Simulate the release of left click*/
 	public void release() {
-		mouse.release();
+		//mouse.release();
 		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
 			timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
 			//Log.println("release in border mode");
@@ -134,8 +134,13 @@ public abstract class IMouseListener {
 	
 	/**Simulation of double click*/
 	public void doubleClick() {
-		click();
-		click();
+		//click();
+		//click();
+		if(mouse.isPressed()){
+			mouse.release();
+		}else{
+			press();
+		}
 	}
 
 	protected void signDetermination(){
