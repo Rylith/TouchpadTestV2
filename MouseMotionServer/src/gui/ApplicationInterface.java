@@ -607,7 +607,10 @@ public class ApplicationInterface extends JFrame {
 				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
 				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
-				tempRect.setFill(Color.RED);
+				//tempRect.setFill(Color.RED);
+				tempRect.setFill(Color.TRANSPARENT);
+				tempRect.setStroke(Color.RED);
+				tempRect.setStrokeWidth(10);
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
 			}
