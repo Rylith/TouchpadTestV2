@@ -3,13 +3,16 @@ package rylith.touchpadtestv2;
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -266,8 +269,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 InversionAxe = true;
                 PositionMode=false;
             }
-
-            board.drawColor(0, PorterDuff.Mode.CLEAR);
+            if(!PositionMode){
+                board.drawColor(0, PorterDuff.Mode.CLEAR);
+            }
         }
         else {
 
@@ -362,12 +366,16 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
 
-    public void initZone(){
+    private void initZone(){
 
         int ecartX = (int)(0.25*screenSize.x);
         int ecartY = (int)(0.30*screenSize.y);
 
         Paint rectPaint = new Paint();
+        Bitmap bitmap = decodeSampledBitmapFromResource(getResources(),R.drawable.maxresdefault,(screenSize.x-2*ecartX),(screenSize.y-2*ecartY));
+        Rect frameToDraw = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        RectF whereToDraw = new RectF(ecartX, ecartY, (screenSize.x-ecartX), (screenSize.y-ecartY));
+        board.drawBitmap(bitmap,frameToDraw,whereToDraw,rectPaint);
 
         rectPaint.setColor(Color.GREEN);
         rectN = new Rect(ecartX,0,screenSize.x-ecartX,ecartY);
@@ -386,7 +394,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         board.drawRect(rectE,rectPaint);
     }
 
-    public void setCoord(MotionEvent ev){
+    private void setCoord(MotionEvent ev){
         if(InversionAxe){
             if(InversionX){
                 current[1] = screenSize.x-ev.getX();
@@ -414,6 +422,44 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
     }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((height / inSampleSize) >= reqHeight
+                    && (width / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        //options.outHeight=reqHeight;
+        //options.outWidth=reqWidth;
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
 }
 
 
