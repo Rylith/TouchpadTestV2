@@ -39,6 +39,13 @@ public class DragListener extends MouseInputAdapter {
         for (int i = 0; i < rectList.size(); i++) {
         	Rectangle rectCurr = rectList.get(i);
         	if(rectCurr.contains(x,y)){
+        		if(doc.index != i){
+	                ApplicationInterface.getListView().get(doc.index).getItems().remove(doc);
+	                doc.index = i;
+	                ApplicationInterface.getListView().get(doc.index).getItems().add(doc);
+	                ApplicationInterface.getListView().get(doc.index).getSelectionModel().select(doc);
+	                ApplicationInterface.getListTitles().get(doc.index).setExpanded(true);
+        		}
                 component.setLocation(x, y);
         	}
 		}

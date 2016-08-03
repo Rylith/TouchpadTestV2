@@ -109,8 +109,8 @@ public class ApplicationInterface extends JFrame {
 	private static final double PERCENT_Y_FRAME_SIZE=0.3;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
-    private List<TitledPane> listTitle = new ArrayList<TitledPane>();
-    private List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
+    private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
+    private static List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
     private static int left=0;
     private static int top;
 
@@ -128,7 +128,7 @@ public class ApplicationInterface extends JFrame {
         String name;
         JInternalFrame frame;
         TransferHandler th;
-        private int index=0;
+        int index = 0;
 		private double percentX;
 		private double percentY;
 		ImagePanel im = null;
@@ -593,9 +593,9 @@ public class ApplicationInterface extends JFrame {
 		int index = 0;
 		
 		rectList.clear();
-		for (int c = 1; c <= COL; c++) {
+		for (int l= 1; l <= LIGNE; l++) {
 			//System.out.println("COLONNE: " + c);
-			for (int l = 1; l <= LIGNE; l++){
+			for (int c = 1; c <= COL; c++){
 				//System.out.println("LIGNE: " + l);
 				//x y
 				x = c*ECART+((c-1)*rectWidth);
@@ -705,5 +705,13 @@ public class ApplicationInterface extends JFrame {
 
 	public static void setEngine(Engine engine) {
 		ApplicationInterface.engine = engine;
+	}
+	
+	public static List<ListView<Doc>> getListView(){
+		return listViews;
+	}
+	
+	public static List<TitledPane> getListTitles(){
+		return listTitle;
 	}
 }
