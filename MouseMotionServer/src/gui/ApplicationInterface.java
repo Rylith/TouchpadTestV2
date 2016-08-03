@@ -49,10 +49,8 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import javafx.embed.swing.SwingNode;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -62,11 +60,8 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle; 
@@ -88,7 +83,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 import java.awt.datatransfer.*;
  
 /**
@@ -106,11 +100,15 @@ public class ApplicationInterface extends JFrame {
 
 	private static boolean DEMO = false;
 	
-	private static final int NB_DIVISION=3;
+	private List<Rectangle> rectList = new ArrayList<Rectangle>();
+    private static final int COL = 3;
+    private static final int LIGNE = 2;
+	private static final double ECART = 50;
+	private static final int NB_DIVISION=(COL*LIGNE);
+	private static final double PERCENT_X_FRAME_SIZE=0.5;
+	private static final double PERCENT_Y_FRAME_SIZE=0.3;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
-    private DefaultListModel<Doc> listModel = new DefaultListModel<Doc>();
-    private JList<Doc> list = new JList<Doc>(listModel);
     private List<TitledPane> listTitle = new ArrayList<TitledPane>();
     private List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
     private static int left=0;
@@ -123,49 +121,58 @@ public class ApplicationInterface extends JFrame {
     private Timeline timeline;
     private JToolBar toolBar;
 	private static JMenuBar men;
-	private SwingNode swingNode=null;
     
-    private List<Rectangle> rectList = new ArrayList<Rectangle>();
-    private static int COL = 3;
-    private static int LIGNE = 2;
-	private static double ECART = 50;
+    
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
         JInternalFrame frame;
         TransferHandler th;
- 
-        public Doc(File file) {
-            this.name = file.getName();
+        private int index=0;
+		private double percentX;
+		private double percentY;
+		ImagePanel im = null;
+		BufferedImage image = null;
+        
+        public Doc(File file,int index){
+        	this.name = file.getName();
+            this.index=index;
             try {
                 init(file.toURI().toURL());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
+        
+        public Doc(File file) {
+            this(file,0);
+        }
          
         public Doc(String name) {
             this.name = name;
+            this.index=0;
             init(getClass().getResource(name));
         }
          
         private void init(URL url) {
-        	int index=0;
             frame = new JInternalFrame(name);
             frame.addInternalFrameListener(this);
-            listModel.add(listModel.size(), this);
+            //listModel.add(listModel.size(), this);
             listViews.get(index).getItems().add(this);
             listTitle.get(index).setExpanded(true);
-            ImagePanel im = null;
+            
+            Rectangle rect = rectList.get(index);
+            int x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
+            int y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
             try {
                 //BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                BufferedImage image = null;
+                
                 InputStream is = new FileInputStream(URLDecoder.decode(url.getFile(), "UTF-8"));
                 //System.out.println(URLDecoder.decode(url.getFile(), "UTF-8"));
                 ImageInputStream iis = ImageIO.createImageInputStream(is);
                 image = ImageIO.read(iis);
-                Image pic = image.getScaledInstance(40, 30, Image.SCALE_DEFAULT);
-                im = new ImagePanel(pic); 
+                Image pic = image.getScaledInstance(x_size, y_size, Image.SCALE_DEFAULT);
+                im = new ImagePanel(pic);
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -173,7 +180,7 @@ public class ApplicationInterface extends JFrame {
             }
             th = im.getTransferHandler();
             BasicInternalFrameUI bi = (BasicInternalFrameUI)frame.getUI();
-            DragListener drag = new DragListener();
+            DragListener drag = new DragListener(this);
             frame.addMouseMotionListener(drag);
             frame.addMouseListener(drag);
             frame.getContentPane().add(im);
@@ -181,7 +188,7 @@ public class ApplicationInterface extends JFrame {
             if (DEMO) {
                 frame.setSize(300, 200);
             } else {
-                frame.setSize(40, 30);
+                frame.setSize(x_size, y_size);
             }
             
             frame.setLocation(left, top);
@@ -193,21 +200,21 @@ public class ApplicationInterface extends JFrame {
                     select();
                 }
             });
-            incr();
+            //incr();
         }
  
         public void internalFrameClosing(InternalFrameEvent event) {
-        	listViews.get(0).getItems().remove(this);
+        	listViews.get(index).getItems().remove(this);
         }
  
         public void internalFrameOpened(InternalFrameEvent event) {
-            listViews.get(0).getSelectionModel().select(this);
-            listTitle.get(0).setExpanded(true);
+            listViews.get(index).getSelectionModel().select(this);
+            listTitle.get(index).setExpanded(true);
         }
  
         public void internalFrameActivated(InternalFrameEvent event) {
-            listViews.get(0).getSelectionModel().select(this);
-            listTitle.get(0).setExpanded(true);
+            listViews.get(index).getSelectionModel().select(this);
+            listTitle.get(index).setExpanded(true);
         }
  
         public String toString() {
@@ -223,6 +230,29 @@ public class ApplicationInterface extends JFrame {
          
         public void actionPerformed(java.awt.event.ActionEvent ae) {
         }
+
+		public void setPercent() {
+			Rectangle rect = rectList.get(index);
+			double width = rect.getWidth();
+			double height = rect.getHeight();
+			double x = rect.getX();
+			double y = rect.getY();
+			
+			if(width != 0){
+				this.percentX=1-(width-(frame.getX()-x))/width;
+			}
+			if(height != 0){
+				this.percentY=1-(height-(frame.getY()-y))/height;
+			}
+		}
+
+		public double getPercentY() {
+			return percentY;
+		}
+		
+		public double getPercentX() {
+			return percentX;
+		}
          
     }
  
@@ -289,13 +319,22 @@ public class ApplicationInterface extends JFrame {
         toolBar = createDummyToolBar();
         getContentPane().add(toolBar, BorderLayout.NORTH);
         
-        final JFXPanel fxPanel = new JFXPanel();
-        fxPanel.addComponentListener(new ComponentAdapter() {
+        final JFXPanel fxPanelDrop = new JFXPanel();
+        final JFXPanel fxPanelList = new JFXPanel();
+        final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fxPanelList, dp);
+        dp.addComponentListener(new ComponentAdapter() {
         	public void componentResized(ComponentEvent e) {
+        		
+        		JDesktopPane desktop = (JDesktopPane) e.getComponent();
+        		fxPanelDrop.setSize(desktop.getWidth(), desktop.getHeight());
+        		fxPanelList.setSize((getWidth()-(desktop.getWidth())),desktop.getHeight());
+        		sp.setDividerLocation(0.25f);
         		Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        initFX(fxPanel);
+                    	initFXList(fxPanelList);
+                    	initFX(fxPanelDrop);
+             
                         ChangeListener<Doc> chListener = new ChangeListener<Doc>(){
             				@Override
             				public void changed(ObservableValue<? extends Doc> observable, Doc oldValue, Doc newValue) {
@@ -305,21 +344,33 @@ public class ApplicationInterface extends JFrame {
                         for(ListView<Doc> lis : listViews){
                         	lis.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
                         	lis.getSelectionModel().selectedItemProperty().addListener(chListener);
+                        	for(Doc doc : lis.getItems()){
+                        		Rectangle rect = rectList.get(doc.index);
+                        		int x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
+                                int y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
+                                doc.frame.remove(doc.im);
+                                doc.im = new ImagePanel(doc.image.getScaledInstance(x_size, y_size, Image.SCALE_DEFAULT));
+                                doc.frame.add(doc.im);
+                        		doc.frame.setSize(x_size, y_size);
+                        		doc.frame.setLocation((int)(rect.getX()+rect.getWidth()*doc.getPercentX()), (int) (rect.getY()+rect.getHeight()*doc.getPercentY()));
+                        	}
                         }
                   }
         		});
         	}	
         });
-        getContentPane().add(fxPanel); 
+        dp.add(fxPanelDrop);
+        sp.setDividerLocation(120);
+        getContentPane().add(sp);
        
-        final TransferHandler th = list.getTransferHandler();
+        //final TransferHandler th = list.getTransferHandler();
  
         nullItem.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent ae) {
                 if (nullItem.isSelected()) {
-                    list.setTransferHandler(null);
+                    //list.setTransferHandler(null);
                 } else {
-                    list.setTransferHandler(th);
+                    //list.setTransferHandler(th);
                 }
             }
         });
@@ -335,6 +386,11 @@ public class ApplicationInterface extends JFrame {
         });
         //dp.setTransferHandler(handler);
     }
+    
+    private void initFXList(JFXPanel fxPanelList) {
+    	Scene scene = createListScene(fxPanelList.getWidth(),fxPanelList.getHeight());
+        fxPanelList.setScene(scene);
+	}
  
     public static void createAndShowGUI(String[] args) {
         try {
@@ -354,7 +410,6 @@ public class ApplicationInterface extends JFrame {
         }
         test.setLocationRelativeTo(null);
         test.setVisible(true);
-        test.list.requestFocus();
     }
      
     private JToolBar createDummyToolBar() {
@@ -437,16 +492,15 @@ public class ApplicationInterface extends JFrame {
         Scene scene = createScene(fxPanel.getWidth(),fxPanel.getHeight());
         fxPanel.setScene(scene);
     }
-
-	private Scene createScene(double width,double height) {
-		Group dropArea = new Group();
-		Group circles = new Group();
-		BorderPane root=null;
+    
+    private Scene createListScene(double width,double height){
+    	BorderPane root=null;
 		try {
 			root = FXMLLoader.load(getClass().getResource("Sample.fxml"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		SplitPane split = null;
 		
 		for(Node node : root.getChildren()){
@@ -455,17 +509,13 @@ public class ApplicationInterface extends JFrame {
 			}
 		}
 		
-		StackPane stack =  null;
-		Pane pane = new Pane();
 		VBox box=null;
 		for(Node node : split.getItems()){
-			if(node instanceof StackPane){
-				stack = (StackPane) node;
-			}
 			if(node instanceof VBox){
 				box=(VBox) node;
 			}
 		}
+		Scene scene = new Scene(box, width, height, Color.BLACK);
 		
 		for(Node node : box.getChildren()){
 			if(listTitle.size() >= NB_DIVISION){
@@ -481,7 +531,14 @@ public class ApplicationInterface extends JFrame {
 			@SuppressWarnings("unchecked")
 			ListView<Doc> list = (ListView<Doc>) title.getContent();
 			if(listViews.size()>=NB_DIVISION){
+				//Transfer data from previous list
 				list.setItems(listViews.get(0).getItems());
+				//Select docs selected before resize
+				for(int i = 0;i<list.getItems().size();i++){
+					if(listViews.get(0).getSelectionModel().isSelected(i)){
+						list.getSelectionModel().select(i);
+					}
+				}
 				listViews.remove(0);
 			}else{
 				ObservableList<Doc> obsvervableList = FXCollections.observableArrayList();
@@ -489,8 +546,14 @@ public class ApplicationInterface extends JFrame {
 			}
 			listViews.add(list);
 		}
+		return scene;
+    }
+    
+	private Scene createScene(double width,double height) {
+		Group dropArea = new Group();
+		Group circles = new Group();
 		
-		Scene scene = new Scene(root, width, height, Color.BLACK);
+		Scene scene = new Scene(dropArea, width, height, Color.BLACK);
 		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
@@ -522,30 +585,34 @@ public class ApplicationInterface extends JFrame {
 		/*100+250*/
 		Group rectGroup = new Group();
 		double rectWidth = (int)(width-(ECART+COL*ECART))/COL;
-		System.out.println("LONGUEUR: " + rectWidth);
+		//System.out.println("LONGUEUR: " + rectWidth);
 		double rectHeight = (int)(height-(ECART+LIGNE*ECART))/LIGNE;
-		System.out.println("HAUTEUR: " + rectHeight);
+		//System.out.println("HAUTEUR: " + rectHeight);
 		double x = 0;
 		double y = 0;
+		int index = 0;
+		
+		rectList.clear();
 		for (int c = 1; c <= COL; c++) {
 			//System.out.println("COLONNE: " + c);
 			for (int l = 1; l <= LIGNE; l++){
 				//System.out.println("LIGNE: " + l);
 				//x y
 				x = c*ECART+((c-1)*rectWidth);
-				System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
-				System.out.println("X: " + x);
+				//System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
+				//System.out.println("X: " + x);
 				y = l*ECART+((l-1)*rectHeight);
-				System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
-				System.out.println("Y: " + y);
+				//System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
+				//System.out.println("Y: " + y);
 				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
+				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
 				tempRect.setFill(Color.RED);
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
 			}
 		}
-		System.out.println("----------DONE----------");
+		//System.out.println("----------DONE----------");
 		/*Première ligne
         Rectangle rectVac = new Rectangle(ECART,ECART,rectWidth,rectHeight);
         Rectangle rectMountain = new Rectangle(2*ECART+rectWidth,ECART,rectWidth,rectHeight);
@@ -584,7 +651,7 @@ public class ApplicationInterface extends JFrame {
 	                        /*left = (int)rectCurr.getX();
 	                        top = (int)rectCurr.getY();*/
 		                    for (File file:db.getFiles()) {
-		                    	new Doc(file);
+		                    	new Doc(file,i).setPercent();
 		                    }
                     	}
 					}
@@ -652,14 +719,6 @@ public class ApplicationInterface extends JFrame {
 		
 		dropArea.getChildren().add(blendModeGroup);
 		dropArea.getChildren().add(rectGroup);
-		pane.getChildren().add(dropArea);
-		Bounds bounds = dropArea.getBoundsInLocal();
-		if(swingNode == null){
-			swingNode = new SwingNode();
-			swingNode.setContent(dp);
-		}
-		stack.getChildren().addAll(pane,swingNode);
-		dp.setSize((int) bounds.getWidth(), (int) bounds.getHeight());
 		
 		if(timeline !=null){
 			timeline.stop();

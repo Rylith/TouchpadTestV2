@@ -10,7 +10,7 @@
 
 <BorderPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <SplitPane dividerPositions="0.25" opacity="0.86">
+      <SplitPane dividerPositions="0.25" opacity="1">
          <items>
             <VBox prefHeight="320.0" prefWidth="128.0">
                <children>
@@ -25,6 +25,21 @@
                      </content>
                   </TitledPane>
                   <TitledPane expanded="false" text="Plages">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" text="Fleurs">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" text="Planetes">
+                     <content>
+                        <ListView prefHeight="200.0" prefWidth="200.0" />
+                     </content>
+                  </TitledPane>
+                  <TitledPane expanded="false" text="Divers">
                      <content>
                         <ListView prefHeight="200.0" prefWidth="200.0" />
                      </content>
