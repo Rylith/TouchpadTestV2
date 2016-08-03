@@ -466,7 +466,7 @@ public class ApplicationInterface extends JFrame {
 		    public void handle(MouseEvent mouseEvent) {
 		    	if(mouseEvent.getClickCount() >=2 ){
 		    		System.out.println("double clicked");
-					if(getExtendedState() != JFrame.MAXIMIZED_BOTH){
+					if(getJMenuBar() != null){
 						setExtendedState(JFrame.MAXIMIZED_BOTH); 
 						dispose();
 						setUndecorated(true);
