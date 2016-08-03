@@ -62,6 +62,7 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -87,6 +88,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import java.awt.datatransfer.*;
  
 /**
@@ -113,6 +115,7 @@ public class ApplicationInterface extends JFrame {
     private List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
     private static int left=0;
     private static int top;
+
     private JCheckBoxMenuItem copyItem;
     private JCheckBoxMenuItem nullItem;
     private JCheckBoxMenuItem thItem;
@@ -121,7 +124,11 @@ public class ApplicationInterface extends JFrame {
     private JToolBar toolBar;
 	private static JMenuBar men;
 	private SwingNode swingNode=null;
-
+    
+    private List<Rectangle> rectList = new ArrayList<Rectangle>();
+    private static int COL = 3;
+    private static int LIGNE = 2;
+	private static double ECART = 50;
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
@@ -157,7 +164,7 @@ public class ApplicationInterface extends JFrame {
                 //System.out.println(URLDecoder.decode(url.getFile(), "UTF-8"));
                 ImageInputStream iis = ImageIO.createImageInputStream(is);
                 image = ImageIO.read(iis);
-                Image pic = image.getScaledInstance(400, 300, Image.SCALE_DEFAULT);
+                Image pic = image.getScaledInstance(40, 30, Image.SCALE_DEFAULT);
                 im = new ImagePanel(pic); 
                 is.close();
             } catch (Exception e) {
@@ -174,7 +181,7 @@ public class ApplicationInterface extends JFrame {
             if (DEMO) {
                 frame.setSize(300, 200);
             } else {
-                frame.setSize(400, 300);
+                frame.setSize(40, 30);
             }
             
             frame.setLocation(left, top);
@@ -267,10 +274,10 @@ public class ApplicationInterface extends JFrame {
             return true;
         }
     };
-    
-    private static void incr() {
-    	left += 30;
-    	top += 30;
+ 
+    private void incr() {
+        left += 30;
+        top += 30;
         if (top == 150) {
             top = 0;
         }
@@ -489,7 +496,7 @@ public class ApplicationInterface extends JFrame {
 		    public void handle(MouseEvent mouseEvent) {
 		    	if(mouseEvent.getClickCount() >=2 ){
 		    		System.out.println("double clicked");
-					if(getExtendedState() != JFrame.MAXIMIZED_BOTH){
+					if(getJMenuBar() != null){
 						setExtendedState(JFrame.MAXIMIZED_BOTH); 
 						dispose();
 						setUndecorated(true);
@@ -510,6 +517,46 @@ public class ApplicationInterface extends JFrame {
 		    		//System.out.println("mouse click detected! " + mouseEvent.getSource());
 		    }
 		});		
+		
+        /*Experimenting with rectangles*/
+		/*100+250*/
+		Group rectGroup = new Group();
+		double rectWidth = (int)(width-(ECART+COL*ECART))/COL;
+		System.out.println("LONGUEUR: " + rectWidth);
+		double rectHeight = (int)(height-(ECART+LIGNE*ECART))/LIGNE;
+		System.out.println("HAUTEUR: " + rectHeight);
+		double x = 0;
+		double y = 0;
+		for (int c = 1; c <= COL; c++) {
+			//System.out.println("COLONNE: " + c);
+			for (int l = 1; l <= LIGNE; l++){
+				//System.out.println("LIGNE: " + l);
+				//x y
+				x = c*ECART+((c-1)*rectWidth);
+				System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
+				System.out.println("X: " + x);
+				y = l*ECART+((l-1)*rectHeight);
+				System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
+				System.out.println("Y: " + y);
+				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
+				tempRect.setVisible(true);
+				tempRect.setFill(Color.RED);
+				rectList.add(tempRect);
+				rectGroup.getChildren().add(tempRect);
+			}
+		}
+		System.out.println("----------DONE----------");
+		/*Première ligne
+        Rectangle rectVac = new Rectangle(ECART,ECART,rectWidth,rectHeight);
+        Rectangle rectMountain = new Rectangle(2*ECART+rectWidth,ECART,rectWidth,rectHeight);
+        Rectangle rectBeach = new Rectangle(3*ECART+2*rectWidth,ECART,rectWidth,rectHeight);
+        */
+    	/*Deuxième ligne
+        Rectangle rectHouse = new Rectangle(ECART,2*ECART+rectHeight,rectWidth,rectHeight);
+        Rectangle rectPeople = new Rectangle(2*ECART+rectWidth,2*ECART+rectHeight,rectWidth,rectHeight);
+        Rectangle rectCar = new Rectangle(3*ECART+2*rectWidth,2*ECART+rectHeight,rectWidth,rectHeight);
+        */        
+		
 		scene.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
@@ -529,14 +576,54 @@ public class ApplicationInterface extends JFrame {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    for (File file:db.getFiles()) {
-                    	new Doc(file);
-                    }
+                    for (int i = 0; i < rectList.size(); i++) {
+                    	Rectangle rectCurr = rectList.get(i);
+                    	if(rectCurr.contains(event.getSceneX(), event.getSceneY())){
+                    		left = (int)event.getSceneX();
+	                        top = (int)event.getSceneY();
+	                        /*left = (int)rectCurr.getX();
+	                        top = (int)rectCurr.getY();*/
+		                    for (File file:db.getFiles()) {
+		                    	new Doc(file);
+		                    }
+                    	}
+					}
                 }
                 event.setDropCompleted(success);
                 event.consume();
             }
         });
+        
+        
+        scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				// TODO Auto-generated method stub
+				System.out.println("----------RELEASE----------");
+                event.consume();
+			}
+        	
+		});
+        
+        /*scene.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, new EventHandler<MouseDragEvent>() {
+			    @Override
+			    public void handle(MouseDragEvent mouseEvent) {
+			    	System.out.println("----------DRAG OVER----------");
+			    	mouseEvent.consume();
+			    }
+        	}
+        );
+        
+        scene.setOnMouseDragReleased(new EventHandler<MouseDragEvent>() {
+			@Override
+			public void handle(MouseDragEvent event) {
+				// TODO Auto-generated method stub
+				System.out.println("----------DRAG OVER----------");
+                event.consume();
+			}
+        	
+		});*/
+        
 		for (int i = 0; i < 30; i++) {
 			   Circle circle = new Circle(150, Color.web("white", 0.05));
 			   circle.setStrokeType(StrokeType.OUTSIDE);
@@ -564,6 +651,7 @@ public class ApplicationInterface extends JFrame {
 		colors.setBlendMode(BlendMode.OVERLAY);
 		
 		dropArea.getChildren().add(blendModeGroup);
+		dropArea.getChildren().add(rectGroup);
 		pane.getChildren().add(dropArea);
 		Bounds bounds = dropArea.getBoundsInLocal();
 		if(swingNode == null){
