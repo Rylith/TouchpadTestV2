@@ -81,6 +81,8 @@ import javafx.scene.control.SelectionMode;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ImageObserver;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -108,7 +110,7 @@ public class ApplicationInterface extends JFrame {
 	private static final double ECART = 50;
 	private static final int NB_DIVISION=(COL*LIGNE);
 	private static final double PERCENT_X_FRAME_SIZE=0.5;
-	private static final double PERCENT_Y_FRAME_SIZE=0.3;
+	private static final double PERCENT_Y_FRAME_SIZE=0.5;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
     private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
@@ -166,6 +168,7 @@ public class ApplicationInterface extends JFrame {
             Rectangle rect = rectList.get(index);
             int x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
             int y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
+            Image pic;
             try {
                 //BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 
@@ -173,7 +176,7 @@ public class ApplicationInterface extends JFrame {
                 //System.out.println(URLDecoder.decode(url.getFile(), "UTF-8"));
                 ImageInputStream iis = ImageIO.createImageInputStream(is);
                 image = ImageIO.read(iis);
-                Image pic = image.getScaledInstance(x_size, y_size, Image.SCALE_DEFAULT);
+                pic = Scalr.resize(image, x_size, y_size,(BufferedImageOp)null);
                 im = new ImagePanel(pic);
                 is.close();
             } catch (Exception e) {
@@ -191,10 +194,10 @@ public class ApplicationInterface extends JFrame {
             if (DEMO) {
                 frame.setSize(300, 200);
             } else {
-                frame.setSize(x_size, y_size);
+            	setInternalFrameSize(pic, frame);
             }
             
-            frame.setLocation(left-(x_size/2), top-(y_size/2));
+            frame.setLocation(left-(frame.getWidth()/2), top-(frame.getHeight()/2));
             frame.setBorder(null);
             bi.setNorthPane(null);
             frame.show();
@@ -352,9 +355,10 @@ public class ApplicationInterface extends JFrame {
                         		int x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
                                 int y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
                                 doc.frame.remove(doc.im);
-                                doc.im = new ImagePanel(doc.image.getScaledInstance(x_size, y_size, Image.SCALE_DEFAULT));
+                                Image pic = Scalr.resize(doc.image, x_size, y_size,(BufferedImageOp)null);
+                                doc.im = new ImagePanel(pic);
                                 doc.frame.add(doc.im);
-                        		doc.frame.setSize(x_size, y_size);
+                        		setInternalFrameSize(pic, doc.frame);
                         		doc.frame.setLocation((int)(rect.getX()+rect.getWidth()*doc.getPercentX()), (int) (rect.getY()+rect.getHeight()*doc.getPercentY()));
                         	}
                         }
@@ -723,5 +727,19 @@ public class ApplicationInterface extends JFrame {
 	
 	public static List<TitledPane> getListTitles(){
 		return listTitle;
+	}
+	
+	private void setInternalFrameSize(Image image,final JInternalFrame frame){
+		ImageObserver observer = new ImageObserver() {
+			
+			@Override
+			public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+				frame.setSize(width,height);
+				int somme = ImageObserver.WIDTH | ImageObserver.HEIGHT;
+				return !((infoflags & somme) == somme) ;
+			}
+		};
+        frame.setSize(image.getWidth(observer), image.getHeight(observer));
+		
 	}
 }
