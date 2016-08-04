@@ -109,8 +109,8 @@ public class ApplicationInterface extends JFrame {
     private static final int LIGNE = 2;
 	private static final double ECART = 50;
 	private static final int NB_DIVISION=(COL*LIGNE);
-	private static final double PERCENT_X_FRAME_SIZE=0.5;
-	private static final double PERCENT_Y_FRAME_SIZE=0.5;
+	private static final double PERCENT_X_FRAME_SIZE=0.75;
+	private static final double PERCENT_Y_FRAME_SIZE=0.75;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
     private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
@@ -188,7 +188,6 @@ public class ApplicationInterface extends JFrame {
             DragListener drag = new DragListener(this,rectList);
             frame.addMouseMotionListener(drag);
             frame.addMouseListener(drag);
-            
             frame.getContentPane().add(im);
             dp.add(frame);
             if (DEMO) {
@@ -344,7 +343,9 @@ public class ApplicationInterface extends JFrame {
                         ChangeListener<Doc> chListener = new ChangeListener<Doc>(){
             				@Override
             				public void changed(ObservableValue<? extends Doc> observable, Doc oldValue, Doc newValue) {
-            					newValue.select();
+            					if(newValue != null){
+            						newValue.select();
+            					}
             				}
                     	};
                         for(ListView<Doc> lis : listViews){
