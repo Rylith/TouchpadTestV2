@@ -68,6 +68,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle; 
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import network.Interface.Engine;
 import javafx.scene.paint.Color;
@@ -104,8 +107,8 @@ public class ApplicationInterface extends JFrame {
 
 	private static boolean DEMO = false;
 	
-	private ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
-	private ArrayList<Point> RectPoint = new ArrayList<Point>();
+	private List<Rectangle> rectList = new ArrayList<Rectangle>();
+	private List<Point> rectPoint = new ArrayList<Point>();
     private static final int COL = 3;
     private static final int LIGNE = 2;
 	private static final double ECART = 50;
@@ -127,7 +130,7 @@ public class ApplicationInterface extends JFrame {
     private JToolBar toolBar;
 	private static JMenuBar men;
     
-    
+    private String[] menuNames = new String[]{"Vacances","Montagnes","Plages","Fleurs","Planetes","Divers"};
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
@@ -612,13 +615,24 @@ public class ApplicationInterface extends JFrame {
 				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
 				//tempRect.setFill(Color.RED);
+				//Define the aspect of rectangle
 				tempRect.setFill(Color.TRANSPARENT);
 				tempRect.setStroke(Color.WHITE);
 				tempRect.setArcHeight(15);
 		        tempRect.setArcWidth(15);
 				tempRect.setStrokeWidth(5);
+				
+				//Define the label for the rectangle
+				Text text = new Text(menuNames[index-1]);
+				text.setFill(Color.AZURE);
+				text.setFont(Font.font(null, FontWeight.BOLD, 14));
+				double textWidth = text.getLayoutBounds().getWidth();
+				text.setX(x+rectWidth/2-textWidth/2);
+				text.setY(y-ECART/3);
+				
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
+				rectGroup.getChildren().add(text);
 			}
 		}
 		final Color shadowColor = Color.WHITE.deriveColor(1, 1, 1, 1); 
