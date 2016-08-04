@@ -3,7 +3,7 @@ package gui;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.MouseInputAdapter;
 
@@ -17,13 +17,13 @@ public class DragListener extends MouseInputAdapter {
 	Point begin;
     MouseEvent pressed;
 	private Doc doc;
-    ArrayList<Rectangle> rectList;
+    List<Rectangle> rectList;
     private boolean change;
  
-    public DragListener(Doc doc,ArrayList<Rectangle> list) {
+    public DragListener(Doc doc,List<Rectangle> rectList2) {
 		super();
 		this.doc=doc;
-		rectList = list;
+		rectList = rectList2;
 	}
 
 	@Override
@@ -59,15 +59,19 @@ public class DragListener extends MouseInputAdapter {
 		        			fme.getComponent().setLocation(location.x + fme.getX()-pressed.getX(),location.y + fme.getY()- pressed.getY());
 		        			location = fme.getComponent().getLocation(location);
 		        		}
+		        		doc.setPercent();
 					}
         		});
         	}
 		}
-        if(!change)me.getComponent().setLocation(begin);
+        if(!change){
+        	me.getComponent().setLocation(begin);
+        }
         this.doc.setPercent();
         
     }
     
+    @Override
     public void mouseDragged(MouseEvent me)
     {
         Component component = me.getComponent();

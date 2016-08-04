@@ -68,6 +68,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle; 
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 import network.Interface.Engine;
 import javafx.scene.paint.Color;
@@ -104,14 +107,17 @@ public class ApplicationInterface extends JFrame {
 
 	private static boolean DEMO = false;
 	
-	private ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
-	private ArrayList<Point> RectPoint = new ArrayList<Point>();
+	private List<Rectangle> rectList = new ArrayList<Rectangle>();
+	private List<Point> rectPoint = new ArrayList<Point>();
     private static final int COL = 3;
     private static final int LIGNE = 2;
 	private static final double ECART = 50;
 	private static final int NB_DIVISION=(COL*LIGNE);
 	private static final double PERCENT_X_FRAME_SIZE=0.75;
 	private static final double PERCENT_Y_FRAME_SIZE=0.75;
+	
+	//Coef: when the width = 800, font-size = 14
+	private static final double COEF_FONT_SIZE = 0.0175;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
     private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
@@ -127,7 +133,7 @@ public class ApplicationInterface extends JFrame {
     private JToolBar toolBar;
 	private static JMenuBar men;
     
-    
+    private String[] menuNames = new String[]{"Vacances","Montagnes","Plages","Fleurs","Planetes","Divers"};
   
     public class Doc extends InternalFrameAdapter implements ActionListener {
         String name;
@@ -209,7 +215,7 @@ public class ApplicationInterface extends JFrame {
         }
  
         public void positon(int index){
-        	this.frame.setLocation(RectPoint.get(index).x, RectPoint.get(index).y);
+        	this.frame.setLocation(rectPoint.get(index).x, rectPoint.get(index).y);
             incr(index,this.frame.getWidth(),this.frame.getHeight());
         }
         
@@ -316,11 +322,11 @@ public class ApplicationInterface extends JFrame {
     };
  
     private void incr(int i, int width, int height) {
-    	int vx = RectPoint.get(i).x + width/10;
+    	int vx = rectPoint.get(i).x + width/10;
     	if (rectList.get(i).getX() + rectList.get(i).getWidth() > vx + width){
-    		RectPoint.set(i, new Point(vx,RectPoint.get(i).y));
+    		rectPoint.set(i, new Point(vx,rectPoint.get(i).y));
     	} else {
-    		RectPoint.set(i, new Point((int)rectList.get(i).getX(),RectPoint.get(i).y + 20));
+    		rectPoint.set(i, new Point((int)rectList.get(i).getX(),rectPoint.get(i).y + 20));
     	}
     }
  
@@ -602,12 +608,12 @@ public class ApplicationInterface extends JFrame {
 		int index = 0;
 		
 		rectList.clear();
-		RectPoint.clear();
+		rectPoint.clear();
 		for (int l= 1; l <= LIGNE; l++) {
 			for (int c = 1; c <= COL; c++){
 				x = c*ECART+((c-1)*rectWidth);
 				y = l*ECART+((l-1)*rectHeight);
-				RectPoint.add(new Point((int)x,(int)y));
+				rectPoint.add(new Point((int)x,(int)y));
 				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
 				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
@@ -616,8 +622,18 @@ public class ApplicationInterface extends JFrame {
 				tempRect.setArcHeight(15);
 		        tempRect.setArcWidth(15);
 				tempRect.setStrokeWidth(5);
+				
+				//Define the label for the rectangle
+				Text text = new Text(menuNames[index-1]);
+				text.setFill(Color.AZURE);
+				text.setFont(Font.font(null, FontWeight.BOLD, getWidth()*COEF_FONT_SIZE));
+				double textWidth = text.getLayoutBounds().getWidth();
+				text.setX(x+rectWidth/2-textWidth/2);
+				text.setY(y-ECART/3);
+				
 				rectList.add(tempRect);
 				rectGroup.getChildren().add(tempRect);
+				rectGroup.getChildren().add(text);
 			}
 		}
 		final Color shadowColor = Color.WHITE.deriveColor(1, 1, 1, 1); 
