@@ -53,10 +53,11 @@ public class DragListener extends MouseInputAdapter {
 			                ApplicationInterface.getListView().get(doc.index).getItems().add(doc);
 			                ApplicationInterface.getListView().get(doc.index).getSelectionModel().select(doc);
 			                ApplicationInterface.getListTitles().get(doc.index).setExpanded(true);
+			                doc.positon(doc.index);
 		        		}
 		        		else {
-		        			location = fme.getComponent().getLocation(location);
 		        			fme.getComponent().setLocation(location.x + fme.getX()-pressed.getX(),location.y + fme.getY()- pressed.getY());
+		        			location = fme.getComponent().getLocation(location);
 		        		}
 					}
         		});

@@ -197,7 +197,7 @@ public class ApplicationInterface extends JFrame {
             	setInternalFrameSize(pic, frame);
             }
             
-            frame.setLocation(left-(frame.getWidth()/2), top-(frame.getHeight()/2));
+            this.positon(index);
             frame.setBorder(null);
             bi.setNorthPane(null);
             frame.show();
@@ -206,9 +206,13 @@ public class ApplicationInterface extends JFrame {
                     select();
                 }
             });
-            //incr();
         }
  
+        public void positon(int index){
+        	this.frame.setLocation(RectPoint.get(index).x, RectPoint.get(index).y);
+            incr(index,this.frame.getWidth(),this.frame.getHeight());
+        }
+        
         public void internalFrameClosing(InternalFrameEvent event) {
         	listViews.get(index).getItems().remove(this);
         }
@@ -311,8 +315,13 @@ public class ApplicationInterface extends JFrame {
         }
     };
  
-    private void incr(int i) {
-    	//RectPoint.get(i).x
+    private void incr(int i, int width, int height) {
+    	int vx = RectPoint.get(i).x + width/10;
+    	if (rectList.get(i).getX() + rectList.get(i).getWidth() > vx + width){
+    		RectPoint.set(i, new Point(vx,RectPoint.get(i).y));
+    	} else {
+    		RectPoint.set(i, new Point((int)rectList.get(i).getX(),RectPoint.get(i).y + 20));
+    	}
     }
  
     public ApplicationInterface() {
@@ -585,33 +594,23 @@ public class ApplicationInterface extends JFrame {
 		    }
 		});		
 		
-        /*Experimenting with rectangles*/
-		/*100+250*/
 		Group rectGroup = new Group();
 		double rectWidth = (int)(width-(ECART+COL*ECART))/COL;
-		//System.out.println("LONGUEUR: " + rectWidth);
 		double rectHeight = (int)(height-(ECART+LIGNE*ECART))/LIGNE;
-		//System.out.println("HAUTEUR: " + rectHeight);
 		double x = 0;
 		double y = 0;
 		int index = 0;
 		
 		rectList.clear();
+		RectPoint.clear();
 		for (int l= 1; l <= LIGNE; l++) {
-			//System.out.println("COLONNE: " + c);
 			for (int c = 1; c <= COL; c++){
-				//System.out.println("LIGNE: " + l);
-				//x y
 				x = c*ECART+((c-1)*rectWidth);
-				//System.out.println("CALCUL DE X: " + c +" * ECART + " + "(("+c+"-1) * rectWidth)");
-				//System.out.println("X: " + x);
 				y = l*ECART+((l-1)*rectHeight);
-				//System.out.println("CALCUL DE Y: " + l +" * ECART + ((" + l +"-1)*rectHeight)");
-				//System.out.println("Y: " + y);
+				RectPoint.add(new Point((int)x,(int)y));
 				Rectangle tempRect = new Rectangle(x,y,rectWidth,rectHeight);
 				tempRect.setId(Integer.toString(index++));
 				tempRect.setVisible(true);
-				//tempRect.setFill(Color.RED);
 				tempRect.setFill(Color.TRANSPARENT);
 				tempRect.setStroke(Color.WHITE);
 				tempRect.setArcHeight(15);
