@@ -103,6 +103,7 @@ public class ApplicationInterface extends JFrame {
 	private static boolean DEMO = false;
 	
 	private ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
+	private ArrayList<Point> RectPoint = new ArrayList<Point>();
     private static final int COL = 3;
     private static final int LIGNE = 2;
 	private static final double ECART = 50;
@@ -308,12 +309,8 @@ public class ApplicationInterface extends JFrame {
         }
     };
  
-    private void incr() {
-        left += 30;
-        top += 30;
-        if (top == 150) {
-            top = 0;
-        }
+    private void incr(int i) {
+    	RectPoint.get(i).x
     }
  
     public ApplicationInterface() {
