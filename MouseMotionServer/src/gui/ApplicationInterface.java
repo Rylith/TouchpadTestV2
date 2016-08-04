@@ -333,8 +333,6 @@ public class ApplicationInterface extends JFrame {
     public ApplicationInterface() {
         super("Pictures Sort");
         setJMenuBar(createDummyMenuBar());
-        toolBar = createDummyToolBar();
-        getContentPane().add(toolBar, BorderLayout.NORTH);
         
         final JFXPanel fxPanelDrop = new JFXPanel();
         final JFXPanel fxPanelList = new JFXPanel();
