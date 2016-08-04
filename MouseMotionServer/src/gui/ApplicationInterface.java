@@ -116,6 +116,9 @@ public class ApplicationInterface extends JFrame {
 	private static final double PERCENT_X_FRAME_SIZE=0.75;
 	private static final double PERCENT_Y_FRAME_SIZE=0.75;
 	
+	//Coef: when the width = 800, font-size = 14
+	private static final double COEF_FONT_SIZE = 0.0175;
+	
     private static JDesktopPane dp = new TransparentDesktopPane();
     private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
     private static List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
@@ -625,7 +628,7 @@ public class ApplicationInterface extends JFrame {
 				//Define the label for the rectangle
 				Text text = new Text(menuNames[index-1]);
 				text.setFill(Color.AZURE);
-				text.setFont(Font.font(null, FontWeight.BOLD, 14));
+				text.setFont(Font.font(null, FontWeight.BOLD, getWidth()*COEF_FONT_SIZE));
 				double textWidth = text.getLayoutBounds().getWidth();
 				text.setX(x+rectWidth/2-textWidth/2);
 				text.setY(y-ECART/3);
