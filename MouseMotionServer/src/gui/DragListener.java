@@ -35,6 +35,8 @@ public class DragListener extends MouseInputAdapter {
  
     @Override
     public void mouseReleased(MouseEvent me){
+    	Component component = me.getComponent();
+    	location = component.getLocation(location);
     	int x = location.x + me.getX();
         int y = location.y + me.getY();
         change = false;
@@ -57,7 +59,6 @@ public class DragListener extends MouseInputAdapter {
 		        		}
 		        		else {
 		        			fme.getComponent().setLocation(location.x + fme.getX()-pressed.getX(),location.y + fme.getY()- pressed.getY());
-		        			location = fme.getComponent().getLocation(location);
 		        		}
 		        		doc.setPercent();
 					}

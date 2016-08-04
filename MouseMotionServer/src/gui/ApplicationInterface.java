@@ -581,13 +581,13 @@ public class ApplicationInterface extends JFrame {
 						dispose();
 						setUndecorated(true);
 						setJMenuBar(null);
-						remove(toolBar);
+						//remove(toolBar);
 						setVisible(true);
 					}else{
 						setSize(800, 600);
 						dispose();
 						setJMenuBar(men);
-						getContentPane().add(toolBar, BorderLayout.NORTH);
+						//getContentPane().add(toolBar, BorderLayout.NORTH);
 						setUndecorated(false);
 						setLocationRelativeTo(null);
 						setVisible(true);
