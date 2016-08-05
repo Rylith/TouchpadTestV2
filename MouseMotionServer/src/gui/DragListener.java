@@ -13,11 +13,11 @@ import javafx.scene.shape.Rectangle;
 
 public class DragListener extends MouseInputAdapter {
 	
-	Point location;
-	Point begin;
-    MouseEvent pressed;
+	private Point location;
+	private Point begin;
+    private MouseEvent pressed;
 	private Doc doc;
-    List<Rectangle> rectList;
+    private List<Rectangle> rectList;
     private boolean change;
  
     public DragListener(Doc doc,List<Rectangle> rectList2) {

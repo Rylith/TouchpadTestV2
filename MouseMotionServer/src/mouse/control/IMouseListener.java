@@ -136,6 +136,10 @@ public abstract class IMouseListener {
 	public void doubleClick() {
 		//click();
 		//click();
+		float rand =0.9f+(new Random().nextFloat()/10.0f);
+		channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
+    	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+    	
 		if(mouse.isPressed()){
 			mouse.release();
 		}else{
