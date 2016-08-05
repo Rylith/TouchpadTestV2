@@ -575,7 +575,7 @@ public class ApplicationInterface extends JFrame {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
 		    	if(mouseEvent.getClickCount() >=2 ){
-		    		System.out.println("double clicked");
+		    		//System.out.println("double clicked");
 					if(getJMenuBar() != null){
 						setExtendedState(JFrame.MAXIMIZED_BOTH); 
 						dispose();
