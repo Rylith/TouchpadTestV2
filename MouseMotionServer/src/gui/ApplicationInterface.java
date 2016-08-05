@@ -122,15 +122,15 @@ public class ApplicationInterface extends JFrame {
     private static JDesktopPane dp = new TransparentDesktopPane();
     private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
     private static List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
-    private static int left=0;
-    private static int top;
+    //private static int left=0;
+    //private static int top;
 
     private JCheckBoxMenuItem copyItem;
     private JCheckBoxMenuItem nullItem;
     private JCheckBoxMenuItem thItem;
     private static Engine engine;
     private Timeline timeline;
-    private JToolBar toolBar;
+    //private JToolBar toolBar;
 	private static JMenuBar men;
     
     private String[] menuNames = new String[]{"Vacances","Montagnes","Plages","Fleurs","Planetes","Divers"};
@@ -429,7 +429,8 @@ public class ApplicationInterface extends JFrame {
         test.setLocationRelativeTo(null);
         test.setVisible(true);
     }
-     
+    
+    /*
     private JToolBar createDummyToolBar() {
         JToolBar tb = new JToolBar();
         JButton b;
@@ -450,7 +451,7 @@ public class ApplicationInterface extends JFrame {
         tb.add(b);
         tb.setFloatable(false);
         return tb;
-    }
+    }*/
      
     private JMenuBar createDummyMenuBar() {
         JMenuBar mb = new JMenuBar();
@@ -661,8 +662,8 @@ public class ApplicationInterface extends JFrame {
                     for (int i = 0; i < rectList.size(); i++) {
                     	Rectangle rectCurr = rectList.get(i);
                     	if(rectCurr.contains(event.getSceneX(), event.getSceneY())){
-                    		left = (int)event.getSceneX();
-	                        top = (int)event.getSceneY();
+                    		//left = (int)event.getSceneX();
+	                        //top = (int)event.getSceneY();
 	                        /*left = (int)rectCurr.getX();
 	                        top = (int)rectCurr.getY();*/
 		                    for (File file:db.getFiles()) {
