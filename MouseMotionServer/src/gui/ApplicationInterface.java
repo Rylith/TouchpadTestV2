@@ -338,12 +338,17 @@ public class ApplicationInterface extends JFrame {
         final JFXPanel fxPanelList = new JFXPanel();
         final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fxPanelList, dp);
         dp.addComponentListener(new ComponentAdapter() {
-        	public void componentResized(ComponentEvent e) {
+        	private boolean first=true;
+
+			public void componentResized(ComponentEvent e) {
         		
         		JDesktopPane desktop = (JDesktopPane) e.getComponent();
         		fxPanelDrop.setSize(desktop.getWidth(), desktop.getHeight());
         		fxPanelList.setSize((getWidth()-(desktop.getWidth())),desktop.getHeight());
-        		sp.setDividerLocation(0.25f);
+        		if(first){
+        			sp.setDividerLocation(0.25f);
+        			first=false;
+        		}
         		Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
