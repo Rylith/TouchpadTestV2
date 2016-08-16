@@ -93,8 +93,8 @@ public class MouseListenerV3 extends IMouseListener {
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
 			}
-			dist_x= /*(int) distanceX*/0;
-			dist_y= /*(int) distanceY*/0;
+			dist_x= Math.round(distanceX)/*0*/;
+			dist_y= Math.round(distanceY)/*0*/;
 		}
 
 		if (future == null || future.isDone()){
