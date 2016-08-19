@@ -473,7 +473,7 @@ public class ApplicationInterface extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						new GraphicalInterface(engine).createAndShowGUI();
+						new OptionsInterface(engine).createAndShowGUI();
 					}
 				});
 			}

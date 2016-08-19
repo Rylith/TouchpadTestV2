@@ -35,13 +35,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class GraphicalInterface extends JFrame{
+public class OptionsInterface extends JFrame{
 	
 	private static final long serialVersionUID = -9002852749853545258L;
 	private static final String prefixPercentScreen = "Taille marge bord: ";
 	private static final String prefixTimerAFF = "Temps pour changer de mode: ";
 	private static final String prefixTimerMovement = "Temps entre deux déplacements (V2 et V3):  ";
-	private static final String prefixDivisionCoef = "Coefficient gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
+	private static final String prefixDivisionCoef = "Coefficient diviseur de l'angle gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
@@ -56,12 +56,12 @@ public class GraphicalInterface extends JFrame{
 	private static final String v4="Gestion déplacement mapping";
 	private Engine engine;
 	
-	public GraphicalInterface(){
+	public OptionsInterface(){
 		init();
 		//createAndShowGUI();
 	}
 	
-	public GraphicalInterface(Engine e){
+	public OptionsInterface(Engine e){
 		this.engine=e;
 		init();
 		//createAndShowGUI();
@@ -78,7 +78,7 @@ public class GraphicalInterface extends JFrame{
 	    this.setTitle("Réglage des paramètres");
 	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
-	    //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public static JTextArea getText() {

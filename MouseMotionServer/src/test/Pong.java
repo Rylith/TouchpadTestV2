@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.swing.SwingUtilities;
 
 import gui.Log;
+import gui.OptionsInterface;
 import gui.ApplicationInterface;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
@@ -35,10 +36,10 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					//GraphicalInterface graph = new GraphicalInterface(pong);
-					//graph.createAndShowGUI();
-					ApplicationInterface.createAndShowGUI(args);
-					ApplicationInterface.setEngine(pong);
+					new OptionsInterface(pong).createAndShowGUI();
+					//TODO: Choisir l'interface de test ou non
+					/*ApplicationInterface.createAndShowGUI(args);
+					ApplicationInterface.setEngine(pong);*/
 					//GraphicalInterface.showOnScreen(0, graph);
 				}
 			});
