@@ -14,6 +14,8 @@ import java.nio.channels.SelectionKey;
 import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -55,6 +57,7 @@ public class OptionsInterface extends JFrame{
 	private static final String v3="Blocage avant";
 	private static final String v4="Gestion déplacement mapping";
 	private Engine engine;
+	private boolean killProgramOnClose=false;
 	
 	public OptionsInterface(){
 		init();
@@ -62,9 +65,14 @@ public class OptionsInterface extends JFrame{
 	}
 	
 	public OptionsInterface(Engine e){
+		this(e,false);
+		//createAndShowGUI();
+	}
+	
+	public OptionsInterface(Engine e, boolean killProgramOnClose){
+		this.killProgramOnClose=killProgramOnClose;
 		this.engine=e;
 		init();
-		//createAndShowGUI();
 	}
 	
 	private void init(){
@@ -78,7 +86,12 @@ public class OptionsInterface extends JFrame{
 	    this.setTitle("Réglage des paramètres");
 	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    Toolkit kit = Toolkit.getDefaultToolkit();
+        Image img = kit.createImage("Evolution Cursor.png");
+		this.setIconImage(img);
+	    if(killProgramOnClose){
+	    	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    }
 	}
 
 	public static JTextArea getText() {

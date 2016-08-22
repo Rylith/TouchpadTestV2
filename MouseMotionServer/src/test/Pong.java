@@ -12,13 +12,20 @@ import network.Impl.OwnEngine;
 import network.Interface.Engine;
 
 public class Pong{
-
+	
+	private static final String TEST="--test";
+	private static final String OPTIONS="--options";
+	
 	public static void main(final String[] args) {
 		try {
 			int portInitial=4444;
 			//Il est possible de changer le port de départ
 			if(args !=null && args.length != 0){
-				portInitial = Integer.parseInt(args[0]);
+				for(String arg : args){
+					if(isNumeric(arg)){
+						portInitial = Integer.parseInt(arg);
+					}
+				}
 			}
 			int port = portInitial;
 			
@@ -32,20 +39,40 @@ public class Pong{
 			}
 			//pong.startEcho();
 			new Thread((OwnEngine)pong).start();
+			
 			SwingUtilities.invokeLater(new Runnable() {
 				
 				@Override
 				public void run() {
-					new OptionsInterface(pong).createAndShowGUI();
-					//TODO: Choisir l'interface de test ou non
-					/*ApplicationInterface.createAndShowGUI(args);
-					ApplicationInterface.setEngine(pong);*/
-					//GraphicalInterface.showOnScreen(0, graph);
-				}
+					if(args !=null && args.length != 0){
+						for(String arg : args){
+							switch (arg) {
+							case TEST:
+								ApplicationInterface.createAndShowGUI(args);
+								ApplicationInterface.setEngine(pong);
+								break;
+							case OPTIONS:
+								new OptionsInterface(pong,true).createAndShowGUI();
+								break;
+							default:
+								break;
+							}
+							
+						}
+					}else{
+						//Default when arguments are empty
+						new OptionsInterface(pong,true).createAndShowGUI();
+					}
+				}	
+				//GraphicalInterface.showOnScreen(0, graph);
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public static boolean isNumeric(String str)
+	{
+	  return str.matches("\\d+");  //match an unsigned integer.
+	}
 }

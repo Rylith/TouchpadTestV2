@@ -113,7 +113,9 @@ public class ApplicationInterface extends JFrame {
     private static final int LIGNE = 2;
 	private static final double ECART = 50;
 	private static final int NB_DIVISION=(COL*LIGNE);
+	//The maximum size of each picture in x is 75% of rectangle width
 	private static final double PERCENT_X_FRAME_SIZE=0.75;
+	//The maximum size of each picture in y is 75% of rectangle height
 	private static final double PERCENT_Y_FRAME_SIZE=0.75;
 	
 	//Coef: when the width = 800, font-size = 14
