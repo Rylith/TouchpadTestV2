@@ -103,4 +103,9 @@ public class DeliverCallbackTest implements DeliverCallback {
 		listener.setCenter(xC, yC);
 	}
 
+	@Override
+	public void destroy() {
+		listener.destroy();
+	}
+
 }

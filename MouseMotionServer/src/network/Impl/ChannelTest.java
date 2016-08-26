@@ -55,6 +55,7 @@ public class ChannelTest extends Channel {
 	@Override
 	public void close() {
 		try {
+			callback.destroy();
 			m_ch.close();
 		} catch (IOException e) {
 			e.printStackTrace();

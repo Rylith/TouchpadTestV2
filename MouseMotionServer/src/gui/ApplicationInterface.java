@@ -72,6 +72,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+
+import mouse.control.MouseControl;
 import network.Interface.Engine;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -104,7 +106,8 @@ public class ApplicationInterface extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -3733033957725377148L;
-
+	
+	public static List<mouse.control.Cursor> listCursor = new ArrayList<>();
 	private static boolean DEMO = false;
 	
 	private List<Rectangle> rectList = new ArrayList<Rectangle>();
@@ -122,7 +125,7 @@ public class ApplicationInterface extends JFrame {
 	private static final double COEF_FONT_SIZE = 0.0175;
 	
     private static JDesktopPane dp = new TransparentDesktopPane();
-    private static List<TitledPane> listTitle = new ArrayList<TitledPane>();
+    public static List<TitledPane> listTitle = new ArrayList<TitledPane>();
     private static List<ListView<Doc>> listViews = new ArrayList<ListView<Doc>>();
     //private static int left=0;
     //private static int top;
@@ -133,7 +136,7 @@ public class ApplicationInterface extends JFrame {
     private static Engine engine;
     private Timeline timeline;
     //private JToolBar toolBar;
-	private static JMenuBar men;
+	public static JMenuBar men;
     
     private String[] menuNames = new String[]{"Vacances","Montagnes","Plages","Fleurs","Planetes","Divers"};
   
@@ -322,6 +325,8 @@ public class ApplicationInterface extends JFrame {
             return true;
         }
     };
+
+	
  
     private void incr(int i, int width, int height) {
     	int vx = rectPoint.get(i).x + width/10;
@@ -336,8 +341,48 @@ public class ApplicationInterface extends JFrame {
         super("Pictures Sort");
         setJMenuBar(createDummyMenuBar());
         
-        final JFXPanel fxPanelDrop = new JFXPanel();
-        final JFXPanel fxPanelList = new JFXPanel();
+        final JFXPanel fxPanelDrop = (JFXPanel) new JFXPanelWithCustomCursor(dp.getX(), men.getHeight());
+        		
+        		/*new JFXPanel(){
+			private static final long serialVersionUID = -3172632992570296318L;
+
+			public void paint(Graphics g){
+        		super.paint(g);
+        		int yOffset =0;
+        		if(getJMenuBar() != null){
+    				yOffset = men.getHeight();
+    			}
+        		for(mouse.control.Cursor cursor : listCursor ){
+        			if(this.contains(cursor.getPoint().x-dp.getX(),cursor.getPoint().y-yOffset)){
+        				cursor.setScene(this.getScene());
+        				cursor.setComponent(dp);
+        				cursor.setoffsetY(yOffset);
+        				cursor.setOffsetX(dp.getX());
+        				cursor.paint(g);
+        			}
+        		}
+        	}
+        };*/
+        final JFXPanel fxPanelList = (JFXPanel) new JFXPanelWithCustomCursor(0, men.getHeight());/*new JFXPanel(){
+			private static final long serialVersionUID = 997029855889171510L;
+
+			public void paint(Graphics g){
+        		int yOffset =0;
+        		if(getJMenuBar() != null){
+    				yOffset = men.getHeight();
+    			}
+        		for(mouse.control.Cursor cursor : listCursor ){
+        			if(this.contains(cursor.getPoint().x,cursor.getPoint().y-yOffset)){
+        				cursor.setScene(this.getScene());
+        				cursor.setComponent(this);
+        				cursor.setoffsetY(yOffset);
+        				cursor.setOffsetX(this.getX());
+        				cursor.paint(g);
+        			}
+        		}
+        		super.paint(g);
+        	}
+        };*/
         final JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, fxPanelList, dp);
         dp.addComponentListener(new ComponentAdapter() {
         	private boolean first=true;
@@ -385,9 +430,34 @@ public class ApplicationInterface extends JFrame {
         	}	
         });
         dp.add(fxPanelDrop);
-        sp.setDividerLocation(120);
-        getContentPane().add(sp);
        
+       JPanel panel = new JPanel(new BorderLayout()){
+ 
+			private static final long serialVersionUID = 1L;
+
+			public void paint(Graphics g){
+        		super.paint(g);
+        		int yOffset =0;
+        		if(getJMenuBar() != null){
+    				yOffset = men.getHeight();
+    			}
+        		for(mouse.control.Cursor cursor : listCursor ){
+        			if(this.contains(cursor.getPoint().x,cursor.getPoint().y-yOffset)){
+        				cursor.setScene(fxPanelList.getScene());
+        				cursor.setComponent(this);
+        				cursor.setoffsetY(yOffset);
+        				cursor.setOffsetX(this.getX());
+        				cursor.paint(g);
+        			}
+        		}
+        	}
+        };
+        panel.add(sp,BorderLayout.CENTER);
+        initKeyListener(this);
+        initKeyListener(fxPanelList);
+        initKeyListener(fxPanelDrop);
+        sp.setDividerLocation(120);
+        getContentPane().add(panel);
         //final TransferHandler th = list.getTransferHandler();
  
         nullItem.addActionListener(new ActionListener() {
@@ -423,18 +493,36 @@ public class ApplicationInterface extends JFrame {
         } catch (Exception e) {
         }
  
-        ApplicationInterface test = new ApplicationInterface();
+        JFrame test = new ApplicationInterface();
         Toolkit kit = Toolkit.getDefaultToolkit();
         Image img = kit.createImage("watch_2-512.png");
+        hideCursor(test);
 		test.setIconImage(img);
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         if (DEMO) {
             test.setSize(493, 307);
         } else {
-        	test.setSize(800, 600);
+        	Dimension scrDim = Toolkit.getDefaultToolkit().getScreenSize();
+        	test.setPreferredSize(scrDim);
         }
-        test.setLocationRelativeTo(null);
+        //test.setLocationRelativeTo(null);
+        test.setUndecorated(true);
+        test.pack();    // the panel makes itself full-screen size
+        test.setResizable(false);
         test.setVisible(true);
+        MouseControl.setInterface(test);
+        new AddCursorEvent().addCursorEventListener(new AddCursorEventListener() {
+			@Override
+			public void addCursor(mouse.control.Cursor cursor) {
+				ApplicationInterface.listCursor.add(cursor);
+			}
+
+			@Override
+			public void removeCursor(mouse.control.Cursor cursor) {
+				ApplicationInterface.listCursor.remove(cursor);
+				cursor.repaint();
+			}
+		});
     }
     
     /*
@@ -459,9 +547,43 @@ public class ApplicationInterface extends JFrame {
         tb.setFloatable(false);
         return tb;
     }*/
+    
+    private void initKeyListener(Component compo)
+    // define keys for stopping
+    {
+      compo.addKeyListener( new KeyAdapter() {
+         public void keyPressed(KeyEvent e)
+         { 
+           int keyCode = e.getKeyCode();
+           if ((keyCode == KeyEvent.VK_ESCAPE) || (keyCode == KeyEvent.VK_Q) ||
+               ((keyCode == KeyEvent.VK_C) && e.isControlDown()) )
+                  // ESC, q, ctrl-c to stop isRunning 
+             System.exit(0);
+         }
+       });
+    } 
      
     private JMenuBar createDummyMenuBar() {
-        JMenuBar mb = new JMenuBar();
+        JMenuBar mb = new JMenuBar(){
+        	/**
+			 * 
+			 */
+			private static final long serialVersionUID = -4494078917370244445L;
+
+			@Override
+        	public void paint(Graphics g) {
+        		super.paint(g);
+        		for(mouse.control.Cursor cursor : listCursor){
+        			if(this.contains(cursor.getPoint())){
+        				cursor.setComponent(men);
+        				cursor.setoffsetY(0);
+        				cursor.setOffsetX(men.getX());
+        				cursor.paint(g);
+        			}
+        		}
+        	}
+			
+        };
         mb.add(createDummyMenu("File"));
         mb.add(createDummyMenu("Edit"));
         mb.add(createDummyMenu("Search"));
@@ -507,11 +629,45 @@ public class ApplicationInterface extends JFrame {
      
     private JMenu createDummyMenu(String str) {
         JMenu menu = new JMenu(str);
-        JMenuItem item = new JMenuItem("[Empty]");
+        JMenuItem item = new JMenuItem("[Empty]"){
+        	/**
+			 * 
+			 */
+			private static final long serialVersionUID = -2464840758192061079L;
+
+			@Override
+        	public void paint(Graphics g) {
+        		
+        		for(mouse.control.Cursor cursor : listCursor){
+        			Point location = this.getLocationOnScreen();
+        			System.out.println("Sous menu : " + location);
+        			if(location.x<=cursor.getPoint().x && cursor.getPoint().x<=location.x+this.getWidth()){
+        				cursor.setoffsetY(location.y);
+        				cursor.setOffsetX(location.x);
+        				cursor.paint(g);
+        			}
+        		}
+        		super.paint(g);
+        	}
+        	
+        };
         item.setEnabled(false);
         menu.add(item);
         return menu;
     }
+    
+    private static void hideCursor(Container c)
+    {
+      // create a transparent 16 x 16 pixel cursor image
+      BufferedImage cursorIm = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+
+      // create a new blank cursor
+      Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                                      cursorIm, new Point(0, 0), "blank cursor");
+
+      // assign the blank cursor to the JFrame
+      c.setCursor(blankCursor);
+    } 
     
     private void initFX(JFXPanel fxPanel) {
         // This method is invoked on the JavaFX thread
@@ -542,6 +698,7 @@ public class ApplicationInterface extends JFrame {
 			}
 		}
 		Scene scene = new Scene(box, width, height, Color.BLACK);
+		scene.setCursor(javafx.scene.Cursor.NONE);
 		
 		for(Node node : box.getChildren()){
 			if(listTitle.size() >= NB_DIVISION){
@@ -579,6 +736,9 @@ public class ApplicationInterface extends JFrame {
 		Group dropArea = new Group();
 		Group circles = new Group();	
 		Scene scene = new Scene(dropArea, width, height, Color.BLACK);
+	     
+	    scene.setCursor(javafx.scene.Cursor.NONE);
+
 		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {

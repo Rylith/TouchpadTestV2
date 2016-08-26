@@ -9,4 +9,6 @@ public interface DeliverCallback {
    * @param bytes
    */
   public void deliver(Channel channel, byte[] bytes);
+
+  public void destroy();
 }
