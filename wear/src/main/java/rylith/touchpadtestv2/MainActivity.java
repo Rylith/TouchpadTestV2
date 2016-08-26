@@ -237,8 +237,40 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-        if(PositionMode){
+        if(!PositionMode){
 
+            setCoord(ev);
+            //current[0] = ev.getX();
+            //current[1] = ev.getY();
+            switch (MotionEventCompat.getActionMasked(ev)) {
+                case (MotionEvent.ACTION_DOWN):
+                    //origin[0] = ev.getX();
+                    //origin[1] = ev.getY();
+                    origin[0] = current[0];
+                    origin[1] = current[1];
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "DOWN," + current[0] + "," + current[1]);
+                    break;
+                case (MotionEvent.ACTION_MOVE):
+                    float distX = -current[0] + origin[0];
+                    float distY = -current[1] + origin[1];
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
+                    //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
+                    origin[0] = current[0];
+                    origin[1] = current[1];
+                    break;
+                case (MotionEvent.ACTION_UP):
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
+                    //isUp = true;
+                    /*if (vibrator != null) {
+                        vibrator.cancel();
+                    }*/
+                    break;
+                default:
+
+            }
+
+        }
+        else {
             int evX = Math.round(ev.getX());
             int evY = Math.round(ev.getY());
 
@@ -272,38 +304,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             if(!PositionMode){
                 board.drawColor(0, PorterDuff.Mode.CLEAR);
             }
-        }
-        else {
 
-            setCoord(ev);
-            //current[0] = ev.getX();
-            //current[1] = ev.getY();
-            switch (MotionEventCompat.getActionMasked(ev)) {
-                case (MotionEvent.ACTION_DOWN):
-                    //origin[0] = ev.getX();
-                    //origin[1] = ev.getY();
-                    origin[0] = current[0];
-                    origin[1] = current[1];
-                    sendMessage(MainActivity.WEAR_DATA_PATH,"DOWN,"+current[0]+","+current[1]);
-                    break;
-                case (MotionEvent.ACTION_MOVE):
-                    float distX = -current[0] + origin[0];
-                    float distY = -current[1] + origin[1];
-                    sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
-                    //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
-                    origin[0] = current[0];
-                    origin[1] = current[1];
-                    break;
-                case (MotionEvent.ACTION_UP):
-                    sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
-                    //isUp = true;
-                    /*if (vibrator != null) {
-                        vibrator.cancel();
-                    }*/
-                    break;
-                default:
-
-            }
         }
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
