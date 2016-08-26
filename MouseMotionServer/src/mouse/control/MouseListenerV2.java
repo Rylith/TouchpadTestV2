@@ -24,7 +24,7 @@ public class MouseListenerV2 extends IMouseListener{
 					dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
 					lastPointOnstraightLineX+=COEF;
 					lastPointOnstraightLineY=y1;
-					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y);
+					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y,preview);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);
 				} catch (InterruptedException e) {
@@ -58,6 +58,10 @@ public class MouseListenerV2 extends IMouseListener{
 				lastPointOnstraightLineX=x;
 				lastPointOnstraightLineY=y;
 				reglin=true;
+				if(preview){
+					previewEvent.removePreview();
+				}
+				preview=false;
 				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
@@ -90,7 +94,7 @@ public class MouseListenerV2 extends IMouseListener{
 		}
 		prec=current;
 		if (future == null || future.isDone()){
-			mouse.motion(dist_x, dist_y);
+			mouse.motion(dist_x, dist_y,preview);
 		}
 		return intensity;
 	}

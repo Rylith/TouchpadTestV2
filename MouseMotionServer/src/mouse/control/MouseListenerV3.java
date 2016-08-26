@@ -24,6 +24,7 @@ public class MouseListenerV3 extends IMouseListener {
         	key.selector().wakeup();
             origin = current;
             borderMode = true;
+            preview=true;
             if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
 			}
@@ -51,7 +52,7 @@ public class MouseListenerV3 extends IMouseListener {
 				lastPointOnstraightLineY=y1;
 				//channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
 				//key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-				mouse.motion(dist_x,dist_y);
+				mouse.motion(dist_x,dist_y,preview);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);
 				} catch (InterruptedException e) {
@@ -86,6 +87,10 @@ public class MouseListenerV3 extends IMouseListener {
 			lastPointOnstraightLineX=x;
 			lastPointOnstraightLineY=y;
 			borderMode=false;
+			if(preview){
+				previewEvent.removePreview();
+			}
+			preview=false;
 			reglin=true;
 		}else if(borderMode){
 			//Nothing to do, ignore the movement on screen
@@ -98,7 +103,7 @@ public class MouseListenerV3 extends IMouseListener {
 		}
 
 		if (future == null || future.isDone()){
-			mouse.motion(dist_x, dist_y);
+			mouse.motion(dist_x, dist_y,preview);
 		}
 		return intensity;
 	}

@@ -16,7 +16,9 @@ import network.Interface.Channel;
 
 public abstract class IMouseListener {
 	
-	protected MouseControl mouse = new MouseControl();
+	protected static PreviewEvent previewEvent = new PreviewEvent();
+	protected MouseControl mouse = new MouseControl(previewEvent);
+	
 	protected Point center,origin;
 	protected Point current;
 	protected Point prec;
@@ -50,12 +52,13 @@ public abstract class IMouseListener {
         	key.selector().wakeup();
             origin = current;
             borderMode = true;
+            preview = true;
             //Log.println("changement de mode: "+borderMode);
         }
     };
     
     protected ScheduledFuture<?> timerExitBorderMode;
-    protected static long TIMER_EXIT_MODE = 50;
+    protected static long TIMER_EXIT_MODE = 75;
     protected TimerTask exitBorderMode = new TimerTask() {
         @Override
         public void run() {
@@ -69,6 +72,7 @@ public abstract class IMouseListener {
     };
     
     protected boolean borderMode=false;
+    protected boolean preview=false;
     protected boolean reglin=false;
     
     protected float lastPointOnstraightLineX;
@@ -139,12 +143,16 @@ public abstract class IMouseListener {
 		float rand =0.9f+(new Random().nextFloat()/10.0f);
 		channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
     	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-    	
+    	if(preview){
+    		previewEvent.removePreview();
+    		mouse.goLastPoint();
+    		preview=false;
+    	}/*
 		if(mouse.isPressed()){
 			mouse.release();
 		}else{
 			press();
-		}
+		}*/
 	}
 
 	protected void signDetermination(){

@@ -12,8 +12,10 @@ import network.Impl.Util;
 public class MouseControl {
 	
 	private Robot mouse;
+	private Point lastPoint = new Point();
 	private boolean pressed=false;
 	private static int COEF = 2;
+	private static PreviewEvent previewEvent;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1; 
 	
@@ -24,13 +26,24 @@ public class MouseControl {
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
+				lastPoint=MouseInfo.getPointerInfo().getLocation();
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
 	}
 	
-	public void motion(int x, int y){
-		Point current_point = MouseInfo.getPointerInfo().getLocation();
+	public MouseControl(PreviewEvent previewEvent){
+		this();
+		MouseControl.previewEvent=previewEvent;
+	}
+	
+	public void motion(int x, int y, boolean preview){
+		Point current_point;
+		if(!preview){
+			current_point = MouseInfo.getPointerInfo().getLocation();
+		}else{
+			current_point=lastPoint;
+		}
 		
 		int dx = x * COEF;
 		int dy = y * COEF;
@@ -53,8 +66,14 @@ public class MouseControl {
 			n_y=(int) (-j + current_point.y);
 			//System.out.println("Subdivision: "+ n_x + ", " + n_y);
 			//System.out.println("i and j: "+i+", "+j);
-			mouse.mouseMove(n_x, n_y);
+			if(!preview){
+				mouse.mouseMove(n_x, n_y);
+			}else{
+				previewEvent.setPreview(n_x, n_y);
+			}
 		}
+		lastPoint.x=n_x;
+		lastPoint.y=n_y;
 		//current_point = MouseInfo.getPointerInfo().getLocation();
 		//System.out.println("Reaching Point: "+current_point.x+", "+current_point.y);
 		
@@ -96,5 +115,9 @@ public class MouseControl {
 
 	public boolean isPressed() {
 		return pressed;
+	}
+
+	public void goLastPoint() {
+		mouse.mouseMove(lastPoint.x, lastPoint.y);
 	}
 }
