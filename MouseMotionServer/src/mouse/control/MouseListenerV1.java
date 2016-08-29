@@ -34,10 +34,7 @@ public class MouseListenerV1 extends IMouseListener{
 				lastPointOnstraightLineX=x;
 				lastPointOnstraightLineY=y;
 				reglin=true;
-				if(preview){
-					previewEvent.removePreview();
-				}
-				preview=false;
+				validPreview();
 				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)

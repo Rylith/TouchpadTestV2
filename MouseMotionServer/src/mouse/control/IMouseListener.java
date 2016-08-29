@@ -143,16 +143,28 @@ public abstract class IMouseListener {
 		float rand =0.9f+(new Random().nextFloat()/10.0f);
 		channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
     	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-    	if(preview){
-    		previewEvent.removePreview();
-    		mouse.goLastPoint();
-    		preview=false;
-    	}/*
+    	unvalidPreview();
+    	/*
 		if(mouse.isPressed()){
 			mouse.release();
 		}else{
 			press();
 		}*/
+	}
+	
+	protected void validPreview(){
+		if(preview){
+    		previewEvent.removePreview();
+    		mouse.goLastPoint();
+    		preview=false;
+    	}
+	}
+	
+	protected void unvalidPreview(){
+		if(preview){
+			previewEvent.removePreview();
+			preview=false;
+		}
 	}
 
 	protected void signDetermination(){

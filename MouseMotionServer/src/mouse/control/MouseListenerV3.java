@@ -87,10 +87,7 @@ public class MouseListenerV3 extends IMouseListener {
 			lastPointOnstraightLineX=x;
 			lastPointOnstraightLineY=y;
 			borderMode=false;
-			if(preview){
-				previewEvent.removePreview();
-			}
-			preview=false;
+			validPreview();
 			reglin=true;
 		}else if(borderMode){
 			//Nothing to do, ignore the movement on screen

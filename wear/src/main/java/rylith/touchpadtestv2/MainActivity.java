@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static Bitmap sheet;
     public static Paint paint;
     public static ImageView image;
+    public static float brightness=-1f;
     //private float downx = 0, downy = 0, upx = 0, upy = 0;
 
     //private static final String START_ACTIVITY ="/start_activity";
@@ -75,7 +76,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private PutDataRequest request;
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
-    private boolean PositionMode = true;//To decide if it needs to ask the user position
+    public static boolean PositionMode = true;//To decide if it needs to ask the user position
     private Rect rectN, rectS,rectE,rectO;
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
     private boolean InversionX=false,InversionY = false;
@@ -119,10 +120,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 mDismissOverlay.showIntroIfNecessary();
 
 
-                sheet = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+                sheet = Bitmap.createBitmap(screenSize.x, screenSize.y, Bitmap.Config.ARGB_8888);
                 board = new Canvas(sheet);
                 paint = new Paint();
-                paint.setColor(Color.RED);
+                //paint.setColor(Color.RED);
                 paint.setStrokeWidth(10);
                 image.setImageBitmap(sheet);
                 initZone();
@@ -244,6 +245,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             //current[1] = ev.getY();
             switch (MotionEventCompat.getActionMasked(ev)) {
                 case (MotionEvent.ACTION_DOWN):
+                    if(brightness != 0.0f){
+                        board.drawColor(0, PorterDuff.Mode.CLEAR);
+                        WindowManager.LayoutParams lp = getWindow().getAttributes();
+                        brightness = 0.0f;
+                        lp.screenBrightness = brightness;
+                        getWindow().setAttributes(lp);
+                    }
                     //origin[0] = ev.getX();
                     //origin[1] = ev.getY();
                     origin[0] = current[0];
@@ -303,9 +311,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
             if(!PositionMode){
                 board.drawColor(0, PorterDuff.Mode.CLEAR);
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                brightness = 0.0f;
+                lp.screenBrightness = brightness;
+                getWindow().setAttributes(lp);
             }
 
         }
+
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
 

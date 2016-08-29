@@ -31,9 +31,7 @@ public class MouseListenerV4 extends IMouseListener {
 				lastPointOnstraightLineX=x;
 				lastPointOnstraightLineY=y;
 				reglin=true;
-				if(preview){
-					previewEvent.removePreview();
-				}
+				validPreview();
 				preview=false;
 				COEF=1;
 			}else{
