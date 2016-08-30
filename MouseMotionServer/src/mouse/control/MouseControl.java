@@ -3,10 +3,10 @@ package mouse.control;
 import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
+
+import javax.swing.JFrame;
 
 import gui.AddCursorEvent;
-import java.awt.Component;
 import java.awt.MouseInfo;
 
 public class MouseControl {
@@ -16,7 +16,7 @@ public class MouseControl {
 	private Cursor cursor=null;
 	private Point lastPoint = new Point();
 	private boolean pressed=false;
-	private static Component frame;
+	private static JFrame frame;
 	private static int COEF = 2;
 
 	private static int id;
@@ -29,13 +29,12 @@ public class MouseControl {
 	
 	//Parameters for the fluidity method
 	private static int testFluidity = 6;
-	private static int multiFluidity =2;
+	private static int multiFluidity = 2;
 	
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
-				
-				if(frame !=null){
+				if(frame != null){
 					this.cursor=initCursor(frame);
 					new AddCursorEvent().fireAddCursor(cursor);
 				}
@@ -46,8 +45,8 @@ public class MouseControl {
 			}
 	}
 	
-	public static void setInterface(Component frame){
-		MouseControl.frame=frame;
+	public static void setInterface(JFrame w){
+		MouseControl.frame=w;
 	}
 	
 	public MouseControl(PreviewEvent previewEvent){
@@ -58,7 +57,8 @@ public class MouseControl {
 	public void motion(int x, int y, boolean preview){
 		Point current_point;
 		if(!preview){
-			current_point = MouseInfo.getPointerInfo().getLocation();
+			//current_point = MouseInfo.getPointerInfo().getLocation();
+			current_point = cursor.getPoint();
 		}else{
 			current_point=lastPoint;
 		}
@@ -87,9 +87,10 @@ public class MouseControl {
 			//System.out.println("Subdivision: "+ n_x + ", " + n_y);
 			//System.out.println("i and j: "+i+", "+j);
 			if(!preview || !enablePreview){
-				mouse.mouseMove(n_x, n_y);
+				//mouse.mouseMove(n_x, n_y);
+				cursor.mouseMove(n_x, n_y);
 			}else{
-				previewEvent.setPreview(n_x, n_y);
+				previewEvent.setPreview(n_x, n_y, cursor);
 			}
 		}
 		lastPoint.x=n_x;
@@ -100,20 +101,14 @@ public class MouseControl {
 	}
 	
 	public void press(){
-		if(cursor!=null){
-			mouse.mouseMove(cursor.getPoint().x, cursor.getPoint().y);
-		}
-		mouse.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-		//cursor.mousePress();
+		//mouse.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+		cursor.mousePress();
 		pressed=true;
 	}
 	
 	public void release(){
-		if(cursor!=null){
-			mouse.mouseMove(cursor.getPoint().x, cursor.getPoint().y);
-		}
-		mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-		//cursor.mouseRelease();
+		//mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+		cursor.mouseRelease();
 		pressed=false;
 	}
 	
@@ -145,7 +140,7 @@ public class MouseControl {
 		return pressed;
 	}
 	
-	private Cursor initCursor(Component frame){
+	private Cursor initCursor(JFrame frame){
 		Cursor cursor =null;
 		/*ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
 	    Controller[] ca = ce.getControllers();
@@ -188,7 +183,12 @@ public class MouseControl {
 
 	public void goLastPoint() {
 		if(enablePreview){
-			mouse.mouseMove(lastPoint.x, lastPoint.y);
+			//mouse.mouseMove(lastPoint.x, lastPoint.y);
+			cursor.mouseMove(lastPoint.x, lastPoint.y);
 		}
+	}
+
+	public Cursor getCursor() {
+		return cursor;
 	}
 }

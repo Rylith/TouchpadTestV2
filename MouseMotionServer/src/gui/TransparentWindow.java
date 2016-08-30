@@ -9,16 +9,21 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 
+import mouse.control.Cursor;
+import mouse.control.MouseControl;
 import mouse.control.PreviewEvent;
 import mouse.control.PreviewEventListener;
 
-public class TransparentWindow implements PreviewEventListener {
+public class TransparentWindow implements PreviewEventListener, AddCursorEventListener {
 
-	private List<Point> pointList = new ArrayList<>();
+	private Map<Cursor,List<Point>> cursorMap = new HashMap<Cursor,List<Point>>();
 	private final int ARR_SIZE = 7;
 	private final int ARROW_LENGHT = 25;
 	private final int POINT_DIAMETER = 16;
@@ -53,38 +58,44 @@ public class TransparentWindow implements PreviewEventListener {
 			public void paint(Graphics g) {
 				this.toFront();
 				super.paint(g);
-				synchronized (pointList) {
-					if(pointList.size()>1){
-						//final Font font = getFont().deriveFont(48f);
-						//g.setFont(font);
-						Graphics2D g2 = (Graphics2D) g;
-						BasicStroke line = new BasicStroke(2.5f);
-						g2.setStroke(line);
-						Point firstPoint = pointList.get(0);
-						Point lastPoint = pointList.get(pointList.size()-1);
-						if(DRAW_LINE){
-							g2.setColor(Color.RED);
-							g2.drawLine(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
-						}
-						if(DRAW_PATH){
-							g2.setColor(Color.BLUE);
-							for(int i=0; i<pointList.size()-1;i++){
-								g2.drawLine(pointList.get(i).x, pointList.get(i).y, pointList.get(i+1).x, pointList.get(i+1).y);
+				List<Point> pointList=null;
+				synchronized (cursorMap) {
+					for(Entry<Cursor, List<Point>> entry : cursorMap.entrySet()){
+						entry.getKey().paint(g);
+						pointList = entry.getValue();
+						synchronized (pointList) {
+							if(pointList.size()>1){
+								//final Font font = getFont().deriveFont(48f);
+								//g.setFont(font);
+								Graphics2D g2 = (Graphics2D) g;
+								BasicStroke line = new BasicStroke(2.5f);
+								g2.setStroke(line);
+								Point firstPoint = pointList.get(0);
+								Point lastPoint = pointList.get(pointList.size()-1);
+								if(DRAW_LINE){
+									g2.setColor(Color.RED);
+									g2.drawLine(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
+								}
+								if(DRAW_PATH){
+									g2.setColor(Color.BLUE);
+									for(int i=0; i<pointList.size()-1;i++){
+										g2.drawLine(pointList.get(i).x, pointList.get(i).y, pointList.get(i+1).x, pointList.get(i+1).y);
+									}
+								}
+								if(DRAW_FINAL_POINT){
+									g2.setColor(Color.DARK_GRAY);
+									g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
+								}
+								if(DRAW_ARROW){
+									g2.setColor(Color.ORANGE);
+									drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+								}
+								
+								if(DRAW_CONE){
+									drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+								}
 							}
 						}
-						if(DRAW_FINAL_POINT){
-							g2.setColor(Color.DARK_GRAY);
-							g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
-						}
-						if(DRAW_ARROW){
-							g2.setColor(Color.ORANGE);
-							drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
-						}
-						
-						if(DRAW_CONE){
-							drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
-						}
-						
 					}
 				}
 			}
@@ -103,6 +114,8 @@ public class TransparentWindow implements PreviewEventListener {
 		w.setBounds(bounds);
 		w.setBackground(new Color(0,true));
 		new PreviewEvent().addPreviewEventListener(this);
+		new AddCursorEvent().addCursorEventListener(this);
+		MouseControl.setInterface(w);
 		w.setVisible(true);
 	}
 	
@@ -143,7 +156,6 @@ public class TransparentWindow implements PreviewEventListener {
 		
 
 	@Override
-	public void drawPreview(int x, int y) {
 		if(!(x>=bounds.x && x<=w.getWidth())){
 			x = pointList.get(pointList.size()-1).x + bounds.x;		
 		}
@@ -157,9 +169,24 @@ public class TransparentWindow implements PreviewEventListener {
 	}
 
 	@Override
-	public void removePreview() {
 		synchronized (pointList) {
 			pointList.clear();
+		}
+		w.repaint();
+	}
+
+	@Override
+	public void addCursor(Cursor cursor) {
+		synchronized (cursorMap) {
+			cursorMap.put(cursor, new ArrayList<Point>());
+		}
+		w.repaint();
+	}
+
+	@Override
+	public void removeCursor(Cursor cursor) {
+		synchronized (cursorMap) {
+			cursorMap.remove(cursor);
 		}
 		w.repaint();
 	}

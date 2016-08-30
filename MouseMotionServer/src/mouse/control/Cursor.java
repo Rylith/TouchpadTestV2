@@ -9,46 +9,34 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.time.Instant;
-import javax.swing.JMenu;
+
+import javax.swing.JFrame;
 
 import javafx.scene.Scene;
 
-public class Cursor extends java.awt.Cursor{
+public class Cursor{
 
 	private Point point;
-	private Component component;
-	private Component originComponent;
+	private JFrame originComponent;
 	//private Scene scene;
 	private Image image;
 	private int ID;
 	public static enum State{IDLE,PRESS};
 	public static enum EventType{PRESS,RELEASE,DRAG,ENTERED,EXIT};
 	private State state = State.IDLE;
-	private int offsetX;
-	private int yOffset =0;
-	private JMenu mComponent;
-	private boolean find=false;
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -417141145656113947L;
 	
-	
-    public void paint(Graphics g){
+	public void paint(Graphics g){
 		Graphics2D g2d = (Graphics2D) g.create();
-		g2d.drawImage(image, point.x-offsetX, point.y-yOffset, null);
-		g2d.finalize();
+		g2d.drawImage(image, point.x, point.y, null);
 	}
 	
-	public Cursor(Component component,int id){
-		super(id);
-		this.originComponent=component;
-		this.component=component;
+	public Cursor(JFrame frame,int id){
+		this.originComponent=frame;
 		this.ID=id;
 		Toolkit kit = Toolkit.getDefaultToolkit();
         image = kit.createImage("Evolution Cursor.png").getScaledInstance(30, 30, Image.SCALE_DEFAULT);
-		int centerComponentX = component.getWidth()/2;
-		int centerComponentY = component.getHeight()/2;
+		int centerComponentX = frame.getWidth()/2;
+		int centerComponentY = frame.getHeight()/2;
 		this.point = new Point(centerComponentX,centerComponentY);
 	}
 	
@@ -57,24 +45,20 @@ public class Cursor extends java.awt.Cursor{
 	}
 	
 	public void setPoint(int x,int y){
-		if(x<=originComponent.getX()+originComponent.getWidth() && x>=0){
-			point.x=x;
+		if(x<=originComponent.getX()+originComponent.getWidth() && x>=originComponent.getX()){
+			point.x=x-originComponent.getX();
 			//System.out.println("point.x="+point.x);
 		}
-		if(y<=originComponent.getY()+originComponent.getHeight() && y>=0){
+		if(y<=originComponent.getY()+originComponent.getHeight() && y>=originComponent.getY()){
 			//System.out.println("point.y="+point.y);
-			point.y=y;
+			point.y=y-originComponent.getY();
 		}
 	}
 	
 	public void setPoint(Point point){
 		this.point=point;
 	}
-	
-	public void setComponent(Component component) {
-		this.component = component;
-	}
-	
+		
 	private void createMouseEvent(EventType eventType,Component component){
 		MouseEvent me =null;
 		switch (eventType) {
@@ -125,10 +109,6 @@ public class Cursor extends java.awt.Cursor{
 		//this.scene = scene;
 	}
 	
-	public void setOffsetX(int offsetX) {
-		this.offsetX = offsetX;
-	}
-
 
 	public int getID() {
 		return ID;
@@ -136,7 +116,6 @@ public class Cursor extends java.awt.Cursor{
 	
 	public void mouseMove(int x,int y){
 		setPoint(x, y);
-		
 		/*if(component instanceof JMenuBar){
 			//createMouseEvent(EventType.ENTERED, component);
 			for(int i=0;i<((JMenuBar) component).getMenuCount();i++){
@@ -161,26 +140,14 @@ public class Cursor extends java.awt.Cursor{
 		createMouseEvent(EventType.DRAG,component);*/
 		
 		originComponent.repaint();
-		
 	}
 	
 	public void mousePress(){
-		if(!find){
-			createMouseEvent(EventType.PRESS,component);
-		}else
-			createMouseEvent(EventType.PRESS, mComponent);
+		createMouseEvent(EventType.PRESS, originComponent);
 	}
 
 	public void mouseRelease() {
-		if(!find){
-		createMouseEvent(EventType.RELEASE,component);
-		}else
-			createMouseEvent(EventType.RELEASE,mComponent);
-	}
-
-	public void setoffsetY(int yOffset) {
-		this.yOffset = yOffset;
-		
+		createMouseEvent(EventType.RELEASE, originComponent);
 	}
 	
 	public boolean possessCursor(){
@@ -190,4 +157,19 @@ public class Cursor extends java.awt.Cursor{
 	public void repaint(){
 		originComponent.repaint();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		System.out.println("call to equals of cursor");
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		Cursor other = (Cursor) obj;
+		if (this.ID != other.getID())
+			return false;
+		return true;
+	}
+	
+	
 }

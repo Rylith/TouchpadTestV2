@@ -73,7 +73,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-import mouse.control.MouseControl;
 import network.Interface.Engine;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -107,7 +106,7 @@ public class ApplicationInterface extends JFrame {
 	 */
 	private static final long serialVersionUID = -3733033957725377148L;
 	
-	public static List<mouse.control.Cursor> listCursor = new ArrayList<>();
+	//public static List<mouse.control.Cursor> listCursor = new ArrayList<>();
 	private static boolean DEMO = false;
 	
 	private List<Rectangle> rectList = new ArrayList<Rectangle>();
@@ -341,7 +340,7 @@ public class ApplicationInterface extends JFrame {
         super("Pictures Sort");
         setJMenuBar(createDummyMenuBar());
         
-        final JFXPanel fxPanelDrop = (JFXPanel) new JFXPanelWithCustomCursor(dp.getX(), men.getHeight());
+        final JFXPanel fxPanelDrop = new JFXPanel();
         		
         		/*new JFXPanel(){
 			private static final long serialVersionUID = -3172632992570296318L;
@@ -363,7 +362,7 @@ public class ApplicationInterface extends JFrame {
         		}
         	}
         };*/
-        final JFXPanel fxPanelList = (JFXPanel) new JFXPanelWithCustomCursor(0, men.getHeight());/*new JFXPanel(){
+        final JFXPanel fxPanelList = new JFXPanel();/*new JFXPanel(){
 			private static final long serialVersionUID = 997029855889171510L;
 
 			public void paint(Graphics g){
@@ -431,7 +430,7 @@ public class ApplicationInterface extends JFrame {
         });
         dp.add(fxPanelDrop);
        
-       JPanel panel = new JPanel(new BorderLayout()){
+       JPanel panel = new JPanel(new BorderLayout());/*{
  
 			private static final long serialVersionUID = 1L;
 
@@ -451,7 +450,7 @@ public class ApplicationInterface extends JFrame {
         			}
         		}
         	}
-        };
+        };*/
         panel.add(sp,BorderLayout.CENTER);
         initKeyListener(this);
         initKeyListener(fxPanelList);
@@ -510,8 +509,8 @@ public class ApplicationInterface extends JFrame {
         test.pack();    // the panel makes itself full-screen size
         test.setResizable(false);
         test.setVisible(true);
-        MouseControl.setInterface(test);
-        new AddCursorEvent().addCursorEventListener(new AddCursorEventListener() {
+        //MouseControl.setInterface(test);
+        /*new AddCursorEvent().addCursorEventListener(new AddCursorEventListener() {
 			@Override
 			public void addCursor(mouse.control.Cursor cursor) {
 				ApplicationInterface.listCursor.add(cursor);
@@ -522,7 +521,7 @@ public class ApplicationInterface extends JFrame {
 				ApplicationInterface.listCursor.remove(cursor);
 				cursor.repaint();
 			}
-		});
+		});*/
     }
     
     /*
@@ -564,10 +563,8 @@ public class ApplicationInterface extends JFrame {
     } 
      
     private JMenuBar createDummyMenuBar() {
-        JMenuBar mb = new JMenuBar(){
-        	/**
-			 * 
-			 */
+        JMenuBar mb = new JMenuBar();/*{
+        	
 			private static final long serialVersionUID = -4494078917370244445L;
 
 			@Override
@@ -583,7 +580,7 @@ public class ApplicationInterface extends JFrame {
         		}
         	}
 			
-        };
+        };*/
         mb.add(createDummyMenu("File"));
         mb.add(createDummyMenu("Edit"));
         mb.add(createDummyMenu("Search"));
@@ -629,10 +626,8 @@ public class ApplicationInterface extends JFrame {
      
     private JMenu createDummyMenu(String str) {
         JMenu menu = new JMenu(str);
-        JMenuItem item = new JMenuItem("[Empty]"){
-        	/**
-			 * 
-			 */
+        JMenuItem item = new JMenuItem("[Empty]");/*{
+        
 			private static final long serialVersionUID = -2464840758192061079L;
 
 			@Override
@@ -650,7 +645,7 @@ public class ApplicationInterface extends JFrame {
         		super.paint(g);
         	}
         	
-        };
+        };*/
         item.setEnabled(false);
         menu.add(item);
         return menu;
