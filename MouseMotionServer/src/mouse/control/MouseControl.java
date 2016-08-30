@@ -15,6 +15,7 @@ public class MouseControl {
 	private Point lastPoint = new Point();
 	private boolean pressed=false;
 	private static int COEF = 2;
+	private static boolean enablePreview = true;
 	private static PreviewEvent previewEvent;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1; 
@@ -66,7 +67,7 @@ public class MouseControl {
 			n_y=(int) (-j + current_point.y);
 			//System.out.println("Subdivision: "+ n_x + ", " + n_y);
 			//System.out.println("i and j: "+i+", "+j);
-			if(!preview){
+			if(!preview || !enablePreview){
 				mouse.mouseMove(n_x, n_y);
 			}else{
 				previewEvent.setPreview(n_x, n_y);
@@ -117,7 +118,17 @@ public class MouseControl {
 		return pressed;
 	}
 
+	public static void setEnablePreview(boolean enablePreview) {
+		MouseControl.enablePreview = enablePreview;
+	}
+	
+	public static boolean isEnablePreview(){
+		return enablePreview;
+	}
+
 	public void goLastPoint() {
-		mouse.mouseMove(lastPoint.x, lastPoint.y);
+		if(enablePreview){
+			mouse.mouseMove(lastPoint.x, lastPoint.y);
+		}
 	}
 }

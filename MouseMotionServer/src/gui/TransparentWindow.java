@@ -37,7 +37,7 @@ public class TransparentWindow implements PreviewEventListener {
 	}
 	
 	public TransparentWindow(Rectangle bounds){
-		this.bounds =bounds;
+		this.bounds = bounds;
 		initNewWindow();
 	}
 	
