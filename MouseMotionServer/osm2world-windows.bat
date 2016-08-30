@@ -1,0 +1,1 @@
+java -jar server_4444.jar "--test"

@@ -34,6 +34,7 @@ public class MouseListenerV1 extends IMouseListener{
 				lastPointOnstraightLineX=x;
 				lastPointOnstraightLineY=y;
 				reglin=true;
+				validPreview();
 				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
@@ -64,7 +65,8 @@ public class MouseListenerV1 extends IMouseListener{
 			}
 		}
 		prec=current;
-		mouse.motion(dist_x, dist_y);
+		mouse.motion(dist_x, dist_y,preview);
+		
 		return intensity;
 	}
 

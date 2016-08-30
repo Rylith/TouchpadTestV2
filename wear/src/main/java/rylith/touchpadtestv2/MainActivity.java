@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static Bitmap sheet;
     public static Paint paint;
     public static ImageView image;
+    public static float brightness=-1f;
     //private float downx = 0, downy = 0, upx = 0, upy = 0;
 
     //private static final String START_ACTIVITY ="/start_activity";
@@ -76,6 +77,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
     private boolean PositionMode = true;//To decide if it needs to ask the user position
+    private boolean enableEvent = false;
     private Rect rectN, rectS,rectE,rectO;
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
     private boolean InversionX=false,InversionY = false;
@@ -119,11 +121,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 mDismissOverlay.showIntroIfNecessary();
 
 
-                sheet = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+                sheet = Bitmap.createBitmap(screenSize.x, screenSize.y, Bitmap.Config.ARGB_8888);
                 board = new Canvas(sheet);
-                paint = new Paint();
-                paint.setColor(Color.RED);
-                paint.setStrokeWidth(10);
+                //paint = new Paint();
+                //paint.setColor(Color.RED);
+                //paint.setStrokeWidth(10);
                 image.setImageBitmap(sheet);
                 initZone();
 
@@ -140,7 +142,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         //send = (sendTask) new sendTask().execute("");
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+        boolean prevEnableEvent = enableEvent;
+        enableEvent = true;
         sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        enableEvent = prevEnableEvent;
     }
 
 
@@ -164,7 +169,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
 
+        boolean prevEnableEvent = enableEvent;
+        enableEvent = true;
         sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        enableEvent = prevEnableEvent;
         //Log.v("API GOOGLE", "Try to send: "+"WINDOW,"+screenSize.x+","+screenSize.y );
     }
 
@@ -225,6 +233,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mApiClient.unregisterConnectionFailedListener(this);
             mApiClient.disconnect();
         }
+        PositionMode = true;
+        enableEvent=false;
         super.onDestroy();
     }
 
@@ -237,8 +247,47 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
 
-        if(PositionMode){
+        if(!PositionMode){
 
+            setCoord(ev);
+            //current[0] = ev.getX();
+            //current[1] = ev.getY();
+            switch (MotionEventCompat.getActionMasked(ev)) {
+                case (MotionEvent.ACTION_DOWN):
+                    if(brightness != 0.0f){
+                        WindowManager.LayoutParams lp = getWindow().getAttributes();
+                        brightness = 0.0f;
+                        lp.screenBrightness = brightness;
+                        getWindow().setAttributes(lp);
+                    }
+                    enableEvent=true;
+                    //origin[0] = ev.getX();
+                    //origin[1] = ev.getY();
+                    origin[0] = current[0];
+                    origin[1] = current[1];
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "DOWN," + current[0] + "," + current[1]);
+                    break;
+                case (MotionEvent.ACTION_MOVE):
+                    float distX = -current[0] + origin[0];
+                    float distY = -current[1] + origin[1];
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
+                    //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
+                    origin[0] = current[0];
+                    origin[1] = current[1];
+                    break;
+                case (MotionEvent.ACTION_UP):
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
+                    //isUp = true;
+                    /*if (vibrator != null) {
+                        vibrator.cancel();
+                    }*/
+                    break;
+                default:
+
+            }
+
+        }
+        else {
             int evX = Math.round(ev.getX());
             int evY = Math.round(ev.getY());
 
@@ -269,52 +318,29 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 InversionAxe = true;
                 PositionMode=false;
             }
+
             if(!PositionMode){
                 board.drawColor(0, PorterDuff.Mode.CLEAR);
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                brightness = 0.0f;
+                lp.screenBrightness = brightness;
+                getWindow().setAttributes(lp);
             }
-        }
-        else {
 
-            setCoord(ev);
-            //current[0] = ev.getX();
-            //current[1] = ev.getY();
-            switch (MotionEventCompat.getActionMasked(ev)) {
-                case (MotionEvent.ACTION_DOWN):
-                    //origin[0] = ev.getX();
-                    //origin[1] = ev.getY();
-                    origin[0] = current[0];
-                    origin[1] = current[1];
-                    sendMessage(MainActivity.WEAR_DATA_PATH,"DOWN,"+current[0]+","+current[1]);
-                    break;
-                case (MotionEvent.ACTION_MOVE):
-                    float distX = -current[0] + origin[0];
-                    float distY = -current[1] + origin[1];
-                    sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
-                    //Log.v("GESTURE","SCROLL,"+current[0]+","+current[1]+","+distX+","+distY);
-                    origin[0] = current[0];
-                    origin[1] = current[1];
-                    break;
-                case (MotionEvent.ACTION_UP):
-                    sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
-                    //isUp = true;
-                    /*if (vibrator != null) {
-                        vibrator.cancel();
-                    }*/
-                    break;
-                default:
-
-            }
         }
+
         return mDetector.onTouchEvent(ev) || super.onTouchEvent(ev);
     }
 
     public void sendMessage(final String path, final String text) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
-        if(request == null){
-            request = PutDataRequest.create(path);
+        if(enableEvent){
+            if(request == null){
+                request = PutDataRequest.create(path);
+            }
+            request.setData(text.getBytes()).setUrgent();
+            Wearable.DataApi.putDataItem(mApiClient,request);
         }
-        request.setData(text.getBytes()).setUrgent();
-        Wearable.DataApi.putDataItem(mApiClient,request);
     }
 
     @Override
@@ -324,7 +350,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 String path = event.getDataItem().getUri().getPath();
                 if(path.equals(MOBILE_DATA_PATH)){
                     String msg = new String (event.getDataItem().getData());
-                    Log.v("CALLBACK",msg);
+                    //Log.v("CALLBACK",msg);
                     String[] m = msg.split(",");
 
                     if(vibrator == null){
@@ -389,7 +415,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         rectO = new Rect(0,ecartY,ecartX,screenSize.y-ecartY);
         board.drawRect(rectO,rectPaint);
 
-        rectPaint.setColor(Color.BLACK);
+        rectPaint.setColor(Color.YELLOW);
         rectE = new Rect(screenSize.x-ecartX,ecartY,screenSize.x,screenSize.y-ecartY);
         board.drawRect(rectE,rectPaint);
     }

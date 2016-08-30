@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -47,6 +48,7 @@ public class OptionsInterface extends JFrame{
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
+	private static final String prefixPreview = "Activation de la prévisualisation en Border Mode";
 	private static final JTextArea text = new JTextArea();
 	private static final String prefixListLabel = "Choix du type de Souris: ";
 	private static final String suffixPercent="%";
@@ -132,6 +134,7 @@ public class OptionsInterface extends JFrame{
 	    final JSlider sliderCoeffControl = new JSlider();
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
+	    final JCheckBox boxPreview = new JCheckBox(prefixPreview);
 	    
 	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
 	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
@@ -219,6 +222,8 @@ public class OptionsInterface extends JFrame{
 	    sliderMultiFluidity.setMinorTickSpacing(1);
 	    sliderMultiFluidity.setMajorTickSpacing(1);
 	    
+	    boxPreview.setAlignmentX(LEFT_ALIGNMENT);
+	    boxPreview.setSelected(MouseControl.isEnablePreview());
 	    
 	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
 	    labPercentScreen.setFont(fontOptionTitle);
@@ -247,6 +252,10 @@ public class OptionsInterface extends JFrame{
 	    labMultiFluidity.setFont(fontOptionTitle);
 	    labMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
 	    //labMultiFluidity.setPreferredSize(new Dimension(400, 50));
+	    
+	    final JLabel labEnablePreview = new JLabel(prefixPreview);
+	    labEnablePreview.setFont(fontOptionTitle);
+	    labEnablePreview.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
 			@Override
@@ -318,6 +327,14 @@ public class OptionsInterface extends JFrame{
 			}
 	    });
 	    
+	    boxPreview.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				MouseControl.setEnablePreview(boxPreview.isSelected());
+			}
+		});
+	    
 	    JPanel pan = new JPanel();
 	    JPanel southEastList = new JPanel(new BorderLayout());
 	    JPanel southEastCOEF = new JPanel(new BorderLayout());
@@ -355,6 +372,9 @@ public class OptionsInterface extends JFrame{
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labMultiFluidity);
 	    boxpan.add(sliderMultiFluidity);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
+	    boxpan.add(labEnablePreview);
+	    boxpan.add(boxPreview);
 	    
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import java.util.Random;
 
@@ -29,6 +30,10 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public void onLongPress(MotionEvent event) {
+        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+        MainActivity.brightness = -1f;
+        lp.screenBrightness = MainActivity.brightness;
+        activity.getWindow().setAttributes(lp);
         MainActivity.mDismissOverlay.show();
     }
 
@@ -44,12 +49,13 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        MainActivity.pos.setText("Pos:\n" +"X: "+ event.getX()+"\nY: "+event.getY());
-        MainActivity.paint.setColor(Color.BLUE);
-        MainActivity.board.drawPoint(event.getX(),event.getY(),MainActivity.paint);
-        MainActivity.paint.setColor(Color.GREEN);
-        MainActivity.image.invalidate();
         activity.sendMessage(MainActivity.WEAR_DATA_PATH,"CLICK");
+        /*if(MainActivity.brightness !=0.0f && !MainActivity.PositionMode){
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            MainActivity.brightness = 0.0f;
+            lp.screenBrightness = MainActivity.brightness;
+            activity.getWindow().setAttributes(lp);
+        }*/
         return true;
     }
 
