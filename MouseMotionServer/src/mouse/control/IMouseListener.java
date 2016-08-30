@@ -166,6 +166,7 @@ public abstract class IMouseListener {
 	
 	protected void validPreview(){
 		if(preview){
+    		previewEvent.removePreview(mouse.getCursor());
     		mouse.goLastPoint();
     		preview=false;
     	}
@@ -173,6 +174,7 @@ public abstract class IMouseListener {
 	
 	protected void unvalidPreview(){
 		if(preview){
+			previewEvent.removePreview(mouse.getCursor());
 			preview=false;
 		}
 	}

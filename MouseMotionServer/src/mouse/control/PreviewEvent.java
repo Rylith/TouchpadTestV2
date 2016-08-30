@@ -15,15 +15,23 @@ public class PreviewEvent {
 	}
 	/**
 	 * Set the last point in the preview*/
+	public void setPreview(int x, int y, Cursor cursor){
+		firePreviewChanged(x, y, cursor);
 	}
 	
+	public void removePreview(Cursor cursor){
+		fireRemovePreview(cursor);
 	}
 	
+	protected void firePreviewChanged(int x, int y, Cursor cursor){
 		for(PreviewEventListener lt : listeners.getListeners(PreviewEventListener.class)){
+			lt.drawPreview(x,y,cursor);
 		}
 	}
 	
+	protected void fireRemovePreview(Cursor cursor){
 		for(PreviewEventListener lt : listeners.getListeners(PreviewEventListener.class)){
+			lt.removePreview(cursor);
 		}
 	}
 }

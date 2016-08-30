@@ -156,6 +156,8 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 		
 
 	@Override
+	public void drawPreview(int x, int y, Cursor cursor) {		
+		List<Point> pointList = cursorMap.get(cursor);
 		if(!(x>=bounds.x && x<=w.getWidth())){
 			x = pointList.get(pointList.size()-1).x + bounds.x;		
 		}
@@ -169,6 +171,8 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 	}
 
 	@Override
+	public void removePreview(Cursor cursor) {
+		List<Point> pointList = cursorMap.get(cursor);
 		synchronized (pointList) {
 			pointList.clear();
 		}
