@@ -1,6 +1,8 @@
 package mouse.control;
 
 import java.awt.Point;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import network.Impl.Util;
@@ -42,6 +44,10 @@ public class MouseListenerV4 extends IMouseListener {
 				borderActions();	
 			}
 		}else{
+			if(start != null){
+				System.out.println("DRAG : Time between release and scroll: "+ start.until(Instant.now(),ChronoUnit.MILLIS));
+			}
+			System.out.println("DRAG in border mode at : "+ Instant.now().toEpochMilli());
 			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
 				timerExitBorderMode.cancel(false);
 			} 

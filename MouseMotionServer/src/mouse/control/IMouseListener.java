@@ -2,6 +2,8 @@ package mouse.control;
 
 import java.awt.Point;
 import java.nio.channels.SelectionKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,6 +17,8 @@ import network.Impl.Util;
 import network.Interface.Channel;
 
 public abstract class IMouseListener {
+	
+	protected Instant start;
 	
 	protected static PreviewEvent previewEvent = new PreviewEvent();
 	protected MouseControl mouse = new MouseControl(previewEvent);
@@ -58,11 +62,12 @@ public abstract class IMouseListener {
     };
     
     protected ScheduledFuture<?> timerExitBorderMode;
-    protected static long TIMER_EXIT_MODE = 75;
+    protected static long TIMER_EXIT_MODE = 125;
     protected TimerTask exitBorderMode = new TimerTask() {
         @Override
         public void run() {
             borderMode = false;
+            System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
             //Log.println("Appel au thread de changement de mode: "+ borderMode);
             float rand =0.9f+(new Random().nextFloat()/10.0f);
             channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
@@ -104,11 +109,16 @@ public abstract class IMouseListener {
 	/**Reset data to calculate the line*/
 	public void resetBuffers(float x,float y) {
 		//borderMode=false;
-		reglin=true;
-        bufferX.clear();
-        bufferY.clear();
+		if(!borderMode){
+			reglin=true;
+        	bufferX.clear();
+        	bufferY.clear();
         //Init de the prec point before scrolling
-        prec=new Point(Math.round(x),Math.round(y));
+        	prec=new Point(Math.round(x),Math.round(y));
+        }else{
+        	System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
+        	System.out.println("DOWN in border mode at : " + Instant.now().toEpochMilli());
+        }
 	}
 	
 	/**Simulate a continue left click*/
@@ -121,7 +131,9 @@ public abstract class IMouseListener {
 		//mouse.release();
 		if(borderMode && (timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone())){
 			timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
+			start = Instant.now();
 			//Log.println("release in border mode");
+			System.out.println("RELEASE in border mode at : " + start.toEpochMilli());
 		}
 		if(timerChangeMode != null){
 			timerChangeMode.cancel(false);

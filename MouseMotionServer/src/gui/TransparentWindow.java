@@ -27,10 +27,10 @@ public class TransparentWindow implements PreviewEventListener {
 	private JFrame w;
 	private Rectangle bounds;
 	private static boolean DRAW_FINAL_POINT = true;
-	private static boolean DRAW_LINE = true;
-	private static boolean DRAW_ARROW = true;
+	private static boolean DRAW_LINE = false;
+	private static boolean DRAW_ARROW = false;
 	private static boolean DRAW_PATH=true;
-	private static boolean DRAW_CONE=true;
+	private static boolean DRAW_CONE=false;
 	
 	public TransparentWindow() {
 		initNewWindow();
@@ -51,6 +51,7 @@ public class TransparentWindow implements PreviewEventListener {
 			
 			@Override
 			public void paint(Graphics g) {
+				this.toFront();
 				super.paint(g);
 				synchronized (pointList) {
 					if(pointList.size()>1){
@@ -144,11 +145,10 @@ public class TransparentWindow implements PreviewEventListener {
 	@Override
 	public void drawPreview(int x, int y) {
 		if(!(x>=bounds.x && x<=w.getWidth())){
-			x = pointList.get(pointList.size()-1).x;
-				
+			x = pointList.get(pointList.size()-1).x + bounds.x;		
 		}
 		if(!(y>=bounds.y && y<=w.getHeight())){
-			y = pointList.get(pointList.size()-1).y;
+			y = pointList.get(pointList.size()-1).y + bounds.y ;
 		}
 		synchronized (pointList) {
 			pointList.add(new Point(x-bounds.x,y-bounds.y));
