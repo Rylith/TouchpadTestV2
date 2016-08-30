@@ -76,7 +76,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private PutDataRequest request;
     private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
-    public static boolean PositionMode = true;//To decide if it needs to ask the user position
+    private boolean PositionMode = true;//To decide if it needs to ask the user position
+    private boolean enableEvent = false;
     private Rect rectN, rectS,rectE,rectO;
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
     private boolean InversionX=false,InversionY = false;
@@ -141,7 +142,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         //send = (sendTask) new sendTask().execute("");
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
+        boolean prevEnableEvent = enableEvent;
+        enableEvent = true;
         sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        enableEvent = prevEnableEvent;
     }
 
 
@@ -165,7 +169,10 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
 
+        boolean prevEnableEvent = enableEvent;
+        enableEvent = true;
         sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+        enableEvent = prevEnableEvent;
         //Log.v("API GOOGLE", "Try to send: "+"WINDOW,"+screenSize.x+","+screenSize.y );
     }
 
@@ -226,6 +233,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             mApiClient.unregisterConnectionFailedListener(this);
             mApiClient.disconnect();
         }
+        PositionMode = true;
+        enableEvent=false;
         super.onDestroy();
     }
 
@@ -251,6 +260,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         lp.screenBrightness = brightness;
                         getWindow().setAttributes(lp);
                     }
+                    enableEvent=true;
                     //origin[0] = ev.getX();
                     //origin[1] = ev.getY();
                     origin[0] = current[0];
@@ -324,11 +334,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     public void sendMessage(final String path, final String text) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
-        if(request == null){
-            request = PutDataRequest.create(path);
+        if(enableEvent){
+            if(request == null){
+                request = PutDataRequest.create(path);
+            }
+            request.setData(text.getBytes()).setUrgent();
+            Wearable.DataApi.putDataItem(mApiClient,request);
         }
-        request.setData(text.getBytes()).setUrgent();
-        Wearable.DataApi.putDataItem(mApiClient,request);
     }
 
     @Override
@@ -338,7 +350,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 String path = event.getDataItem().getUri().getPath();
                 if(path.equals(MOBILE_DATA_PATH)){
                     String msg = new String (event.getDataItem().getData());
-                    Log.v("CALLBACK",msg);
+                    //Log.v("CALLBACK",msg);
                     String[] m = msg.split(",");
 
                     if(vibrator == null){
