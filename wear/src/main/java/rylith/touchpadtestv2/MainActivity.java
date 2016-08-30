@@ -122,9 +122,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
                 sheet = Bitmap.createBitmap(screenSize.x, screenSize.y, Bitmap.Config.ARGB_8888);
                 board = new Canvas(sheet);
-                paint = new Paint();
+                //paint = new Paint();
                 //paint.setColor(Color.RED);
-                paint.setStrokeWidth(10);
+                //paint.setStrokeWidth(10);
                 image.setImageBitmap(sheet);
                 initZone();
 
@@ -246,7 +246,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             switch (MotionEventCompat.getActionMasked(ev)) {
                 case (MotionEvent.ACTION_DOWN):
                     if(brightness != 0.0f){
-                        board.drawColor(0, PorterDuff.Mode.CLEAR);
                         WindowManager.LayoutParams lp = getWindow().getAttributes();
                         brightness = 0.0f;
                         lp.screenBrightness = brightness;
@@ -309,6 +308,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 InversionAxe = true;
                 PositionMode=false;
             }
+
             if(!PositionMode){
                 board.drawColor(0, PorterDuff.Mode.CLEAR);
                 WindowManager.LayoutParams lp = getWindow().getAttributes();
@@ -403,7 +403,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         rectO = new Rect(0,ecartY,ecartX,screenSize.y-ecartY);
         board.drawRect(rectO,rectPaint);
 
-        rectPaint.setColor(Color.BLACK);
+        rectPaint.setColor(Color.YELLOW);
         rectE = new Rect(screenSize.x-ecartX,ecartY,screenSize.x,screenSize.y-ecartY);
         board.drawRect(rectE,rectPaint);
     }

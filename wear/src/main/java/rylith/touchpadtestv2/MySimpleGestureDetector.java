@@ -45,7 +45,9 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        activity.sendMessage(MainActivity.WEAR_DATA_PATH,"CLICK");
+        if(!MainActivity.PositionMode){
+            activity.sendMessage(MainActivity.WEAR_DATA_PATH,"CLICK");
+        }
         /*if(MainActivity.brightness !=0.0f && !MainActivity.PositionMode){
             WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
             MainActivity.brightness = 0.0f;
