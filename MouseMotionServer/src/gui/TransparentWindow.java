@@ -6,6 +6,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,20 @@ public class TransparentWindow implements PreviewEventListener {
 	private final int POINT_DIAMETER = 16;
 	private final int CONE_ANGLE = 60;//in degrees
 	
-	private static JFrame w;
-	private boolean DRAW_FINAL_POINT = true;
-	private boolean DRAW_LINE = true;
-	private boolean DRAW_ARROW = true;
-	private boolean DRAW_PATH=true;
-	private boolean DRAW_CONE=true;
+	private JFrame w;
+	private Rectangle bounds;
+	private static boolean DRAW_FINAL_POINT = true;
+	private static boolean DRAW_LINE = true;
+	private static boolean DRAW_ARROW = true;
+	private static boolean DRAW_PATH=true;
+	private static boolean DRAW_CONE=true;
 	
 	public TransparentWindow() {
+		initNewWindow();
+	}
+	
+	public TransparentWindow(Rectangle bounds){
+		this.bounds =bounds;
 		initNewWindow();
 	}
 	
@@ -89,12 +96,19 @@ public class TransparentWindow implements PreviewEventListener {
 		w.setType(JFrame.Type.UTILITY);
 		w.setAlwaysOnTop(true);
 		w.setUndecorated(true);
-		w.setBounds(w.getGraphicsConfiguration().getBounds());
+		if(bounds == null){
+			bounds = w.getGraphicsConfiguration().getBounds();
+		}
+		w.setBounds(bounds);
 		w.setBackground(new Color(0,true));
 		new PreviewEvent().addPreviewEventListener(this);
 		w.setVisible(true);
 	}
 	
+	public JFrame getFrame() {
+		return w;
+	}
+
 	private void drawArrow(Graphics g, int x1, int y1, int x2, int y2,int lenght){
 		Graphics2D g2 = (Graphics2D) g.create();
 		
@@ -129,15 +143,15 @@ public class TransparentWindow implements PreviewEventListener {
 
 	@Override
 	public void drawPreview(int x, int y) {
-		if(!(x>=0 && x<=w.getWidth())){
+		if(!(x>=bounds.x && x<=w.getWidth())){
 			x = pointList.get(pointList.size()-1).x;
 				
 		}
-		if(!(y>=0 && y<=w.getHeight())){
+		if(!(y>=bounds.y && y<=w.getHeight())){
 			y = pointList.get(pointList.size()-1).y;
 		}
 		synchronized (pointList) {
-			pointList.add(new Point(x,y));
+			pointList.add(new Point(x-bounds.x,y-bounds.y));
 		}
 		w.repaint();
 	}

@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 import gui.Log;
 import gui.OptionsInterface;
-import gui.TransparentWindow;
+import gui.TransparentWindowsOnAllMonitors;
 import gui.ApplicationInterface;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
@@ -45,7 +45,7 @@ public class Pong{
 				
 				@Override
 				public void run() {
-					new TransparentWindow();
+					new TransparentWindowsOnAllMonitors();
 					if(args !=null && args.length != 0){
 						for(String arg : args){
 							switch (arg) {
