@@ -27,10 +27,10 @@ public class TransparentWindow implements PreviewEventListener {
 	private JFrame w;
 	private Rectangle bounds;
 	private static boolean DRAW_FINAL_POINT = true;
-	private static boolean DRAW_LINE = false;
-	private static boolean DRAW_ARROW = false;
+	private static boolean DRAW_LINE = true;
+	private static boolean DRAW_ARROW = true;
 	private static boolean DRAW_PATH=true;
-	private static boolean DRAW_CONE=false;
+	private static boolean DRAW_CONE=true;
 	
 	public TransparentWindow() {
 		initNewWindow();
@@ -76,14 +76,17 @@ public class TransparentWindow implements PreviewEventListener {
 							g2.setColor(Color.DARK_GRAY);
 							g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
 						}
+						
+						if(DRAW_CONE){
+							drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+						}
+						
 						if(DRAW_ARROW){
 							g2.setColor(Color.ORANGE);
 							drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
 						}
 						
-						if(DRAW_CONE){
-							drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
-						}
+						
 						
 					}
 				}
