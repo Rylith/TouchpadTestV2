@@ -1,6 +1,7 @@
 package network.Impl;
 
 import java.awt.MouseInfo;
+import java.awt.Point;
 import java.nio.channels.SelectionKey;
 
 import gui.Log;
@@ -92,11 +93,14 @@ public class DeliverCallbackTest implements DeliverCallback {
 		try {
 			Class<?> cl = Class.forName(className);
 			Cursor cursor = listener.getCursor();
+			Point lastPoint = listener.getLastPoint();
 			listener = (IMouseListener) cl.newInstance();
+			//give the data to save
 			listener.setKey(key);
 			listener.setChannel(channel);
 			listener.setCenter(xC, yC);
 			listener.setCursor(cursor);
+			listener.setLastPoint(lastPoint);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SecurityException e) {
 			e.printStackTrace();
 		}

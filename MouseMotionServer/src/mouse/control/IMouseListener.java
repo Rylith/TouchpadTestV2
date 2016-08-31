@@ -50,10 +50,7 @@ public abstract class IMouseListener {
     protected TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
-        	float rand =0.9f+(new Random().nextFloat()/10.0f);
-            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
-        	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-        	key.selector().wakeup();
+        	sendFeedBack();
             origin = current;
             borderMode = true;
             preview = true;
@@ -69,10 +66,7 @@ public abstract class IMouseListener {
             borderMode = false;
             System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
             //Log.println("Appel au thread de changement de mode: "+ borderMode);
-            float rand =0.9f+(new Random().nextFloat()/10.0f);
-            channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
-            key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-        	key.selector().wakeup();
+           sendFeedBack();
         }
     };
     
@@ -152,9 +146,7 @@ public abstract class IMouseListener {
 	public void doubleClick() {
 		//click();
 		//click();
-		float rand =0.9f+(new Random().nextFloat()/10.0f);
-		channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
-    	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+		sendFeedBack();
     	unvalidPreview();
     	/*
 		if(mouse.isPressed()){
@@ -198,6 +190,13 @@ public abstract class IMouseListener {
 			}
 		}
 		//System.out.println(sign);
+	}
+	
+	protected void sendFeedBack(){
+		float rand =0.9f+(new Random().nextFloat()/10.0f);
+        channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
+    	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+    	key.selector().wakeup();
 	}
 
 	public void setChannel(Channel channel) {
@@ -250,5 +249,13 @@ public abstract class IMouseListener {
 
 	public void setCursor(Cursor cursor) {
 		mouse.setCursor(cursor);
+	}
+	
+	public Point getLastPoint(){
+		return mouse.getLastPoint();
+	}
+	
+	public void setLastPoint(Point lastPoint){
+		mouse.setLastPoint(lastPoint);
 	}
 }

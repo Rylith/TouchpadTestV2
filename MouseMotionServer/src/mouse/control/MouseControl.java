@@ -194,4 +194,12 @@ public class MouseControl {
 		destroy();
 		this.cursor=cursor;
 	}
+
+	public Point getLastPoint() {
+		return lastPoint;
+	}
+
+	public void setLastPoint(Point lastPoint) {
+		this.lastPoint = lastPoint;
+	}
 }
