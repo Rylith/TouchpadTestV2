@@ -243,4 +243,12 @@ public abstract class IMouseListener {
 	public void destroy() {
 		mouse.destroy();
 	}
+	
+	public Cursor getCursor(){
+		return mouse.getCursor();
+	}
+
+	public void setCursor(Cursor cursor) {
+		mouse.setCursor(cursor);
+	}
 }

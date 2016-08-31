@@ -27,7 +27,7 @@ public class Cursor{
 	
 	public void paint(Graphics g){
 		Graphics2D g2d = (Graphics2D) g.create();
-		g2d.drawImage(image, point.x, point.y, null);
+		g2d.drawImage(image, point.x-originComponent.getX(), point.y-originComponent.getY(), null);
 	}
 	
 	public Cursor(JFrame frame,int id){
@@ -35,8 +35,8 @@ public class Cursor{
 		this.ID=id;
 		Toolkit kit = Toolkit.getDefaultToolkit();
         image = kit.createImage("Evolution Cursor.png").getScaledInstance(30, 30, Image.SCALE_DEFAULT);
-		int centerComponentX = frame.getWidth()/2;
-		int centerComponentY = frame.getHeight()/2;
+		int centerComponentX = 1920/2;
+		int centerComponentY = 1080/2;
 		this.point = new Point(centerComponentX,centerComponentY);
 	}
 	
@@ -46,12 +46,16 @@ public class Cursor{
 	
 	public void setPoint(int x,int y){
 		if(x<=originComponent.getX()+originComponent.getWidth() && x>=originComponent.getX()){
-			point.x=x-originComponent.getX();
+			point.x=x;
 			//System.out.println("point.x="+point.x);
+		}else if(y<originComponent.getX()){
+			point.x=originComponent.getX();
 		}
 		if(y<=originComponent.getY()+originComponent.getHeight() && y>=originComponent.getY()){
+			point.y=y;
 			//System.out.println("point.y="+point.y);
-			point.y=y-originComponent.getY();
+		}else if(y<originComponent.getY()){
+			point.y=originComponent.getY();
 		}
 	}
 	
@@ -116,29 +120,7 @@ public class Cursor{
 	
 	public void mouseMove(int x,int y){
 		setPoint(x, y);
-		/*if(component instanceof JMenuBar){
-			//createMouseEvent(EventType.ENTERED, component);
-			for(int i=0;i<((JMenuBar) component).getMenuCount();i++){
-				JMenu menu = ((JMenuBar) component).getMenu(i);
-				Point pos = menu.getLocation();
-				if(pos.x<=x && (pos.x+menu.getWidth())>=x){
-					if((mComponent == null || !mComponent.equals(menu))){
-						createMouseEvent(EventType.ENTERED, menu);
-						mComponent=menu;
-					}
-					find = true;
-				}else if((mComponent == null || !mComponent.equals(menu))){
-					createMouseEvent(EventType.EXIT, menu);
-				}
-			}
-		}else{
-			if(find){
-				createMouseEvent(EventType.EXIT, mComponent);
-				find=false;
-			}
-		}
-		createMouseEvent(EventType.DRAG,component);*/
-		
+		createMouseEvent(EventType.DRAG,originComponent);
 		originComponent.repaint();
 	}
 	

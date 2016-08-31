@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
@@ -36,6 +39,16 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 	private static boolean DRAW_ARROW = false;
 	private static boolean DRAW_PATH=true;
 	private static boolean DRAW_CONE=false;
+	
+	private long REPAINT_TIMER = 50;//in ms
+	private ScheduledExecutorService task = Executors.newSingleThreadScheduledExecutor() ;
+	private Runnable repaintTask = new Runnable() {
+		
+		@Override
+		public void run() {
+			w.repaint();
+		}
+	};
 	
 	public TransparentWindow() {
 		initNewWindow();
@@ -61,7 +74,6 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 				List<Point> pointList=null;
 				synchronized (cursorMap) {
 					for(Entry<Cursor, List<Point>> entry : cursorMap.entrySet()){
-						entry.getKey().paint(g);
 						pointList = entry.getValue();
 						synchronized (pointList) {
 							if(pointList.size()>1){
@@ -96,6 +108,7 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 								}
 							}
 						}
+						entry.getKey().paint(g);
 					}
 				}
 			}
@@ -184,7 +197,12 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 		synchronized (cursorMap) {
 			cursorMap.put(cursor, new ArrayList<Point>());
 		}
+		//Process to an hard repaint
+		/*for(int i =0 ;i<75;i++){
+			w.repaint();
+		}*/
 		w.repaint();
+		task.schedule(repaintTask, REPAINT_TIMER, TimeUnit.MILLISECONDS);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.awt.MouseInfo;
 import java.nio.channels.SelectionKey;
 
 import gui.Log;
+import mouse.control.Cursor;
 import mouse.control.IMouseListener;
 import mouse.control.MouseListenerV1;
 import network.Interface.Channel;
@@ -90,10 +91,12 @@ public class DeliverCallbackTest implements DeliverCallback {
 	public void setListener(String className){
 		try {
 			Class<?> cl = Class.forName(className);
+			Cursor cursor = listener.getCursor();
 			listener = (IMouseListener) cl.newInstance();
 			listener.setKey(key);
 			listener.setChannel(channel);
 			listener.setCenter(xC, yC);
+			listener.setCursor(cursor);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SecurityException e) {
 			e.printStackTrace();
 		}

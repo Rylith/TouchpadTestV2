@@ -1,20 +1,16 @@
 package mouse.control;
 
-import java.awt.AWTException;
 import java.awt.Point;
-import java.awt.Robot;
-
 import javax.swing.JFrame;
 
 import gui.AddCursorEvent;
-import java.awt.MouseInfo;
 
 public class MouseControl {
 	
-	private Robot mouse;
+	//private Robot mouse;
 
 	private Cursor cursor=null;
-	private Point lastPoint = new Point();
+	private Point lastPoint ;
 	private boolean pressed=false;
 	private static JFrame frame;
 	private static int COEF = 2;
@@ -32,17 +28,19 @@ public class MouseControl {
 	private static int multiFluidity = 2;
 	
 	public MouseControl(){
-		 try {
+		 /*try {
 				this.mouse = new Robot();
-				if(frame != null){
-					this.cursor=initCursor(frame);
-					new AddCursorEvent().fireAddCursor(cursor);
-				}
-
-				lastPoint=MouseInfo.getPointerInfo().getLocation();
+				
 			} catch (AWTException e) {
 				e.printStackTrace();
+			}*/
+		 if(frame != null){
+				this.cursor=initCursor(frame);
+				new AddCursorEvent().fireAddCursor(cursor);
 			}
+
+			//lastPoint=MouseInfo.getPointerInfo().getLocation();
+			lastPoint = new Point(cursor.getPoint());
 	}
 	
 	public static void setInterface(JFrame w){
@@ -190,5 +188,10 @@ public class MouseControl {
 
 	public Cursor getCursor() {
 		return cursor;
+	}
+
+	public void setCursor(Cursor cursor) {
+		destroy();
+		this.cursor=cursor;
 	}
 }
