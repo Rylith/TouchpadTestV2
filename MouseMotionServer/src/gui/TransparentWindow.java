@@ -173,13 +173,13 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 		List<Point> pointList = cursorMap.get(cursor);
 		if(x<bounds.x){
 			x = bounds.x;
-		}else if(x>w.getWidth()){
-			x = w.getWidth();
+		}else if(x>(w.getWidth()+bounds.x)){
+			x = w.getWidth()+bounds.x;
 		}
 		if(y<bounds.y){
 			y=bounds.y;
-		}else if(y>w.getHeight()){
-			y=w.getHeight();
+		}else if(y>(w.getHeight()+bounds.y)){
+			y=w.getHeight()+bounds.y;
 		}
 		synchronized (pointList) {
 			pointList.add(new Point(x-bounds.x,y-bounds.y));
