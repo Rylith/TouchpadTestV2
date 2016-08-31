@@ -147,11 +147,15 @@ public class TransparentWindow implements PreviewEventListener {
 
 	@Override
 	public void drawPreview(int x, int y) {
-		if(!(x>=bounds.x && x<=w.getWidth())){
-			x = pointList.get(pointList.size()-1).x + bounds.x;		
+		if(x<bounds.x){
+			x = bounds.x;
+		}else if(x>(w.getWidth()+bounds.x)){
+			x = w.getWidth()+bounds.x;
 		}
-		if(!(y>=bounds.y && y<=w.getHeight())){
-			y = pointList.get(pointList.size()-1).y + bounds.y ;
+		if(y<bounds.y){
+			y=bounds.y;
+		}else if(y>(w.getHeight()+bounds.y)){
+			y=w.getHeight()+bounds.y;
 		}
 		synchronized (pointList) {
 			pointList.add(new Point(x-bounds.x,y-bounds.y));
