@@ -387,18 +387,25 @@ public class OptionsInterface extends JFrame{
 	    this.setVisible(true);
 	}
 	
-	public static void showOnScreen( int screen, JFrame frame )
+	public static void showOnScreen( int screen, JFrame frame, boolean fullscreen )
 	{
 	    GraphicsEnvironment ge = GraphicsEnvironment
 	        .getLocalGraphicsEnvironment();
 	    GraphicsDevice[] gs = ge.getScreenDevices();
+	   
 	    if( screen > -1 && screen < gs.length )
 	    {
-	        gs[screen].setFullScreenWindow( frame );
+	    	 if(fullscreen){
+	 	    	frame.setPreferredSize(gs[screen].getDefaultConfiguration().getBounds().getSize());
+	 	    }
+	    	frame.setLocation(gs[screen].getDefaultConfiguration().getBounds().x, gs[screen].getDefaultConfiguration().getBounds().y);
 	    }
 	    else if( gs.length > 0 )
-	    {
-	        gs[0].setFullScreenWindow( frame );
+	    {	
+	    	 if(fullscreen){
+		 	    	frame.setPreferredSize(gs[0].getDefaultConfiguration().getBounds().getSize());
+		 	}
+	    	frame.setLocation(gs[0].getDefaultConfiguration().getBounds().x, gs[screen].getDefaultConfiguration().getBounds().y);
 	    }
 	    else
 	    {

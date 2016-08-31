@@ -506,6 +506,7 @@ public class ApplicationInterface extends JFrame {
         }
         //test.setLocationRelativeTo(null);
         test.setUndecorated(true);
+        OptionsInterface.showOnScreen(1, test,true);
         test.pack();    // the panel makes itself full-screen size
         test.setResizable(false);
         test.setVisible(true);
