@@ -37,10 +37,10 @@ public class MouseControl {
 		 if(frame != null){
 				this.cursor=initCursor(frame);
 				new AddCursorEvent().fireAddCursor(cursor);
-			}
+		}
 
 			//lastPoint=MouseInfo.getPointerInfo().getLocation();
-			lastPoint = new Point(cursor.getPoint());
+		lastPoint = new Point(cursor.getPoint());
 	}
 	
 	public static void setInterface(JFrame w){

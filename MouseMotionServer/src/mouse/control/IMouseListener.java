@@ -3,7 +3,6 @@ package mouse.control;
 import java.awt.Point;
 import java.nio.channels.SelectionKey;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,7 +63,7 @@ public abstract class IMouseListener {
         @Override
         public void run() {
             borderMode = false;
-            System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
+            //System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
             //Log.println("Appel au thread de changement de mode: "+ borderMode);
            sendFeedBack();
         }
@@ -110,8 +109,8 @@ public abstract class IMouseListener {
         //Init de the prec point before scrolling
         	prec=new Point(Math.round(x),Math.round(y));
         }else{
-        	System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
-        	System.out.println("DOWN in border mode at : " + Instant.now().toEpochMilli());
+        	//System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
+        	//System.out.println("DOWN in border mode at : " + Instant.now().toEpochMilli());
         }
 	}
 	
@@ -127,7 +126,7 @@ public abstract class IMouseListener {
 			timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
 			start = Instant.now();
 			//Log.println("release in border mode");
-			System.out.println("RELEASE in border mode at : " + start.toEpochMilli());
+			//System.out.println("RELEASE in border mode at : " + start.toEpochMilli());
 		}
 		if(timerChangeMode != null){
 			timerChangeMode.cancel(false);

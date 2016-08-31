@@ -405,7 +405,7 @@ public class OptionsInterface extends JFrame{
 	    	 if(fullscreen){
 		 	    	frame.setPreferredSize(gs[0].getDefaultConfiguration().getBounds().getSize());
 		 	}
-	    	frame.setLocation(gs[0].getDefaultConfiguration().getBounds().x, gs[screen].getDefaultConfiguration().getBounds().y);
+	    	frame.setLocation(gs[0].getDefaultConfiguration().getBounds().x, gs[0].getDefaultConfiguration().getBounds().y);
 	    }
 	    else
 	    {

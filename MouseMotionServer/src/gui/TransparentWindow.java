@@ -40,7 +40,7 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 	private static boolean DRAW_PATH=true;
 	private static boolean DRAW_CONE=false;
 	
-	private long REPAINT_TIMER = 50;//in ms
+	private long REPAINT_TIMER = 100;//in ms
 	private ScheduledExecutorService task = Executors.newSingleThreadScheduledExecutor() ;
 	private Runnable repaintTask = new Runnable() {
 		
@@ -171,11 +171,15 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 	@Override
 	public void drawPreview(int x, int y, Cursor cursor) {		
 		List<Point> pointList = cursorMap.get(cursor);
-		if(!(x>=bounds.x && x<=w.getWidth())){
-			x = pointList.get(pointList.size()-1).x + bounds.x;		
+		if(x<bounds.x){
+			x = bounds.x;
+		}else if(x>w.getWidth()){
+			x = w.getWidth();
 		}
-		if(!(y>=bounds.y && y<=w.getHeight())){
-			y = pointList.get(pointList.size()-1).y + bounds.y ;
+		if(y<bounds.y){
+			y=bounds.y;
+		}else if(y>w.getHeight()){
+			y=w.getHeight();
 		}
 		synchronized (pointList) {
 			pointList.add(new Point(x-bounds.x,y-bounds.y));
