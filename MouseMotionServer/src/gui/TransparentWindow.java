@@ -69,7 +69,9 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 			
 			@Override
 			public void paint(Graphics g) {
-				this.toFront();
+				if(!this.isFocusableWindow()){
+					this.toFront();
+				}
 				super.paint(g);
 				List<Point> pointList=null;
 				synchronized (cursorMap) {

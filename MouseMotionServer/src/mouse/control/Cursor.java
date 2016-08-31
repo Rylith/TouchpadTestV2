@@ -1,15 +1,18 @@
 package mouse.control;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 
@@ -19,6 +22,8 @@ public class Cursor{
 
 	private Point point;
 	private JFrame originComponent;
+	private Component currentComponent;
+	private static Map<Component, Boolean> componentMap = new HashMap<Component, Boolean>();
 	//private Scene scene;
 	private Image image;
 	private int ID;
@@ -74,7 +79,7 @@ public class Cursor{
 		switch (eventType) {
 		case PRESS:
 			me = new MouseEvent(component, MouseEvent.MOUSE_PRESSED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, true,MouseEvent.BUTTON1);
-			//Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
 			component.dispatchEvent(me);
 			System.out.println("Action PRESS: on component: "+ component+" on point : " +point);
 			//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,true,false,false,false,false,false,null));
@@ -83,7 +88,7 @@ public class Cursor{
 			break;
 		case RELEASE: 
 			me = new MouseEvent(component, MouseEvent.MOUSE_RELEASED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 0, false,MouseEvent.BUTTON1);
-			//Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
 			component.dispatchEvent(me);
 			//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_RELEASED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,false,false,false,false,false,false,null));
 			System.out.println("Action RELEASE: on component: "+ component+" on point : " +point);
@@ -94,7 +99,7 @@ public class Cursor{
 			switch(state){
 			case PRESS:
 				me = new MouseEvent(component, MouseEvent.MOUSE_DRAGGED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, false);
-				//Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
 				component.dispatchEvent(me);
 				break;
 			case IDLE:
@@ -105,14 +110,14 @@ public class Cursor{
 			break;
 		case ENTERED:
 			me = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, false);
-			//Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			component.dispatchEvent(me);
+			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+			//component.dispatchEvent(me);
 			System.out.println("Action ENTERED: on component: "+ component+" on point : " +point);
 			break;
 		case EXIT:
 			me = new MouseEvent(component, MouseEvent.MOUSE_EXITED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, false);
-			//Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			component.dispatchEvent(me);
+			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+			//component.dispatchEvent(me);
 			System.out.println("Action EXITED: on component: "+ component+" on point : " +point);
 			break;
 		default:
@@ -131,29 +136,67 @@ public class Cursor{
 	
 	public void mouseMove(int x,int y){
 		setPoint(x, y);
-		createMouseEvent(EventType.DRAG,originComponent);
+		synchronized (componentMap) {
+			
+			for(Entry<Component,Boolean> entry : componentMap.entrySet()){
+				Component compo = entry.getKey();
+				
+				if(compo.isShowing()){
+					Point positionOnScreen = compo.getLocationOnScreen();
+					boolean isInside = entry.getValue().booleanValue();
+					if(point.x<=compo.getWidth()+positionOnScreen.x && point.x>=positionOnScreen.x && point.y>=positionOnScreen.y && point.y<=compo.getHeight()+positionOnScreen.y){
+						//compo.requestFocus();
+						if(!isInside){
+							currentComponent=compo;
+							createMouseEvent(EventType.ENTERED, compo);
+							componentMap.replace(compo, new Boolean(true));
+						}
+						
+					}else if(isInside){
+							createMouseEvent(EventType.EXIT, compo);
+							componentMap.replace(compo, new Boolean(false));
+					}
+				}
+			}
+		}
+		createMouseEvent(EventType.DRAG,currentComponent);
 		originComponent.repaint();
 	}
 	
 	public void mousePress(){
-		createMouseEvent(EventType.PRESS, originComponent);
+		createMouseEvent(EventType.PRESS, currentComponent);
 	}
 
 	public void mouseRelease() {
-		createMouseEvent(EventType.RELEASE, originComponent);
+		createMouseEvent(EventType.RELEASE, currentComponent);
 	}
 	
-	public boolean possessCursor(){
-		return point.equals(MouseInfo.getPointerInfo().getLocation());
+	private static Map<Component, Boolean> getAllComponents(final Container c){
+		Component[] comps = c.getComponents();
+		Map<Component, Boolean> componentMap = new HashMap<>();
+		for(Component comp : comps){
+			componentMap.put(comp, new Boolean(false));
+			if(comp instanceof Container){
+				componentMap.putAll(getAllComponents((Container) comp));
+			}
+		}
+		return componentMap;
 	}
 	
-	public void repaint(){
-		originComponent.repaint();
+	public static void setComponents(final Container c){
+		synchronized (componentMap) {
+			componentMap.putAll(getAllComponents(c));
+		}
 	}
-
+	
+	public static void addComponent(final Component c){
+		synchronized (componentMap) {
+			componentMap.put(c, new Boolean(false));
+		}
+	}
+		
 	@Override
 	public boolean equals(Object obj) {
-		System.out.println("call to equals of cursor");
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -162,7 +205,5 @@ public class Cursor{
 		if (this.ID != other.getID())
 			return false;
 		return true;
-	}
-	
-	
+	}	
 }
