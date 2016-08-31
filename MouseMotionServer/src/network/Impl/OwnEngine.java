@@ -146,11 +146,6 @@ public class OwnEngine extends Engine implements Runnable{
 	    //Si le message est non null c'est qu'il a été lu entièrement
 	    if(msg != null){
 	    	((ChannelTest) channel).getCallback().deliver(channel, msg);
-	    	if(!((ChannelTest) channel).getWriteAutomata().isEmpty()){
-	    		key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-	    	}
-	    	//msg = String.valueOf(Integer.valueOf(new String(msg))+1).getBytes();
-			//channel.send(msg, 0, msg.length);
 	    }
 		
 	}
