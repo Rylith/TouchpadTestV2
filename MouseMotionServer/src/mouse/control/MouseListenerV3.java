@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import gui.Log;
 import network.Impl.Util;
 
 public class MouseListenerV3 extends IMouseListener {
@@ -36,7 +37,7 @@ public class MouseListenerV3 extends IMouseListener {
 		public void run(){
 			while(borderMode){
 				//Logarithmic increase in function of time
-				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.1)*2;
+				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0);
 				//System.out.println("coef: "+coef);
 				//float intensity = COEF/20;
 				//System.out.println(intensity);
@@ -98,5 +99,18 @@ public class MouseListenerV3 extends IMouseListener {
 			mouse.motion(dist_x, dist_y,preview);
 		}
 		return intensity;
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public void release() {
+		//mouse.release();
+		borderMode=false;
+		movement.stop();
+		if(timerChangeMode != null){
+			timerChangeMode.cancel(false);
+		}
+		Log.println("release");
+		
 	}
 }

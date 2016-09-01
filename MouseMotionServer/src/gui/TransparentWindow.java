@@ -19,18 +19,20 @@ import mouse.control.PreviewEventListener;
 public class TransparentWindow implements PreviewEventListener {
 
 	private List<Point> pointList = new ArrayList<>();
+	private Point precPoint;
 	private final int ARR_SIZE = 7;
-	private final int ARROW_LENGHT = 25;
+	private final static int ARROW_LENGHT = 25;
 	private final int POINT_DIAMETER = 16;
 	private final int CONE_ANGLE = 60;//in degrees
 	
 	private JFrame w;
 	private Rectangle bounds;
 	private static boolean DRAW_FINAL_POINT = true;
-	private static boolean DRAW_LINE = true;
+	private static boolean DRAW_LINE = false;
 	private static boolean DRAW_ARROW = true;
-	private static boolean DRAW_PATH=true;
-	private static boolean DRAW_CONE=true;
+	private static boolean DRAW_PATH=false;
+	private static boolean DRAW_CONE=false;
+	private static final int  MINIMAL_DISTANCE_DRAW_ARROW_OR_CONE= ARROW_LENGHT;
 	
 	public TransparentWindow() {
 		initNewWindow();
@@ -76,16 +78,16 @@ public class TransparentWindow implements PreviewEventListener {
 							g2.setColor(Color.DARK_GRAY);
 							g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
 						}
-						
-						if(DRAW_CONE){
-							drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+						if(firstPoint.distance(lastPoint)>MINIMAL_DISTANCE_DRAW_ARROW_OR_CONE){
+							if(DRAW_CONE){
+								drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+							}
+							
+							if(DRAW_ARROW){
+								g2.setColor(Color.ORANGE);
+								drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+							}
 						}
-						
-						if(DRAW_ARROW){
-							g2.setColor(Color.ORANGE);
-							drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
-						}
-						
 						
 						
 					}
@@ -147,6 +149,7 @@ public class TransparentWindow implements PreviewEventListener {
 
 	@Override
 	public void drawPreview(int x, int y) {
+		
 		if(x<bounds.x){
 			x = bounds.x;
 		}else if(x>(w.getWidth()+bounds.x)){
@@ -157,8 +160,13 @@ public class TransparentWindow implements PreviewEventListener {
 		}else if(y>(w.getHeight()+bounds.y)){
 			y=w.getHeight()+bounds.y;
 		}
-		synchronized (pointList) {
-			pointList.add(new Point(x-bounds.x,y-bounds.y));
+		
+		Point point = new Point(x-bounds.x,y-bounds.y);
+		if(precPoint== null || !precPoint.equals(point)){
+			synchronized (pointList) {
+				pointList.add(point);
+			}
+			precPoint=point;
 		}
 		w.repaint();
 	}
@@ -169,5 +177,45 @@ public class TransparentWindow implements PreviewEventListener {
 			pointList.clear();
 		}
 		w.repaint();
+	}
+
+	public static boolean isDRAW_FINAL_POINT() {
+		return DRAW_FINAL_POINT;
+	}
+
+	public static void setDRAW_FINAL_POINT(boolean dRAW_FINAL_POINT) {
+		DRAW_FINAL_POINT = dRAW_FINAL_POINT;
+	}
+
+	public static boolean isDRAW_LINE() {
+		return DRAW_LINE;
+	}
+
+	public static void setDRAW_LINE(boolean dRAW_LINE) {
+		DRAW_LINE = dRAW_LINE;
+	}
+
+	public static boolean isDRAW_ARROW() {
+		return DRAW_ARROW;
+	}
+
+	public static void setDRAW_ARROW(boolean dRAW_ARROW) {
+		DRAW_ARROW = dRAW_ARROW;
+	}
+
+	public static boolean isDRAW_PATH() {
+		return DRAW_PATH;
+	}
+
+	public static void setDRAW_PATH(boolean dRAW_PATH) {
+		DRAW_PATH = dRAW_PATH;
+	}
+
+	public static boolean isDRAW_CONE() {
+		return DRAW_CONE;
+	}
+
+	public static void setDRAW_CONE(boolean dRAW_CONE) {
+		DRAW_CONE = dRAW_CONE;
 	}
 }

@@ -8,6 +8,7 @@ import network.Interface.Channel;
 import network.Interface.Engine;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.channels.SelectionKey;
@@ -48,16 +49,21 @@ public class OptionsInterface extends JFrame{
 	private static final String prefixCoefControl = "Multiplicateur de déplacement (quelque soit le mode): ";
 	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
 	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
-	private static final String prefixPreview = "Activation de la prévisualisation en Border Mode";
+	private static final String prefixPreview = "Activation prévisualisation en Border Mode";
+	private static final String prefixDRAWLINE = "Ligne";
+	private static final String prefixDRAWPATH = "Chemin parcouru";
+	private static final String prefixDRAWCONE = "Cone";
+	private static final String prefixDRAWPOINT = "Dernier Point";
+	private static final String prefixDRAWARROW = "Flèche";
 	private static final JTextArea text = new JTextArea();
 	private static final String prefixListLabel = "Choix du type de Souris: ";
 	private static final String suffixPercent="%";
 	private static final String suffixMS="ms";
 	private static final String suffixPixel= "px";
-	private static final String v1="Gestion déplacement avec vitesse";
-	private static final String v2="Gestion Vitesse";
+	private static final String v1="Accroissement Quadratique";
+	private static final String v2="Vitesse = f(angle)";
 	private static final String v3="Blocage avant";
-	private static final String v4="Gestion déplacement mapping";
+	private static final String v4="Mapping direct delta_angle -> delta_déplacement";
 	private Engine engine;
 	private boolean killProgramOnClose=false;
 	
@@ -135,6 +141,11 @@ public class OptionsInterface extends JFrame{
 	    final JSlider sliderTestFluidity = new JSlider();
 	    final JSlider sliderMultiFluidity = new JSlider();
 	    final JCheckBox boxPreview = new JCheckBox(prefixPreview);
+	    final JCheckBox boxPreviewPoint = new JCheckBox(prefixDRAWPOINT);
+	    final JCheckBox boxPreviewLine = new JCheckBox(prefixDRAWLINE);
+	    final JCheckBox boxPreviewPath = new JCheckBox(prefixDRAWPATH);
+	    final JCheckBox boxPreviewArrow = new JCheckBox(prefixDRAWARROW);
+	    final JCheckBox boxPreviewCone = new JCheckBox(prefixDRAWCONE);
 	    
 	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
 	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
@@ -222,8 +233,23 @@ public class OptionsInterface extends JFrame{
 	    sliderMultiFluidity.setMinorTickSpacing(1);
 	    sliderMultiFluidity.setMajorTickSpacing(1);
 	    
-	    boxPreview.setAlignmentX(LEFT_ALIGNMENT);
+	    JPanel boxPanel = new JPanel(new FlowLayout());
+	    //boxPreview.setAlignmentX(LEFT_ALIGNMENT);
 	    boxPreview.setSelected(MouseControl.isEnablePreview());
+	    
+	    boxPreviewArrow.setSelected(TransparentWindow.isDRAW_ARROW());
+	    boxPreviewCone.setSelected(TransparentWindow.isDRAW_CONE());
+	    boxPreviewLine.setSelected(TransparentWindow.isDRAW_LINE());
+	    boxPreviewPath.setSelected(TransparentWindow.isDRAW_PATH());
+	    boxPreviewPoint.setSelected(TransparentWindow.isDRAW_FINAL_POINT());
+	    
+	    boxPanel.setAlignmentX(LEFT_ALIGNMENT);
+	    boxPanel.add(boxPreview);
+	    boxPanel.add(boxPreviewPoint);
+	    boxPanel.add(boxPreviewArrow);
+	    boxPanel.add(boxPreviewCone);
+	    boxPanel.add(boxPreviewLine);
+	    boxPanel.add(boxPreviewPath);
 	    
 	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
 	    labPercentScreen.setFont(fontOptionTitle);
@@ -335,6 +361,51 @@ public class OptionsInterface extends JFrame{
 			}
 		});
 	    
+	    boxPreviewArrow.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				TransparentWindow.setDRAW_ARROW(boxPreviewArrow.isSelected());
+				
+			}
+		});
+	    
+	    boxPreviewCone.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				TransparentWindow.setDRAW_CONE(boxPreviewCone.isSelected());
+				
+			}
+		});
+	    
+	    boxPreviewLine.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				TransparentWindow.setDRAW_LINE(boxPreviewLine.isSelected());
+				
+			}
+		});
+	    
+	    boxPreviewPath.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				TransparentWindow.setDRAW_PATH(boxPreviewPath.isSelected());
+				
+			}
+		});
+	    
+	    boxPreviewPoint.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				TransparentWindow.setDRAW_FINAL_POINT(boxPreviewPoint.isSelected());
+				
+			}
+		});
+	    
 	    JPanel pan = new JPanel();
 	    JPanel southEastList = new JPanel(new BorderLayout());
 	    JPanel southEastCOEF = new JPanel(new BorderLayout());
@@ -374,7 +445,7 @@ public class OptionsInterface extends JFrame{
 	    boxpan.add(sliderMultiFluidity);
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labEnablePreview);
-	    boxpan.add(boxPreview);
+	    boxpan.add(boxPanel);
 	    
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

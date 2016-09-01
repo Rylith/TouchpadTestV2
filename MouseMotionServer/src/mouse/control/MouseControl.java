@@ -18,7 +18,8 @@ public class MouseControl {
 	private static boolean enablePreview = true;
 	private static PreviewEvent previewEvent;
 	//Subdivision includes in R+*
-	private static double SUBDIVISION = 1; 
+	private static double SUBDIVISION = 1;
+	private boolean prevPreview = false;
 	
 	//Parameters for the fluidity method
 	private static int testFluidity = 6;
@@ -46,6 +47,12 @@ public class MouseControl {
 			current_point=lastPoint;
 		}
 		
+		if(preview != prevPreview && preview && enablePreview){
+			previewEvent.setPreview(current_point.x, current_point.y);
+		}
+		prevPreview=preview;
+		
+		
 		int dx = x * COEF;
 		int dy = y * COEF;
 		//System.out.println("Distance x: "+dx+", "+"y: "+dy);
@@ -65,6 +72,7 @@ public class MouseControl {
 		for(double i=(dx)/SUBDIVISION,j=(dy)/SUBDIVISION,k=0 ; k<=SUBDIVISION ; i+=((dx)/SUBDIVISION),j+=((dy/SUBDIVISION)),k++){
 			n_x=(int) (-i + current_point.x);
 			n_y=(int) (-j + current_point.y);
+			
 			//System.out.println("Subdivision: "+ n_x + ", " + n_y);
 			//System.out.println("i and j: "+i+", "+j);
 			if(!preview || !enablePreview){
