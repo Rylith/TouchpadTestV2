@@ -218,4 +218,44 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 		}
 		w.repaint();
 	}
+	
+	public static boolean isDRAW_FINAL_POINT() {
+		return DRAW_FINAL_POINT;
+	}
+
+	public static void setDRAW_FINAL_POINT(boolean dRAW_FINAL_POINT) {
+		DRAW_FINAL_POINT = dRAW_FINAL_POINT;
+	}
+
+	public static boolean isDRAW_LINE() {
+		return DRAW_LINE;
+	}
+
+	public static void setDRAW_LINE(boolean dRAW_LINE) {
+		DRAW_LINE = dRAW_LINE;
+	}
+
+	public static boolean isDRAW_ARROW() {
+		return DRAW_ARROW;
+	}
+
+	public static void setDRAW_ARROW(boolean dRAW_ARROW) {
+		DRAW_ARROW = dRAW_ARROW;
+	}
+
+	public static boolean isDRAW_PATH() {
+		return DRAW_PATH;
+	}
+
+	public static void setDRAW_PATH(boolean dRAW_PATH) {
+		DRAW_PATH = dRAW_PATH;
+	}
+
+	public static boolean isDRAW_CONE() {
+		return DRAW_CONE;
+	}
+
+	public static void setDRAW_CONE(boolean dRAW_CONE) {
+		DRAW_CONE = dRAW_CONE;
+	}
 }
