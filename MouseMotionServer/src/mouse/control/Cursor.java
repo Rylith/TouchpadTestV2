@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.AbstractButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import javafx.scene.Scene;
 
@@ -28,7 +32,7 @@ public class Cursor{
 	private Image image;
 	private int ID;
 	public static enum State{IDLE,PRESS};
-	public static enum EventType{PRESS,RELEASE,DRAG,ENTERED,EXIT};
+	public static enum EventType{PRESS,RELEASE,CLICK,DRAG,ENTERED,EXIT};
 	private State state = State.IDLE;
 	
 	public void paint(Graphics g){
@@ -74,54 +78,61 @@ public class Cursor{
 		this.point=point;
 	}
 		
-	private void createMouseEvent(EventType eventType,Component component){
+	private void createMouseEvent(EventType eventType,Component component, boolean popupTrigger){
 		MouseEvent me =null;
-		switch (eventType) {
-		case PRESS:
-			me = new MouseEvent(component, MouseEvent.MOUSE_PRESSED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, true,MouseEvent.BUTTON1);
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			component.dispatchEvent(me);
-			System.out.println("Action PRESS: on component: "+ component+" on point : " +point);
-			//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,true,false,false,false,false,false,null));
-			//Event.fireEvent(scene, new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_PRESSED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,true,false,false,false,false,false,null));
-			state = State.PRESS;
-			break;
-		case RELEASE: 
-			me = new MouseEvent(component, MouseEvent.MOUSE_RELEASED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 0, false,MouseEvent.BUTTON1);
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			component.dispatchEvent(me);
-			//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_RELEASED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,false,false,false,false,false,false,null));
-			System.out.println("Action RELEASE: on component: "+ component+" on point : " +point);
-			state = State.IDLE;
-			break;
-		
-		case DRAG: 
-			switch(state){
+		if(component !=null ){
+			switch (eventType) {
 			case PRESS:
-				me = new MouseEvent(component, MouseEvent.MOUSE_DRAGGED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, false);
+				me = new MouseEvent(component, MouseEvent.MOUSE_PRESSED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, popupTrigger,MouseEvent.BUTTON1);
 				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-				component.dispatchEvent(me);
+				//component.dispatchEvent(me);
+				System.out.println("Action PRESS: on component: "+ component+" on point : " +point);
+				//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_CLICKED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,true,false,false,false,false,false,null));
+				//Event.fireEvent(scene, new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_PRESSED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,true,false,false,false,false,false,null));
+				state = State.PRESS;
 				break;
-			case IDLE:
+			case CLICK:
+				me = new MouseEvent(component, MouseEvent.MOUSE_CLICKED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, popupTrigger,MouseEvent.BUTTON1);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+				System.out.println("Action CLICK: on component: "+ component+" on point : " +point);
+				break;
+			case RELEASE: 
+				me = new MouseEvent(component, MouseEvent.MOUSE_RELEASED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 0, popupTrigger,MouseEvent.BUTTON1);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+				//component.dispatchEvent(me);
+				//Event.fireEvent(ApplicationInterface.listTitle.get(0), new javafx.scene.input.MouseEvent(javafx.scene.input.MouseEvent.MOUSE_RELEASED,point.x-component.getX(),point.y,scene.getX(),scene.getY(),javafx.scene.input.MouseButton.PRIMARY,1,false,false,false,false,false,false,false,false,false,false,null));
+				System.out.println("Action RELEASE: on component: "+ component+" on point : " +point);
+				state = State.IDLE;
+				break;
+			
+			case DRAG: 
+				switch(state){
+				case PRESS:
+					me = new MouseEvent(component, MouseEvent.MOUSE_DRAGGED, Instant.now().getEpochSecond(), 0,  point.x, point.y, 1, popupTrigger);
+					Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+					component.dispatchEvent(me);
+					break;
+				case IDLE:
+					break;
+				default:
+					break;
+				}
+				break;
+			case ENTERED:
+				me = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, popupTrigger);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+				//component.dispatchEvent(me);
+				//System.out.println("Action ENTERED: on component: "+ component+" on point : " +point);
+				break;
+			case EXIT:
+				me = new MouseEvent(component, MouseEvent.MOUSE_EXITED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, false);
+				Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
+				//component.dispatchEvent(me);
+				//System.out.println("Action EXITED: on component: "+ component+" on point : " +point);
 				break;
 			default:
 				break;
 			}
-			break;
-		case ENTERED:
-			me = new MouseEvent(component, MouseEvent.MOUSE_ENTERED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, false);
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			//component.dispatchEvent(me);
-			System.out.println("Action ENTERED: on component: "+ component+" on point : " +point);
-			break;
-		case EXIT:
-			me = new MouseEvent(component, MouseEvent.MOUSE_EXITED, Instant.now().getEpochSecond(), 0, point.x, point.y, 0, false);
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(me);
-			//component.dispatchEvent(me);
-			System.out.println("Action EXITED: on component: "+ component+" on point : " +point);
-			break;
-		default:
-			break;
 		}
 	}
 	
@@ -140,42 +151,62 @@ public class Cursor{
 			
 			for(Entry<Component,Boolean> entry : componentMap.entrySet()){
 				Component compo = entry.getKey();
-				
 				if(compo.isShowing()){
+					boolean popuptrigger=false;
 					Point positionOnScreen = compo.getLocationOnScreen();
 					boolean isInside = entry.getValue().booleanValue();
 					if(point.x<=compo.getWidth()+positionOnScreen.x && point.x>=positionOnScreen.x && point.y>=positionOnScreen.y && point.y<=compo.getHeight()+positionOnScreen.y){
-						//compo.requestFocus();
 						if(!isInside){
+							//compo.requestFocus();
 							currentComponent=compo;
-							createMouseEvent(EventType.ENTERED, compo);
+							
+							if(compo instanceof JMenuItem || compo instanceof JPopupMenu){
+								popuptrigger=true;
+							}
+							createMouseEvent(EventType.ENTERED, compo,popuptrigger);
 							componentMap.replace(compo, new Boolean(true));
 						}
 						
 					}else if(isInside){
-							createMouseEvent(EventType.EXIT, compo);
+							if(compo instanceof JMenuItem){
+								popuptrigger=true;
+							}
+							createMouseEvent(EventType.EXIT, compo,popuptrigger);
 							componentMap.replace(compo, new Boolean(false));
 					}
 				}
 			}
 		}
-		createMouseEvent(EventType.DRAG,currentComponent);
+		createMouseEvent(EventType.DRAG,currentComponent,false);
 		originComponent.repaint();
 	}
 	
 	public void mousePress(){
-		createMouseEvent(EventType.PRESS, currentComponent);
+		if(currentComponent instanceof AbstractButton && !(currentComponent instanceof JMenu)){
+			((JMenuItem) currentComponent).doClick();
+		}
+		createMouseEvent(EventType.PRESS, currentComponent,false);
 	}
 
 	public void mouseRelease() {
-		createMouseEvent(EventType.RELEASE, currentComponent);
+		if(!(currentComponent instanceof JMenu)){
+			createMouseEvent(EventType.RELEASE, currentComponent,false);
+		}
 	}
 	
 	private static Map<Component, Boolean> getAllComponents(final Container c){
 		Component[] comps = c.getComponents();
 		Map<Component, Boolean> componentMap = new HashMap<>();
 		for(Component comp : comps){
-			componentMap.put(comp, new Boolean(false));
+			if(comp.getMouseListeners().length>0 || comp.getMouseMotionListeners().length>0){
+				componentMap.put(comp, new Boolean(false));
+			}
+			if(comp instanceof JMenu){
+				int lenght = ((JMenu)comp).getItemCount();
+				for(int i = 0; i < lenght ;i++){
+					componentMap.put(((JMenu)comp).getItem(i), new Boolean(false));
+				}
+			}
 			if(comp instanceof Container){
 				componentMap.putAll(getAllComponents((Container) comp));
 			}

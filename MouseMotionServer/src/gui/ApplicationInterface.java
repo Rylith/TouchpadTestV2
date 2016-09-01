@@ -588,7 +588,7 @@ public class ApplicationInterface extends JFrame {
         mb.add(createDummyMenu("Search"));
         mb.add(createDummyMenu("View"));
         JMenu menu = new JMenu("Tools");
-        JMenuItem item = new JMenuItem("Preference");
+        JMenuItem item = new JMenuItem("Settings");
         item.addActionListener(new ActionListener() {
 			
 			@Override
