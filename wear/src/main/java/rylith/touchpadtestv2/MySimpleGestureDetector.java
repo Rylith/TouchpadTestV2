@@ -1,8 +1,6 @@
 package rylith.touchpadtestv2;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -26,11 +24,13 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public void onLongPress(MotionEvent event) {
-        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-        MainActivity.brightness = -1f;
-        lp.screenBrightness = MainActivity.brightness;
-        activity.getWindow().setAttributes(lp);
-        MainActivity.mDismissOverlay.show();
+        if(!MainActivity.detectMovement){
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            MainActivity.brightness = -1f;
+            lp.screenBrightness = MainActivity.brightness;
+            activity.getWindow().setAttributes(lp);
+            MainActivity.mDismissOverlay.show();
+        }
     }
 
     /*@Override

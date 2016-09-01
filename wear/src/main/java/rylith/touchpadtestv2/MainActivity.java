@@ -63,6 +63,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static Paint paint;
     public static ImageView image;
     public static float brightness=-1f;
+    public static boolean detectMovement = false;
     //private float downx = 0, downy = 0, upx = 0, upy = 0;
 
     //private static final String START_ACTIVITY ="/start_activity";
@@ -248,7 +249,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public boolean onTouchEvent(MotionEvent ev) {
 
         if(!PositionMode){
-
+            detectMovement=false;
             setCoord(ev);
             //current[0] = ev.getX();
             //current[1] = ev.getY();
@@ -268,6 +269,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     sendMessage(MainActivity.WEAR_DATA_PATH, "DOWN," + current[0] + "," + current[1]);
                     break;
                 case (MotionEvent.ACTION_MOVE):
+                    detectMovement=true;
                     float distX = -current[0] + origin[0];
                     float distY = -current[1] + origin[1];
                     sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);
