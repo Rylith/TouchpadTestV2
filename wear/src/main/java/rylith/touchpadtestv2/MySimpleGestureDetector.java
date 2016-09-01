@@ -1,9 +1,12 @@
 package rylith.touchpadtestv2;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+
+import java.util.Random;
 
 /**
  * Created by viallet on 15/07/2016.
@@ -18,7 +21,10 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        activity.sendMessage(MainActivity.WEAR_DATA_PATH,"DOUBLECLICK");
+        Random rand = new Random();
+        String msg = "DOUBLECLICK,"+rand.nextFloat();
+        activity.sendMessage(MainActivity.WEAR_DATA_PATH,msg);
+        //Log.v("DOUBLECLICK","double tap send: "+msg);
         return true;
     }
 

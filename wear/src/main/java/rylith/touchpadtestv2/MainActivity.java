@@ -340,6 +340,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             if(request == null){
                 request = PutDataRequest.create(path);
             }
+            //Log.v("SEND MESSAGE",text);
             request.setData(text.getBytes()).setUrgent();
             Wearable.DataApi.putDataItem(mApiClient,request);
         }
