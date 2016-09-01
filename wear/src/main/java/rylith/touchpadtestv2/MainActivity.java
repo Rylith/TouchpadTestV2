@@ -54,6 +54,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static DismissOverlayView mDismissOverlay;
     private GestureDetectorCompat mDetector;
     private Vibrator vibrator;
+    public static boolean detectMovement = false;
 
     public static TextView pos;
     private NodeApi.GetConnectedNodesResult nodes;
@@ -248,7 +249,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public boolean onTouchEvent(MotionEvent ev) {
 
         if(!PositionMode){
-
+            detectMovement=false;
             setCoord(ev);
             //current[0] = ev.getX();
             //current[1] = ev.getY();
@@ -268,6 +269,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     sendMessage(MainActivity.WEAR_DATA_PATH, "DOWN," + current[0] + "," + current[1]);
                     break;
                 case (MotionEvent.ACTION_MOVE):
+                    detectMovement=true;
                     float distX = -current[0] + origin[0];
                     float distY = -current[1] + origin[1];
                     sendMessage(MainActivity.WEAR_DATA_PATH, "SCROLL," + current[0] + "," + current[1] + "," + distX + "," + distY);

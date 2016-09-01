@@ -30,11 +30,13 @@ public class MySimpleGestureDetector extends GestureDetector.SimpleOnGestureList
 
     @Override
     public void onLongPress(MotionEvent event) {
-        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-        MainActivity.brightness = -1f;
-        lp.screenBrightness = MainActivity.brightness;
-        activity.getWindow().setAttributes(lp);
-        MainActivity.mDismissOverlay.show();
+        if(!MainActivity.detectMovement){
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            MainActivity.brightness = -1f;
+            lp.screenBrightness = MainActivity.brightness;
+            activity.getWindow().setAttributes(lp);
+            MainActivity.mDismissOverlay.show();
+        }
     }
 
     /*@Override
