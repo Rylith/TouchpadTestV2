@@ -27,8 +27,9 @@ import mouse.control.PreviewEventListener;
 public class TransparentWindow implements PreviewEventListener, AddCursorEventListener {
 
 	private Map<Cursor,List<Point>> cursorMap = new HashMap<Cursor,List<Point>>();
+	private Point precPoint;
 	private final int ARR_SIZE = 7;
-	private final int ARROW_LENGHT = 25;
+	private final static int ARROW_LENGHT = 25;
 	private final int POINT_DIAMETER = 16;
 	private final int CONE_ANGLE = 60;//in degrees
 	
@@ -39,6 +40,7 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 	private static boolean DRAW_ARROW = false;
 	private static boolean DRAW_PATH=true;
 	private static boolean DRAW_CONE=false;
+	private static final int  MINIMAL_DISTANCE_DRAW_ARROW_OR_CONE= ARROW_LENGHT;
 	
 	private long REPAINT_TIMER = 100;//in ms
 	private ScheduledExecutorService task = Executors.newSingleThreadScheduledExecutor() ;
@@ -100,13 +102,15 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 									g2.setColor(Color.DARK_GRAY);
 									g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
 								}
-								if(DRAW_ARROW){
-									g2.setColor(Color.ORANGE);
-									drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
-								}
-								
-								if(DRAW_CONE){
-									drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+								if(firstPoint.distance(lastPoint)>MINIMAL_DISTANCE_DRAW_ARROW_OR_CONE){
+									if(DRAW_CONE){
+										drawCone(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+									}
+									
+									if(DRAW_ARROW){
+										g2.setColor(Color.ORANGE);
+										drawArrow(g2, firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y, ARROW_LENGHT);
+									}
 								}
 							}
 						}
@@ -183,8 +187,12 @@ public class TransparentWindow implements PreviewEventListener, AddCursorEventLi
 		}else if(y>(w.getHeight()+bounds.y)){
 			y=w.getHeight()+bounds.y;
 		}
-		synchronized (pointList) {
-			pointList.add(new Point(x-bounds.x,y-bounds.y));
+		Point point = new Point(x-bounds.x,y-bounds.y);
+		if(precPoint== null || !precPoint.equals(point)){
+			synchronized (pointList) {
+				pointList.add(point);
+			}
+			precPoint=point;
 		}
 		w.repaint();
 	}

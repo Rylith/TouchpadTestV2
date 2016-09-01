@@ -14,6 +14,7 @@ public class MouseControl {
 	private boolean pressed=false;
 	private static JFrame frame;
 	private static int COEF = 2;
+	private boolean prevPreview = false;
 
 	private static int id;
 
@@ -60,6 +61,11 @@ public class MouseControl {
 		}else{
 			current_point=lastPoint;
 		}
+		
+		if(preview != prevPreview && preview && enablePreview){
+			previewEvent.setPreview(current_point.x, current_point.y, cursor);
+		}
+		prevPreview=preview;
 
 		int dx = x * COEF;
 		int dy = y * COEF;
