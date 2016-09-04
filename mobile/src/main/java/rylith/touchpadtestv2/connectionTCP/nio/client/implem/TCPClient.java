@@ -12,6 +12,7 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -82,6 +83,30 @@ public class TCPClient{
             }
             m_selector.wakeup();
            //handleWrite(key);
+        }
+    }
+
+    public void sendMessage(ByteBuffer byteBuffer){
+        for(Map.Entry<SelectionKey, Channel> mapEntry : listKey.entrySet()){
+            SelectionKey key = mapEntry.getKey();
+            Channel channel = mapEntry.getValue();
+            channel.send(byteBuffer);
+            //Log.v("message send",message);
+            if(key.isValid()){
+                key.interestOps(SelectionKey.OP_WRITE|SelectionKey.OP_READ);
+            }else{
+                listKey.remove(key);
+                connectionState="Connection with server lost";
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        response.setTextColor(Color.RED);
+                        response.setText(connectionState);
+                    }
+                });
+                mRun=false;
+            }
+            m_selector.wakeup();
+            //handleWrite(key);
         }
     }
 

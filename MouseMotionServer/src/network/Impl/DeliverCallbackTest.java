@@ -5,23 +5,30 @@ import java.nio.channels.SelectionKey;
 
 import gui.Log;
 import mouse.control.IMouseListener;
-import mouse.control.MouseListenerV1;
 import network.Interface.Channel;
 import network.Interface.DeliverCallback;
 
 
 public class DeliverCallbackTest implements DeliverCallback {
 	private static boolean DEBUG = false;
-	private IMouseListener listener = new MouseListenerV1();
+	private IMouseListener listener;
+	public static String defaultListener="mouse.control.MouseListenerV1";
 	private SelectionKey key;
 	private Channel channel;
 	private int xC=0;
 	private int yC=0;
 	
-	public DeliverCallbackTest(){	
+	public DeliverCallbackTest(){
+		try {
+			Class<?> cl = Class.forName(defaultListener);
+			listener = (IMouseListener) cl.newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public DeliverCallbackTest(SelectionKey key, Channel channel){
+		this();
 		this.key=key;
 		this.channel=channel;
 		listener.setKey(key);
@@ -68,6 +75,7 @@ public class DeliverCallbackTest implements DeliverCallback {
 				listener.setCenter(xC,yC);
 				break;
 			case "DOWN":
+				//Set the first previous point
 				float xD = Float.parseFloat(x_y[1]);
 				float yD = Float.parseFloat(x_y[2]);
 				listener.resetBuffers(xD, yD);

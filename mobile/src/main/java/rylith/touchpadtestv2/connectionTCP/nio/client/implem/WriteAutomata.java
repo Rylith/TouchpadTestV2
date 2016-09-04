@@ -30,6 +30,10 @@ public class WriteAutomata {
 		messages.add(ByteBuffer.wrap(data, offset, length));
 	}
 
+	public void write(ByteBuffer byteBuffer){
+		messages.add(byteBuffer);
+	}
+
 	public boolean handleWrite() throws IOException {
 		boolean finish = false;
 		if(!messages.isEmpty()){

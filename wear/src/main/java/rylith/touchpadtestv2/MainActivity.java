@@ -1,8 +1,6 @@
 package rylith.touchpadtestv2;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,54 +11,48 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Channel;
+import com.google.android.gms.wearable.ChannelApi;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import org.w3c.dom.Text;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener{
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener,ChannelApi.ChannelListener{
 
     public static DismissOverlayView mDismissOverlay;
     private GestureDetectorCompat mDetector;
     private Vibrator vibrator;
+    private byte[] lengthBuf = new byte[4];
 
+    private OutputStream out;
     public static TextView pos;
     private NodeApi.GetConnectedNodesResult nodes;
 
     public static Canvas board;
     public static Bitmap sheet;
-    public static Paint paint;
     public static ImageView image;
     public static float brightness=-1f;
     public static boolean detectMovement = false;
@@ -71,24 +63,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public static final String MOBILE_DATA_PATH = "/messageMobile";
 
     private GoogleApiClient mApiClient;
-    private ArrayAdapter<String> mAdapter;
-    private int i=0;
     private Point screenSize;
-    private PutDataRequest request;
-    private MySimpleGestureDetector listener;
     private float[] origin=new float[2],current = new float[2];
     private boolean PositionMode = true;//To decide if it needs to ask the user position
     private boolean enableEvent = false;
     private Rect rectN, rectS,rectE,rectO;
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
     private boolean InversionX=false,InversionY = false;
+    private float intensity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mAdapter = new ArrayAdapter<String>( this, R.layout.list_item );
+        //mAdapter = new ArrayAdapter<String>( this, R.layout.list_item );
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
@@ -137,16 +126,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         initGoogleApiClient();
 
         // Configure a gesture detector
-        mDetector = new GestureDetectorCompat(MainActivity.this, listener=new MySimpleGestureDetector(this));
+        mDetector = new GestureDetectorCompat(MainActivity.this, new MySimpleGestureDetector(this));
 
         //Envoi taille écran"WINDOW,x,y"
         //send = (sendTask) new sendTask().execute("");
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
-        boolean prevEnableEvent = enableEvent;
-        enableEvent = true;
-        sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
-        enableEvent = prevEnableEvent;
     }
 
 
@@ -158,7 +143,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        if(mApiClient != null && !(mApiClient.isConnected() || mApiClient.isConnecting())){
+        if(!(mApiClient.isConnected() || mApiClient.isConnecting())){
             mApiClient.connect();
             //Log.v("API GOOGLE", "Try to connect");
         }
@@ -182,57 +167,63 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         super.onStart();
     }
 
-   /* @Override
-    public void onMessageReceived( final MessageEvent messageEvent ) {
-        runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
-                if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
-                    mAdapter.add(new String(messageEvent.getData()));
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-    }*/
-
     @Override
     public void onConnected(Bundle bundle) {
-        //sendMessage(START_ACTIVITY, "");
+        Log.v("BLUETOOTH","call to OnConnected");
+        Wearable.ChannelApi.addListener(mApiClient,this);
+        Wearable.DataApi.addListener(mApiClient,this);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()){
+                    ChannelApi.OpenChannelResult res = Wearable.ChannelApi.openChannel(mApiClient,node.getId(),WEAR_DATA_PATH).await();
+
+                    Channel channel = res.getChannel();
+
+                    PendingResult<Channel.GetOutputStreamResult> result = channel.getOutputStream(mApiClient);
+                    result.setResultCallback(new ResultCallback<Channel.GetOutputStreamResult>() {
+                        @Override
+                        public void onResult(@NonNull Channel.GetOutputStreamResult getOutputStreamResult) {
+                            out = getOutputStreamResult.getOutputStream();
+                            boolean prevEnableEvent = enableEvent;
+                            enableEvent = true;
+                            Log.v("CHANNEL API","TRY TO SEND WINDOW IN ON CONNECTED");
+                            sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+                            Log.v("CHANNEL API","SEND WINDOW IN ON CONNECTED COMPLETE");
+                            enableEvent = prevEnableEvent;
+                        }
+                    });
+                }
             }
-        });
-        Wearable.DataApi.addListener(mApiClient,this);
-        Log.v("BLUETOOTH","call to OnConnected");
+        }).start();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result){
+    public void onConnectionFailed(@NonNull ConnectionResult result){
         Log.e("ERROR","result: "+result.getErrorMessage());
         if(result.getErrorCode() == ConnectionResult.API_UNAVAILABLE){
             Log.e("ERROR","Wearable API is unavailable");
         }
     }
 
-    /*@Override
-    protected void onStop() {
-        if ( mApiClient != null ) {
-            Wearable.MessageApi.removeListener( mApiClient, this );
-            if ( mApiClient.isConnected() ) {
-                mApiClient.disconnect();
-            }
-        }
-        super.onStop();
-    }*/
 
     @Override
     protected void onDestroy() {
         if( mApiClient != null ) {
+            Wearable.DataApi.removeListener(mApiClient,this);
+            Wearable.ChannelApi.removeListener(mApiClient,this);
             mApiClient.unregisterConnectionCallbacks(this);
             mApiClient.unregisterConnectionFailedListener(this);
             mApiClient.disconnect();
+        }
+        try {
+            if(out != null){
+                out.close();
+                out = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         PositionMode = true;
         enableEvent=false;
@@ -279,10 +270,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     break;
                 case (MotionEvent.ACTION_UP):
                     sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
-                    //isUp = true;
-                    /*if (vibrator != null) {
-                        vibrator.cancel();
-                    }*/
                     break;
                 default:
 
@@ -337,12 +324,18 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void sendMessage(final String path, final String text) {
         //Log.v("BLUETOOTH","Inside sendMessage NOT THREAD");
         if(enableEvent){
-            if(request == null){
-                request = PutDataRequest.create(path);
+            try {
+                if(out !=null){
+                    writeInt32(lengthBuf,0,text.getBytes().length);
+                    //Log.v("CHANNEL API","length: "+text.getBytes().length);
+                    out.write(lengthBuf);
+                    Log.v("CHANNEL API",new String(text.getBytes()));
+                    out.write(text.getBytes());
+                    out.flush();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            //Log.v("SEND MESSAGE",text);
-            request.setData(text.getBytes()).setUrgent();
-            Wearable.DataApi.putDataItem(mApiClient,request);
         }
     }
 
@@ -355,20 +348,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     String msg = new String (event.getDataItem().getData());
                     //Log.v("CALLBACK",msg);
                     String[] m = msg.split(",");
-
                     if(vibrator == null){
                         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                     }
-                    float intensity = Float.parseFloat(m[1]);
-                    //if(!isUp){
-                        if(intensity <= 0.25){
-                            long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),20);
-                            vibrator.vibrate(pattern,-1);
-                        }else{
-                            long[] pattern = genVibratorPattern(Float.parseFloat(m[1]),60);
-                            vibrator.vibrate(pattern,-1);
-                        }
-                    //}
+                    intensity = Float.parseFloat(m[1]);
+
+                    long[] pattern = genVibratorPattern(intensity,60);
+                    vibrator.vibrate(pattern,-1);
                 }
             }
         }
@@ -489,6 +475,53 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    @Override
+    public void onChannelOpened(Channel channel) {
+        PendingResult<Channel.GetOutputStreamResult> result = channel.getOutputStream(mApiClient);
+        Log.v("CHANNEL API","creation of channel");
+        result.setResultCallback(new ResultCallback<Channel.GetOutputStreamResult>() {
+            @Override
+            public void onResult(@NonNull Channel.GetOutputStreamResult getOutputStreamResult) {
+                out = getOutputStreamResult.getOutputStream();
+                boolean prevEnableEvent = enableEvent;
+                enableEvent = true;
+                sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
+                enableEvent = prevEnableEvent;
+            }
+        });
+    }
+
+    @Override
+    public void onChannelClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL CLOSE");
+        /*try {
+            if(out != null){
+                out.close();
+                out = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    @Override
+    public void onInputClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL INPUT CLOSE");
+    }
+
+    @Override
+    public void onOutputClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL OUTPUT CLOSE");
+        out=null;
+        Log.v("CHANNEL API","CHANNEL OUTPUT CLOSE : "+out);
+    }
+
+    static public void writeInt32(byte[] bytes, int offset, int value) {
+        bytes[offset]= (byte)((value >> 24) & 0xff);
+        bytes[offset+1]= (byte)((value >> 16) & 0xff);
+        bytes[offset+2]= (byte)((value >> 8) & 0xff);
+        bytes[offset+3]= (byte)(value & 0xff);
+    }
 }
 
 

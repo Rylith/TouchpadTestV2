@@ -18,20 +18,30 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Channel;
+import com.google.android.gms.wearable.ChannelApi;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import rylith.touchpadtestv2.connectionTCP.nio.client.implem.TCPClient;
 
-public class MainActivity extends Activity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,DataApi.DataListener {
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ChannelApi.ChannelListener {
 
     //private static final String START_ACTIVITY ="/start_activity";
     public static final String WEAR_DATA_PATH = "/message";
@@ -41,18 +51,80 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     private static final String PREFS_SERV = "MyPrefsServ";
 
     private TCPClient mTcpClient;
+    private NodeApi.GetConnectedNodesResult nodes;
+
     public static String SERVERIP = "192.168.43.43"; //your computer IP address
     public static int SERVERPORT = 4446;
     private Activity activity;
     private TextView response;
     private EditText editTextAddress;
     private EditText editTextPort;
+    private Channel channel;
 
     private Canvas board;
     private Bitmap sheet;
     private Paint paint;
     private ImageView image;
     private TextView pos;
+    private InputStream in;
+
+    private ExecutorService task = Executors.newSingleThreadExecutor();
+    private Runnable listenOnChannel = new Runnable() {
+        @Override
+        public void run() {
+            Log.v("CHANNEL API MOBILE","Launch thread");
+            byte[] byteBuffer = new byte[10];
+            byte[] lengthBuf = new byte[4];
+            boolean readLength = true;
+            int length=0;
+            int read=0;
+            try {
+                while(mApiClient.isConnected() && in != null){
+
+                    if(readLength){
+                        //Log.v("CHANNEL API MOBILE","beginning of reading length");
+                        while(read >= 0 && read < 4){
+                            read+=in.read(lengthBuf,read,lengthBuf.length-read);
+                        }
+                        if(read < 0){
+                            return;
+                        }
+                        //Log.v("CHANNEL API MOBILE","end of reading length");
+                        read=0;
+                        length=readInt32(lengthBuf,0);
+                        //Log.v("CHANNEL API MOBILE","length: "+length);
+                        readLength=false;
+                    }else{
+                        if(length>byteBuffer.length){
+                            byteBuffer=new byte[length];
+                        }
+                        //Log.v("CHANNEL API MOBILE","beginning of reading message");
+                        while(read<length){
+                            read+=in.read(byteBuffer,read,length-read);
+                        }
+                        //Log.v("CHANNEL API MOBILE","end of reading message");
+                        read=0;
+                        Log.v("CHANNEL API MOBILE",new String(byteBuffer));
+                        if(mTcpClient != null){
+                            //Log.v("GESTURE",new String(data));
+                            mTcpClient.sendMessage(ByteBuffer.wrap(byteBuffer,0,length));
+                        }
+                        /*String tra = new String(byteBuffer);
+                        String[] mess = tra.split(",");
+                        pos.setText(mess[0]);
+                        if (mess.length>2){
+                            board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
+                            image.invalidate();
+                        }*/
+                        readLength=true;
+                    }
+                }
+            } catch (IOException e) {
+                //e.printStackTrace();
+            }
+            Log.v("CHANNEL API MOBILE","End thread");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +152,7 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        if( mApiClient != null && !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
+        if( !( mApiClient.isConnected() || mApiClient.isConnecting() ) )
             mApiClient.connect();
     }
 
@@ -97,15 +169,19 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
     @Override
     protected void onDestroy() {
+        if(channel != null){
+            channel.close(mApiClient);
+        }
+
         if( mApiClient != null ){
-            Wearable.MessageApi.removeListener( mApiClient, this );
-            Wearable.DataApi.removeListener(mApiClient,this);
+            Wearable.ChannelApi.removeListener(mApiClient,this);
             mApiClient.unregisterConnectionCallbacks(this);
             mApiClient.unregisterConnectionFailedListener(this);
             if ( mApiClient.isConnected() ) {
                 mApiClient.disconnect();
             }
         }
+
         if(mTcpClient !=null){
             mTcpClient.closeConnection();
             mTcpClient.stopClient();
@@ -114,16 +190,12 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
     }
 
     private void init() {
-        /*ListView mListView = (ListView) findViewById(R.id.list_view);
-        mEditText = (EditText) findViewById( R.id.input );
-
-        mAdapter = new ArrayAdapter<String>( this, android.R.layout.simple_list_item_1 );
-        mListView.setAdapter( mAdapter );*/
 
         editTextAddress = (EditText) findViewById(R.id.addressEditText);
         editTextPort = (EditText) findViewById(R.id.portEditText);
         Button buttonConnect = (Button) findViewById(R.id.connectButton);
         Button buttonClear = (Button) findViewById(R.id.clearButton);
+        //Button buttonDisconnect = (Button) null;
         response = (TextView) findViewById(R.id.responseTextView);
 
         buttonConnect.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +207,17 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
                         .getText().toString());
             }
         });
+
+        /*buttonDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mTcpClient !=null){
+                    mTcpClient.closeConnection();
+                    mTcpClient.stopClient();
+                }
+            }
+        });*/
+
         buttonClear.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -149,29 +232,34 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         SERVERPORT = settings.getInt("serverPort", 4446);
     }
 
-    private void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-                }
-               /* runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        //mEditText.setText( "" );
-                    }
-                });*/
-            }
-        }).start();
-    }
     @Override
     public void onConnected(Bundle bundle) {
         Log.v("BLUETOOTH","Call of onConnected");
-        Wearable.MessageApi.addListener( mApiClient, this );
-        Wearable.DataApi.addListener(mApiClient,this);
+        Wearable.ChannelApi.addListener(mApiClient,this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Log.v("CHANNEL API MOBILE","BEGIN create channel");
+                nodes=Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()){
+                    ChannelApi.OpenChannelResult res = Wearable.ChannelApi.openChannel(mApiClient,node.getId(),WEAR_DATA_PATH).await();
+
+                    channel = res.getChannel();
+
+                    PendingResult<Channel.GetInputStreamResult> resu = channel.getInputStream(mApiClient);
+                    resu.setResultCallback(new ResultCallback<Channel.GetInputStreamResult>() {
+                        @Override
+                        public void onResult(@NonNull Channel.GetInputStreamResult getInputStreamResult) {
+                            in = getInputStreamResult.getInputStream();
+                            task.execute(listenOnChannel);
+                        }
+                    });
+                }
+                //Log.v("CHANNEL API MOBILE","Launch of task listen");
+
+
+            }
+        }).start();
     }
 
     @Override
@@ -191,26 +279,6 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         super.onStop();
     }
 
-    @Override
-    public void onMessageReceived(final MessageEvent messageEvent) {
-        /*if(messageEvent.getPath().equalsIgnoreCase(WEAR_MESSAGE_PATH)){
-            if (mTcpClient != null) {
-                //Log.v("Coordinates",message);
-                //new sendTask().execute(message);
-                //new Thread(){public void run() {mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);}}.start();
-                mTcpClient.sendMessage(messageEvent.getData(),0, messageEvent.getData().length);
-            }
-            //Log.v("MOBILE","Receive message via Bluetooth");
-            String tra = new String(messageEvent.getData());
-            String[] mess = tra.split(",");
-            pos.setText(mess[0]);
-            if (mess.length>1){
-                board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
-                image.invalidate();
-            }
-        }*/
-        Log.v("BLUETOOTH","Call of onMessageReceived");
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -220,29 +288,54 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
         }
     }
 
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-        //Log.v("BLUETOOTH","Call of onDataChanged");
-        for(DataEvent event : dataEventBuffer){
 
-            if(event.getType() == DataEvent.TYPE_CHANGED){
-                String path = event.getDataItem().getUri().getPath();
-                if(path.equals(WEAR_DATA_PATH)){
-                    byte[] data = event.getDataItem().getData();
-                    if(mTcpClient != null){
-                        //Log.v("GESTURE",new String(data));
-                        mTcpClient.sendMessage(data,0,data.length);
-                    }
-                    String tra = new String(data);
-                    String[] mess = tra.split(",");
-                    pos.setText(mess[0]);
-                    if (mess.length>2){
-                        board.drawPoint(Float.parseFloat(mess[1]),Float.parseFloat(mess[2]),paint);
-                        image.invalidate();
-                    }
-                }
-            }
+    @Override
+    public void onChannelOpened(Channel channel) {
+        Log.v("CHANNEL API","CHANNEL OPEN");
+        if(this.channel != null ){
+            this.channel.close(mApiClient);
         }
+        this.channel = channel;
+        PendingResult<Channel.GetInputStreamResult> res = channel.getInputStream(mApiClient);
+        res.setResultCallback(new ResultCallback<Channel.GetInputStreamResult>() {
+            @Override
+            public void onResult(@NonNull Channel.GetInputStreamResult getInputStreamResult) {
+                in = getInputStreamResult.getInputStream();
+                task.submit(listenOnChannel);
+            }
+        });
+
+    }
+
+    @Override
+    public void onChannelClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL CLOSE");
+        /*try {
+            if(in != null){
+                in.close();
+                in = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    @Override
+    public void onInputClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL INPUT CLOSE");
+        /*try {
+            if(in != null){
+                in.close();
+                in = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    @Override
+    public void onOutputClosed(Channel channel, int i, int i1) {
+        Log.v("CHANNEL API","CHANNEL OUTPUT CLOSE");
     }
 
     public class connectTask extends AsyncTask<String,String,TCPClient> {
@@ -279,5 +372,15 @@ public class MainActivity extends Activity implements MessageApi.MessageListener
 
             return null;
         }
+    }
+
+    /** Read a signed 32bit value */
+    static public int readInt32(byte bytes[], int offset) {
+        int val;
+        val = ((bytes[offset] & 0xFF) << 24);
+        val |= ((bytes[offset+1] & 0xFF) << 16);
+        val |= ((bytes[offset+2] & 0xFF) << 8);
+        val |= (bytes[offset+3] & 0xFF);
+        return val;
     }
 }

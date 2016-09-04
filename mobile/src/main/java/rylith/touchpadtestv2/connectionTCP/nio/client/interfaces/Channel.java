@@ -1,6 +1,7 @@
 package rylith.touchpadtestv2.connectionTCP.nio.client.interfaces;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 
 /**
  * This class wraps an end-point of a channel.
@@ -30,7 +31,12 @@ public abstract class Channel {
    */
   public abstract void send(byte[] bytes, int offset, int length);
 
-  
+  /**
+   * Sending the given byte buffer
+   * @param byteBuffer
+   * */
+  public abstract void send(ByteBuffer byteBuffer);
+
   public abstract void close();
 
 }

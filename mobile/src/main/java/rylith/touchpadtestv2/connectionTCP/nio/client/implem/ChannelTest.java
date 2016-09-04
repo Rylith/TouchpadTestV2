@@ -2,6 +2,7 @@ package rylith.touchpadtestv2.connectionTCP.nio.client.implem;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 import rylith.touchpadtestv2.connectionTCP.nio.client.interfaces.Channel;
@@ -46,6 +47,10 @@ public class ChannelTest extends Channel {
 	@Override
 	public void send(byte[] bytes, int offset, int length) {
 		writeAutomata.write(bytes,offset,length);
+	}
+
+	public void send(ByteBuffer byteBuffer) {
+		writeAutomata.write(byteBuffer);
 	}
 
 	@Override

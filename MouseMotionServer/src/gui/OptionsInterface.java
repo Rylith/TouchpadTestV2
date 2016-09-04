@@ -125,6 +125,7 @@ public class OptionsInterface extends JFrame{
 	    combo.addItem(v4);
 	    combo.addActionListener (new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
+				DeliverCallbackTest.defaultListener=mouseChoice.get(combo.getSelectedItem().toString());
 	        	for(Entry<SelectionKey, Channel> entry : ((OwnEngine) engine).getDelivers()){
 	        		((DeliverCallbackTest) ((ChannelTest)entry.getValue()).getCallback()).setListener(mouseChoice.get(combo.getSelectedItem().toString()));
 	        	}
