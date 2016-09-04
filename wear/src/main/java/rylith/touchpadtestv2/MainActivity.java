@@ -326,7 +326,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     writeInt32(lengthBuf,0,text.getBytes().length);
                     //Log.v("CHANNEL API","length: "+text.getBytes().length);
                     out.write(lengthBuf);
-                    Log.v("CHANNEL API",new String(text.getBytes()));
+                    //Log.v("CHANNEL API",new String(text.getBytes()));
                     out.write(text.getBytes());
                     out.flush();
                 }

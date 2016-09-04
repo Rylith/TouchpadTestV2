@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         //Log.v("CHANNEL API MOBILE",new String(byteBuffer));
                         if(mTcpClient != null){
                             //Log.v("GESTURE",new String(data));
-                            mTcpClient.sendMessage(ByteBuffer.wrap(byteBuffer,0,length));
+                            mTcpClient.sendMessage(ByteBuffer.wrap(byteBuffer.clone(),0,length));
                         }
                         /*String tra = new String(byteBuffer);
                         String[] mess = tra.split(",");
