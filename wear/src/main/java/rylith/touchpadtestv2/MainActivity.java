@@ -88,22 +88,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 //mListView.setAdapter( mAdapter );
 
                 pos = (TextView) findViewById(R.id.pos);
-                if (pos != null)
+                /*if (pos != null)
                 {
                     Log.v("Debug","POS NON NULL");
                 }
                 else {
                     Log.v("Debug","POS NULLE");
-                }
-                pos.setText("Position:");
+                }*/
                 image = (ImageView) findViewById(R.id.image);
-                if (image != null)
+                /*if (image != null)
                 {
                     Log.v("Debug","IMAGE NON NULL");
                 }
                 else {
                     Log.v("Debug","IMAGE NULLE");
-                }
+                }*/
 
                 // Obtain the DismissOverlayView element
                 mDismissOverlay = (DismissOverlayView) findViewById(R.id.dismiss_overlay);
@@ -188,9 +187,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                             out = getOutputStreamResult.getOutputStream();
                             boolean prevEnableEvent = enableEvent;
                             enableEvent = true;
-                            Log.v("CHANNEL API","TRY TO SEND WINDOW IN ON CONNECTED");
                             sendMessage(WEAR_DATA_PATH,"WINDOW,"+screenSize.x+","+screenSize.y);
-                            Log.v("CHANNEL API","SEND WINDOW IN ON CONNECTED COMPLETE");
                             enableEvent = prevEnableEvent;
                         }
                     });
@@ -513,7 +510,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     public void onOutputClosed(Channel channel, int i, int i1) {
         Log.v("CHANNEL API","CHANNEL OUTPUT CLOSE");
         out=null;
-        Log.v("CHANNEL API","CHANNEL OUTPUT CLOSE : "+out);
     }
 
     static public void writeInt32(byte[] bytes, int offset, int value) {

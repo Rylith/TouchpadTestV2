@@ -104,7 +104,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                         }
                         //Log.v("CHANNEL API MOBILE","end of reading message");
                         read=0;
-                        Log.v("CHANNEL API MOBILE",new String(byteBuffer));
+                        //Log.v("CHANNEL API MOBILE",new String(byteBuffer));
                         if(mTcpClient != null){
                             //Log.v("GESTURE",new String(data));
                             mTcpClient.sendMessage(ByteBuffer.wrap(byteBuffer,0,length));
@@ -195,7 +195,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         editTextPort = (EditText) findViewById(R.id.portEditText);
         Button buttonConnect = (Button) findViewById(R.id.connectButton);
         Button buttonClear = (Button) findViewById(R.id.clearButton);
-        //Button buttonDisconnect = (Button) null;
+        //Button buttonDisconnect = (Button) findViewById(R.id.disconnectButton);
         response = (TextView) findViewById(R.id.responseTextView);
 
         buttonConnect.setOnClickListener(new View.OnClickListener() {
