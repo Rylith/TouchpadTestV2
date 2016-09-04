@@ -301,7 +301,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             @Override
             public void onResult(@NonNull Channel.GetInputStreamResult getInputStreamResult) {
                 in = getInputStreamResult.getInputStream();
-                task.submit(listenOnChannel);
+                task.execute(listenOnChannel);
             }
         });
 
