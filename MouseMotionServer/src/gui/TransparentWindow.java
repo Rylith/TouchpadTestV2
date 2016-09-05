@@ -27,6 +27,9 @@ public class TransparentWindow implements PreviewEventListener {
 	
 	private JFrame w;
 	private Rectangle bounds;
+	private float a;
+	private float b;
+	private boolean drawRegressionLine;
 	private static boolean DRAW_FINAL_POINT = true;
 	private static boolean DRAW_LINE = false;
 	private static boolean DRAW_ARROW = true;
@@ -90,6 +93,16 @@ public class TransparentWindow implements PreviewEventListener {
 						}
 						
 						
+					}
+				}
+				if(drawRegressionLine){
+					float y1;
+					float y2;
+					g.setColor(Color.MAGENTA);
+					for(int x=0;x<this.getWidth()-1;x++){
+						y1 = a * x + b;
+						y2 = a * (x+1) + b;
+						g.drawLine(x-1, Math.round(y1), x, Math.round(y2));
 					}
 				}
 			}
@@ -170,12 +183,21 @@ public class TransparentWindow implements PreviewEventListener {
 		}
 		w.repaint();
 	}
+	
+	@Override
+	public void drawRegressionLine(float a, float b) {
+		this.a = a;
+		this.b = b;
+		drawRegressionLine=true;
+		w.repaint();
+	}
 
 	@Override
 	public void removePreview() {
 		synchronized (pointList) {
 			pointList.clear();
 		}
+		drawRegressionLine=false;
 		w.repaint();
 	}
 

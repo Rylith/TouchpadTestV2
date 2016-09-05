@@ -84,6 +84,7 @@ public class MouseListenerV4 extends IMouseListener {
 		//Calcul of coefficients for the straight line
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
+			previewEvent.drawRegressionLine((float)coefs[0], (float)coefs[1]);
 		}
 		
 		anglePrec+=(360*nbTour);

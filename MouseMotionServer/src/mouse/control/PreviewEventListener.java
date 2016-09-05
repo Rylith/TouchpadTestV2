@@ -10,5 +10,11 @@ public interface PreviewEventListener extends EventListener{
 	public void drawPreview(int x, int y);
 	
 	public void removePreview();
+	
+	/**
+	 * Give the information to draw the regression line
+	 * @param a slope of the regression line  
+	 * @param b intercept of the regression line */
+	public void drawRegressionLine(float a, float b);
 
 }
