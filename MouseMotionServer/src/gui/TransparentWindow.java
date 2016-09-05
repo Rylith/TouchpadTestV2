@@ -29,7 +29,7 @@ public class TransparentWindow implements PreviewEventListener {
 	private Rectangle bounds;
 	private float a;
 	private float b;
-	private boolean drawRegressionLine;
+	private boolean drawRegressionLine=false;
 	private static boolean DRAW_FINAL_POINT = true;
 	private static boolean DRAW_LINE = false;
 	private static boolean DRAW_ARROW = true;
