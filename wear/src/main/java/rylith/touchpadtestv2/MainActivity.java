@@ -1,6 +1,5 @@
 package rylith.touchpadtestv2;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +15,7 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
@@ -40,7 +40,7 @@ import com.google.android.gms.wearable.Wearable;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener,ChannelApi.ChannelListener{
+public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener,ChannelApi.ChannelListener{
 
     public static DismissOverlayView mDismissOverlay;
     private GestureDetectorCompat mDetector;
@@ -71,14 +71,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     private boolean InversionAxe = false;//To decide if it needs to switch x & y depending on user position.
     private boolean InversionX=false,InversionY = false;
     private float intensity;
+    private String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //mAdapter = new ArrayAdapter<String>( this, R.layout.list_item );
-
+        setAmbientEnabled();
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
@@ -112,9 +112,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
                 sheet = Bitmap.createBitmap(screenSize.x, screenSize.y, Bitmap.Config.ARGB_8888);
                 board = new Canvas(sheet);
-                //paint = new Paint();
-                //paint.setColor(Color.RED);
-                //paint.setStrokeWidth(10);
                 image.setImageBitmap(sheet);
                 initZone();
 
@@ -133,7 +130,20 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         getWindowManager().getDefaultDisplay().getRealSize(screenSize);
     }
 
+    @Override
+    public void onEnterAmbient(Bundle ambientDetails) {
+        //Log.v("ALWAYS ON","Enter ambient mode");
+        super.onEnterAmbient(ambientDetails);
+        msg = pos.getText().toString();
+        pos.setText("Application en pause \n Touchez pour réactiver");
+    }
 
+    @Override
+    public void onExitAmbient() {
+        //Log.v("ALWAYS ON","Exit ambient mode");
+        super.onExitAmbient();
+        pos.setText(msg);
+    }
 
     private void initGoogleApiClient(){
         mApiClient = new GoogleApiClient.Builder(this)
