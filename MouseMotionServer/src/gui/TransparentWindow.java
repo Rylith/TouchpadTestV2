@@ -102,7 +102,7 @@ public class TransparentWindow implements PreviewEventListener {
 					for(int x=0;x<this.getWidth()-1;x++){
 						y1 = a * x + b;
 						y2 = a * (x+1) + b;
-						g.drawLine(x-1, Math.round(y1), x, Math.round(y2));
+						g.drawLine((x-1)-getX(), Math.round(y1)-getY(), x-getX(), Math.round(y2)-getY());
 					}
 				}
 			}
