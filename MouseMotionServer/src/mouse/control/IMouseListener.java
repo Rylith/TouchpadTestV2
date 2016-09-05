@@ -29,7 +29,7 @@ public abstract class IMouseListener {
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
-	protected static float PERCENTSCREENSIZE = 0.20f;
+	protected static float PERCENTSCREENSIZE = 0.25f;
 	
 	protected int dist_x = 0;
 	protected int dist_y = 0;
@@ -59,7 +59,7 @@ public abstract class IMouseListener {
     };
     
     protected ScheduledFuture<?> timerExitBorderMode;
-    protected static long TIMER_EXIT_MODE = 125;
+    protected static long TIMER_EXIT_MODE = 160;
     protected TimerTask exitBorderMode = new TimerTask() {
         @Override
         public void run() {
@@ -76,6 +76,9 @@ public abstract class IMouseListener {
     
     protected float lastPointOnstraightLineX;
     protected float lastPointOnstraightLineY;
+    
+    protected float epsX=0;
+	protected float epsY=0;
     
     protected double[] coefs;
     protected int sign;
@@ -107,6 +110,8 @@ public abstract class IMouseListener {
 			reglin=true;
         	bufferX.clear();
         	bufferY.clear();
+        	epsX=0;
+        	epsY=0;
         //Init de the prec point before scrolling
         	prec=new Point(Math.round(x),Math.round(y));
         }else{
@@ -197,6 +202,25 @@ public abstract class IMouseListener {
         channel.send(("VIBRATION,"+rand).getBytes(), 0, ("VIBRATION,"+rand).getBytes().length);
     	key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
     	key.selector().wakeup();
+	}
+	
+	protected void calculateDistanceBorderMode(){
+		epsX = sign * epsX;
+		epsY = sign * epsY;
+		
+		float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+		dist_x= Math.round(sign*(COEF+epsX));
+		dist_y= Math.round(sign*((y1 - lastPointOnstraightLineY)+epsY));
+		
+		epsX = sign*(COEF + epsX) - dist_x;
+		epsY = sign*((y1 - lastPointOnstraightLineY)+epsY) - dist_y;
+		
+		//System.out.println("distances : "+ dist_x+", "+dist_y);
+		//System.out.println("Ecart en x: " + epsX);
+		//System.out.println("Ecart en y: " + epsY);
+		
+		lastPointOnstraightLineX+=(COEF);
+		lastPointOnstraightLineY=y1;
 	}
 
 	public void setChannel(Channel channel) {

@@ -139,4 +139,8 @@ public class MouseControl {
 			mouse.mouseMove(lastPoint.x, lastPoint.y);
 		}
 	}
+	
+	public Point getLastPoint(){
+		return lastPoint;
+	}
 }

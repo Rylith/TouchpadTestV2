@@ -19,11 +19,7 @@ public class MouseListenerV2 extends IMouseListener{
 		public void run(){
 			while(borderMode){
 				//Calcul y in function of the new x to stay on the straight line
-					float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-					dist_x= Math.round(sign*COEF);
-					dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
-					lastPointOnstraightLineX+=COEF;
-					lastPointOnstraightLineY=y1;
+					calculateDistanceBorderMode();
 					mouse.motion(moveSpeed*dist_x,moveSpeed*dist_y,preview);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);

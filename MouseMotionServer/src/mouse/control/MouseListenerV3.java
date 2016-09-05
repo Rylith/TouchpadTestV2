@@ -40,11 +40,7 @@ public class MouseListenerV3 extends IMouseListener {
 				//System.out.println("coef: "+COEF);
 				//float intensity = COEF/20;
 				//System.out.println(intensity);
-				float y1=(float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-				dist_x= (int) (sign*COEF);
-				dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
-				lastPointOnstraightLineX+=COEF;
-				lastPointOnstraightLineY=y1;
+				calculateDistanceBorderMode();
 				//channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
 				//key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
 				mouse.motion(dist_x,dist_y,preview);

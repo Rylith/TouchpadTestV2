@@ -81,10 +81,11 @@ public class MouseListenerV4 extends IMouseListener {
 		//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 		
 		//Log.v("BORDER","signe: "+sign);
-		//Calcul of coefficients for the straight line
+		//Calcul of coefficients for the regression line
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
-			previewEvent.drawRegressionLine((float)coefs[0], (float)coefs[1]);
+			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
+			previewEvent.drawRegressionLine((float)coefs[0], b);
 		}
 		
 		anglePrec+=(360*nbTour);
@@ -109,17 +110,10 @@ public class MouseListenerV4 extends IMouseListener {
 		//System.out.println("Current angle: "+ angleCur);
 		//Log.println("Current angle: "+ angleCur);
 		signDetermination();
-		//Log.println("sign before: " + sign);
+		//System.out.println("sign before: " + sign);
 		sign = sign*(int) Math.signum(angleCur-anglePrec);
-		//Log.println("sign after: " + sign);
-		float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-		dist_x= Math.round(sign*COEF);
-		dist_y= Math.round(sign*(y1 - lastPointOnstraightLineY));
-		
-		//System.out.println("distances : "+ dist_x+", "+dist_y);
-		
-		lastPointOnstraightLineX+=(COEF);
-		lastPointOnstraightLineY=y1;
+		//System.out.println("sign after: " + sign);
+		calculateDistanceBorderMode();
 	}
 
 	@Override
