@@ -44,7 +44,7 @@ public class Util {
 	     * result linear coef with coef[0]=a and coef[1]=b in a*x+b*/
 	    static public double[] regress(List<Float> bufferY,List<Float> bufferX){
 	        double[] coefs = new double[2];
-
+	        //System.out.println("BEGIN REG LINE");
 	        // first pass: read in data, compute xbar and ybar
 	        double sumx = 0.0, sumy = 0.0/*, sumx2 = 0.0*/;
 	        int offset=0;
@@ -96,6 +96,7 @@ public class Util {
 	            //System.out.println("Coefficient of correlation : " + R2);
 	            offset++;
 	        }
+	        //System.out.println("FIN REG LINE");
 	        return coefs;
 	    }
 

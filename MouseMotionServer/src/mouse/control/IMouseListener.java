@@ -115,7 +115,8 @@ public abstract class IMouseListener {
         //Init de the prec point before scrolling
         	prec=new Point(Math.round(x),Math.round(y));
         }else{
-        	System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
+        	if(start != null)
+        		System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
         	System.out.println("DOWN in border mode at : " + Instant.now().toEpochMilli());
         }
 	}
@@ -207,20 +208,25 @@ public abstract class IMouseListener {
 	protected void calculateDistanceBorderMode(){
 		epsX = sign * epsX;
 		epsY = sign * epsY;
-		
-		float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
-		dist_x= Math.round(sign*(COEF+epsX));
-		dist_y= Math.round(sign*((y1 - lastPointOnstraightLineY)+epsY));
-		
-		epsX = sign*(COEF + epsX) - dist_x;
-		epsY = sign*((y1 - lastPointOnstraightLineY)+epsY) - dist_y;
-		
-		//System.out.println("distances : "+ dist_x+", "+dist_y);
-		//System.out.println("Ecart en x: " + epsX);
-		//System.out.println("Ecart en y: " + epsY);
-		
-		lastPointOnstraightLineX+=(COEF);
-		lastPointOnstraightLineY=y1;
+		double angleOr = Math.abs(Util.angle(center,origin));
+		if(!(angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260)){
+			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
+			dist_x= Math.round(sign*(COEF+epsX));
+			dist_y= Math.round(sign*((y1 - lastPointOnstraightLineY)+epsY));
+			
+			epsX = sign*(COEF + epsX) - dist_x;
+			epsY = sign*((y1 - lastPointOnstraightLineY)+epsY) - dist_y;
+			
+			//System.out.println("distances : "+ dist_x+", "+dist_y);
+			//System.out.println("Ecart en x: " + epsX);
+			//System.out.println("Ecart en y: " + epsY);
+			
+			lastPointOnstraightLineX+=(COEF);
+			lastPointOnstraightLineY=y1;
+		}else{
+			dist_x= 0;
+			dist_y = Math.round(sign*(COEF));
+		}
 	}
 
 	public void setChannel(Channel channel) {

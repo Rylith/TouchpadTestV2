@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -99,10 +100,14 @@ public class TransparentWindow implements PreviewEventListener {
 					float y1;
 					float y2;
 					g.setColor(Color.MAGENTA);
-					for(int x=0;x<this.getWidth()-1;x++){
-						y1 = a * x + b;
-						y2 = a * (x+1) + b;
-						g.drawLine((x-1)-getX(), Math.round(y1)-getY(), x-getX(), Math.round(y2)-getY());
+					if(!(Math.abs(b) > 800)){
+						for(int x=0;x<this.getWidth()-1;x++){
+							y1 = a * x + b;
+							y2 = a * (x+1) + b;
+							g.drawLine((x-1)-getX(), Math.round(y1)-getY(), x-getX(), Math.round(y2)-getY());
+						}
+					}else{
+						g.drawLine( MouseInfo.getPointerInfo().getLocation().x, getY(), MouseInfo.getPointerInfo().getLocation().x, getHeight());
 					}
 				}
 			}
