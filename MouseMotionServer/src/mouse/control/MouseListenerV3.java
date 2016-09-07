@@ -20,6 +20,8 @@ public class MouseListenerV3 extends IMouseListener {
             origin = current;
             borderMode = true;
             preview=true;
+            angleOr = Math.abs(Util.angle(center,origin));
+            isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
             if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
 			}
@@ -36,13 +38,15 @@ public class MouseListenerV3 extends IMouseListener {
 		public void run(){
 			while(borderMode){
 				//Logarithmic increase in function of time
-				COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0);
+				double a;
+				if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
+					COEF = (float) (Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0)/a);
+				}else{
+					COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0);
+				}
+				
 				//System.out.println("coef: "+COEF);
-				//float intensity = COEF/20;
-				//System.out.println(intensity);
 				calculateDistanceBorderMode();
-				//channel.send(("VIBRATION,"+intensity).getBytes(), 0, ("VIBRATION,"+intensity).getBytes().length);
-				//key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
 				mouse.motion(dist_x,dist_y,preview);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);

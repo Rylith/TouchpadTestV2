@@ -26,6 +26,7 @@ public abstract class IMouseListener {
 	protected Point center,origin;
 	protected Point current;
 	protected Point prec;
+	protected double angleOr;
 	
 	protected int RAYON;
 	protected static double MARGE = 0;
@@ -52,6 +53,9 @@ public abstract class IMouseListener {
         public void run() {
         	sendFeedBack();
             origin = current;
+            angleOr = Math.abs(Util.angle(center,origin));
+            isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
+            signDetermination();
             borderMode = true;
             preview = true;
             //Log.println("changement de mode: "+borderMode);
@@ -73,6 +77,7 @@ public abstract class IMouseListener {
     protected boolean borderMode=false;
     protected boolean preview=false;
     protected boolean reglin=false;
+    protected boolean isVertical=false;
     
     protected float lastPointOnstraightLineX;
     protected float lastPointOnstraightLineY;
@@ -178,17 +183,20 @@ public abstract class IMouseListener {
 	}
 
 	protected void signDetermination(){
-		double angleOr = Math.abs(Util.angle(center,origin));
+		
 		//System.out.println("angle origin: "+angleOr);
 		if(angleOr>=340 && coefs[0]>0 || angleOr<=10 && coefs[0]<0 || angleOr<180 && angleOr>=170 && coefs[0]>0 || angleOr>180 && angleOr<=190 && coefs[0]<0){
 			sign=(int) -Math.signum(coefs[0]*(angleOr-180));
 		}else{
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 		}
+		if(angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260){
+			sign = (int) Math.signum(angleOr-180);
+		}
 		if(sign == 0 && coefs[0] != 0){
 			sign=1;
 		}else if(coefs[0] == 0){
-			if(angleOr >= 180 && angleOr<=190 || angleOr <= 180 && angleOr>=170){
+			if(angleOr<=190 && angleOr>=170){
 				sign=1;
 			}
 			if(angleOr >= 340 || angleOr <=10 ){
@@ -208,8 +216,8 @@ public abstract class IMouseListener {
 	protected void calculateDistanceBorderMode(){
 		epsX = sign * epsX;
 		epsY = sign * epsY;
-		double angleOr = Math.abs(Util.angle(center,origin));
-		if(!(angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260)){
+		
+		if(!isVertical){
 			float y1= (float) (coefs[0]*(lastPointOnstraightLineX + COEF)+coefs[1]);
 			dist_x= Math.round(sign*(COEF+epsX));
 			dist_y= Math.round(sign*((y1 - lastPointOnstraightLineY)+epsY));

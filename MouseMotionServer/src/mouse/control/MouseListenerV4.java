@@ -55,12 +55,12 @@ public class MouseListenerV4 extends IMouseListener {
 				borderActions();	
 				reglin=false;
 				
-				//Intensity between 0 & 1;
-				if(COEF<=(360/DIVISION_COEF)){
+				//Intensity between 0 & 1; DEPRECATED
+				/*if(COEF<=(360/DIVISION_COEF)){
 					intensity=COEF/(360/DIVISION_COEF);
 				}else{
 					intensity=1.0f;
-				}
+				}*/
 			} else {
 				if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 					timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
@@ -77,7 +77,6 @@ public class MouseListenerV4 extends IMouseListener {
 	private void borderActions() {
 		double angleCur = Math.abs(Util.angle(center,current));
 		double anglePrec = Math.abs(Util.angle(center,prec));
-		
 		//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 		
 		//Log.v("BORDER","signe: "+sign);
@@ -85,8 +84,6 @@ public class MouseListenerV4 extends IMouseListener {
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
 			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
-			double angleOr = Math.abs(Util.angle(center,origin));
-			boolean isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
 			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 		}
 		
@@ -107,11 +104,19 @@ public class MouseListenerV4 extends IMouseListener {
 		angleCur+=(360*nbTour);
 		//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
 		//Log.println("Precedent angle: "+anglePrec+" Angle courant: "+angleCur);
-		COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
-
+		
+		//To prevent a very big increase of Y in function of the slope
+		double a;
+		if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
+			COEF= (float) (Math.abs(angleCur-anglePrec)/(DIVISION_COEF*a));
+		}else{
+			COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
+		}
+		
+		System.out.println("COEF : "+COEF);
 		//System.out.println("Current angle: "+ angleCur);
 		//Log.println("Current angle: "+ angleCur);
-		signDetermination();
+		
 		//System.out.println("sign before: " + sign);
 		sign = sign*(int) Math.signum(angleCur-anglePrec);
 		//System.out.println("sign after: " + sign);

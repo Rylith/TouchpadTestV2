@@ -50,7 +50,7 @@ public class Util {
 	        int offset=0;
 	        int length = bufferX.size();
 	        double R2=0;
-	        while(R2 < 0.75 && offset<length-1){
+	        while(R2 < 0.5 && offset<length-1){
 	            for(int i = offset; i<length ; i++){
 	                if(bufferX.get(i) != Integer.MIN_VALUE && bufferY.get(i) != Integer.MIN_VALUE){
 	                    sumx  += bufferX.get(i);

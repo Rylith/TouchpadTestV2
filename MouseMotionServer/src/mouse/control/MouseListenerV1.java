@@ -50,12 +50,12 @@ public class MouseListenerV1 extends IMouseListener{
 			if(borderMode){
 				borderActions();
 				reglin=false;
-				//Intensity between 0 & 1;
-				if(COEF<=(360/DIVISION_COEF)){
+				//Intensity between 0 & 1; DEPRECATED
+				/*if(COEF<=(360/DIVISION_COEF)){
 					intensity=COEF/(360/DIVISION_COEF);
 				}else{
 					intensity=1.0f;
-				}
+				}*/
 			}else{
 				if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 					timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
@@ -91,10 +91,6 @@ public class MouseListenerV1 extends IMouseListener{
 			}
 		}*/
 		
-		double angleOr = Math.abs(Util.angle(center,origin));
-		//sign = (int) Math.signum(angleCur-angleOr);
-		
-		//Log.v("BORDER","signe: "+sign);
 		//Calcul of coefficients for the straight line
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
@@ -115,12 +111,15 @@ public class MouseListenerV1 extends IMouseListener{
 		}
 		angleCur+=(360*nbTour);
 		//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
-		COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+		double a;
+		if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
+			COEF= (float) (Math.abs(angleCur-angleOr)/(DIVISION_COEF*a));
+		}else{
+			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+		}
 		
 		//System.out.println("Current angle: "+ angleCur);
-		signDetermination();
 		
-		//System.out.println(sign);
 		//Calcul y in function of the new x to stay on the straight line
 		calculateDistanceBorderMode();
 	}

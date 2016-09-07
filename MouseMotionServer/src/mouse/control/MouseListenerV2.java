@@ -71,12 +71,12 @@ public class MouseListenerV2 extends IMouseListener{
 				borderActions();
 				reglin=false;
 				
-				//Intensity between 0 & 1;
-				if(COEF<=(360/DIVISION_COEF)){
+				//Intensity between 0 & 1; DEPRECATED
+				/*if(COEF<=(360/DIVISION_COEF)){
 					intensity=COEF/(360/DIVISION_COEF);
 				}else{
 					intensity=1.0f;
-				}
+				}*/
 			}else {
 				if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 					timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
@@ -95,7 +95,6 @@ public class MouseListenerV2 extends IMouseListener{
 	private void borderActions() {
 		double angleCur = Math.abs(Util.angle(center,current));
 		double anglePrec = Math.abs(Util.angle(center,prec));
-		double angleOr = Math.abs(Util.angle(center,origin));
 		//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 		
 		//Log.v("BORDER","signe: "+sign);
@@ -120,10 +119,14 @@ public class MouseListenerV2 extends IMouseListener{
 		angleCur+=(360*nbTour);
 		//System.out.println("Angle original: "+angleOr+" Angle courant: "+angleCur);
 
-		COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+		double a;
+		if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
+			COEF= (float) (Math.abs(angleCur-angleOr)/(DIVISION_COEF*a));
+		}else{
+			COEF=(float) Math.abs(angleCur-angleOr)/DIVISION_COEF;
+		}
 
 		//System.out.println("Current angle: "+ angleCur);
-		signDetermination();
 		
 		if (future == null || future.isDone()){
 			future = task.submit(movement);
