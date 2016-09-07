@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,9 @@ public class TransparentWindow implements PreviewEventListener {
 	private Point precPoint;
 	private final int ARR_SIZE = 7;
 	private final static int ARROW_LENGHT = 25;
-	private final int POINT_DIAMETER = 16;
+	//private final int POINT_DIAMETER = 16;
 	private final int CONE_ANGLE = 60;//in degrees
+	private Image cursorPreview;
 	
 	private JFrame w;
 	private Rectangle bounds;
@@ -79,8 +82,9 @@ public class TransparentWindow implements PreviewEventListener {
 							}
 						}
 						if(DRAW_FINAL_POINT){
-							g2.setColor(Color.DARK_GRAY);
-							g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
+							//g2.setColor(Color.DARK_GRAY);
+							g2.drawImage(cursorPreview, lastPoint.x, lastPoint.y, null);
+							//g2.fillOval(lastPoint.x-(POINT_DIAMETER/2), lastPoint.y-(POINT_DIAMETER/2), POINT_DIAMETER, POINT_DIAMETER);
 						}
 						if(firstPoint.distance(lastPoint)>MINIMAL_DISTANCE_DRAW_ARROW_OR_CONE){
 							if(DRAW_CONE){
@@ -124,6 +128,8 @@ public class TransparentWindow implements PreviewEventListener {
 		if(bounds == null){
 			bounds = w.getGraphicsConfiguration().getBounds();
 		}
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		cursorPreview = kit.createImage("Windows_Cursor.png").getScaledInstance(32, 32, Image.SCALE_DEFAULT);
 		w.setBounds(bounds);
 		w.setBackground(new Color(0,true));
 		new PreviewEvent().addPreviewEventListener(this);
