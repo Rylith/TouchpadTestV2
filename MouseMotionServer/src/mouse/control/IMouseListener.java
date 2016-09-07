@@ -190,7 +190,7 @@ public abstract class IMouseListener {
 		}else{
 			sign=(int) Math.signum(coefs[0]*(angleOr-180));
 		}
-		if(angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260){
+		if(isVertical){
 			sign = (int) Math.signum(angleOr-180);
 		}
 		if(sign == 0 && coefs[0] != 0){

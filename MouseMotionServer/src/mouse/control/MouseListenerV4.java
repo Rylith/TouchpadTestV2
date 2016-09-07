@@ -117,6 +117,7 @@ public class MouseListenerV4 extends IMouseListener {
 		//System.out.println("COEF : "+COEF);
 		//System.out.println("Current angle: "+ angleCur);
 		//Log.println("Current angle: "+ angleCur);
+		
 		//Define the sign before to change it to follow the rotation sens
 		if(sign == 0){
 			signDetermination();
