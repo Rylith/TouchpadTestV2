@@ -107,6 +107,7 @@ public class MouseListenerV3 extends IMouseListener {
 		if(timerChangeMode != null){
 			timerChangeMode.cancel(false);
 		}
+		sendFeedBack();
 		//Log.println("release");
 		
 	}
