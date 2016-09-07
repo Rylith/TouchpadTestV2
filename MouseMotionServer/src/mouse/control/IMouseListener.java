@@ -52,12 +52,11 @@ public abstract class IMouseListener {
         @Override
         public void run() {
         	sendFeedBack();
+        	borderMode = true;
+            preview = true;
             origin = current;
             angleOr = Math.abs(Util.angle(center,origin));
             isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
-            signDetermination();
-            borderMode = true;
-            preview = true;
             //Log.println("changement de mode: "+borderMode);
         }
     };
@@ -68,6 +67,7 @@ public abstract class IMouseListener {
         @Override
         public void run() {
             borderMode = false;
+            sign = 0;
             System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
             //Log.println("Appel au thread de changement de mode: "+ borderMode);
             sendFeedBack();
@@ -214,6 +214,9 @@ public abstract class IMouseListener {
 	}
 	
 	protected void calculateDistanceBorderMode(){
+		if(sign == 0){
+			signDetermination();
+		}
 		epsX = sign * epsX;
 		epsY = sign * epsY;
 		
@@ -226,6 +229,7 @@ public abstract class IMouseListener {
 			epsY = sign*((y1 - lastPointOnstraightLineY)+epsY) - dist_y;
 			
 			//System.out.println("distances : "+ dist_x+", "+dist_y);
+			//System.out.println("COEF : "+COEF);
 			//System.out.println("Ecart en x: " + epsX);
 			//System.out.println("Ecart en y: " + epsY);
 			

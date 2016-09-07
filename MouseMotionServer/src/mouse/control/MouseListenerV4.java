@@ -48,6 +48,7 @@ public class MouseListenerV4 extends IMouseListener {
 				System.out.println("DRAG : Time between release and scroll: "+ start.until(Instant.now(),ChronoUnit.MILLIS));
 			}
 			System.out.println("DRAG in border mode at : "+ Instant.now().toEpochMilli());
+			
 			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
 				timerExitBorderMode.cancel(false);
 			} 
@@ -113,13 +114,21 @@ public class MouseListenerV4 extends IMouseListener {
 			COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
 		}
 		
-		System.out.println("COEF : "+COEF);
+		//System.out.println("COEF : "+COEF);
 		//System.out.println("Current angle: "+ angleCur);
 		//Log.println("Current angle: "+ angleCur);
-		
+		//Define the sign before to change it to follow the rotation sens
+		if(sign == 0){
+			signDetermination();
+		}
 		//System.out.println("sign before: " + sign);
-		sign = sign*(int) Math.signum(angleCur-anglePrec);
+		
+		//Prevent sign to equal 0
+		if(angleCur != anglePrec){
+			sign = sign*(int) Math.signum(angleCur-anglePrec);
+		}
 		//System.out.println("sign after: " + sign);
+		
 		calculateDistanceBorderMode();
 	}
 
