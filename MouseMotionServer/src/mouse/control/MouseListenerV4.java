@@ -10,6 +10,7 @@ import network.Impl.Util;
 public class MouseListenerV4 extends IMouseListener {
 	
 	private int nbTour=0;
+	private int defaultSign;
 	
 	@Override
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
@@ -121,12 +122,13 @@ public class MouseListenerV4 extends IMouseListener {
 		//Define the sign before to change it to follow the rotation sens
 		if(sign == 0){
 			signDetermination();
+			defaultSign=sign;
 		}
 		//System.out.println("sign before: " + sign);
 		
 		//Prevent sign to equal 0
 		if(angleCur != anglePrec){
-			sign = sign*(int) Math.signum(angleCur-anglePrec);
+			sign = defaultSign*(int) Math.signum(angleCur-anglePrec);
 		}
 		//System.out.println("sign after: " + sign);
 		

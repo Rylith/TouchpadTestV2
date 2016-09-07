@@ -236,7 +236,7 @@ public abstract class IMouseListener {
 			lastPointOnstraightLineX+=(COEF);
 			lastPointOnstraightLineY=y1;
 		}else{
-			dist_x= 0;
+			dist_x = 0;
 			dist_y = Math.round(sign*(COEF));
 		}
 	}
