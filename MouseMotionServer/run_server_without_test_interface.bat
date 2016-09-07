@@ -1,0 +1,1 @@
+java -Djava.library.path=lib -jar server_4444.jar
