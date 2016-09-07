@@ -103,11 +103,13 @@ public class MouseListenerV3 extends IMouseListener {
 	@Override
 	public void release() {
 		//mouse.release();
+		if(borderMode){
+			sendFeedBack();
+		}
 		borderMode=false;
 		if(timerChangeMode != null){
 			timerChangeMode.cancel(false);
 		}
-		sendFeedBack();
 		//Log.println("release");
 		
 	}
