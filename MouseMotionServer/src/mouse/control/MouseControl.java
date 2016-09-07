@@ -5,6 +5,11 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.time.Instant;
+
+import org.libpointing.DisplayDevice;
+import org.libpointing.PointingDevice;
+import org.libpointing.TransferFunction;
 
 import network.Impl.Util;
 
@@ -16,6 +21,7 @@ public class MouseControl {
 	private boolean pressed=false;
 	private static int COEF = 2;
 	private static boolean enablePreview = true;
+	private TransferFunction func;
 	private static PreviewEvent previewEvent;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1;
@@ -29,6 +35,9 @@ public class MouseControl {
 		 try {
 				this.mouse = new Robot();
 				lastPoint=MouseInfo.getPointerInfo().getLocation();
+				DisplayDevice output = new DisplayDevice("any:");
+				PointingDevice input = new PointingDevice("any:");
+				func = new TransferFunction("system:", input, output);
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
@@ -53,12 +62,13 @@ public class MouseControl {
 		prevPreview=preview;
 		
 		
-		int dx = x * COEF;
-		int dy = y * COEF;
-		//System.out.println("Distance x: "+dx+", "+"y: "+dy);
+		//Apply native transfer function
+		Point np = func.applyi(x, y, Instant.now().toEpochMilli());
+		int dx = np.x;
+		int dy = np.y;
 		
-		int n_x = -dx + current_point.x;
-		int n_y = -dy + current_point.y;
+		int n_x = -np.x + current_point.x;
+		int n_y = -np.y + current_point.y;
 		//System.out.println("Point to reach: "+ n_x + ", " + n_y);
 		/*if(n_x>=OwnEngine.width || n_x<=0){
 			n_y=current_point.y;

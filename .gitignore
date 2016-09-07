@@ -120,3 +120,7 @@ MouseMotionServer/MultipleMice
 MouseMotionServer/dist
 MouseMotionServer/jinput-master.zip
 MouseMotionServer/MultipleMice.zip
+MouseMotionServer/libpointing-master
+MouseMotionServer/libpointing-master.zip
+MouseMotionServer/libpointing-v1.0.1-Win64-VS2015.zip
+MouseMotionServer/.classpath
