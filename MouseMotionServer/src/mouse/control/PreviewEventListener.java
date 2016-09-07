@@ -14,7 +14,8 @@ public interface PreviewEventListener extends EventListener{
 	/**
 	 * Give the information to draw the regression line
 	 * @param a slope of the regression line  
-	 * @param b intercept of the regression line */
-	public void drawRegressionLine(float a, float b);
+	 * @param b intercept of the regression line
+	 * @param isVertical if the line is not a function but a vertical line */
+	public void drawRegressionLine(float a, float b, boolean isVertical);
 
 }

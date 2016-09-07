@@ -23,8 +23,8 @@ public class PreviewEvent {
 		fireRemovePreview();
 	}
 	
-	public void drawRegressionLine(float a, float b){
-		fireDrawRegressionLine(a, b);
+	public void drawRegressionLine(float a, float b, boolean isVertical){
+		fireDrawRegressionLine(a, b, isVertical);
 	}
 	
 	protected void firePreviewChanged(int x, int y){
@@ -39,9 +39,9 @@ public class PreviewEvent {
 		}
 	}
 	
-	protected void fireDrawRegressionLine(float a, float b){
+	protected void fireDrawRegressionLine(float a, float b, boolean isVertical){
 		for(PreviewEventListener lt : listeners.getListeners(PreviewEventListener.class)){
-			lt.drawRegressionLine(a, b);;
+			lt.drawRegressionLine(a, b, isVertical);;
 		}
 	}
 }

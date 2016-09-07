@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -31,6 +30,7 @@ public class TransparentWindow implements PreviewEventListener {
 	private float a;
 	private float b;
 	private boolean drawRegressionLine=false;
+	private boolean isVertical=false;
 	private static boolean DRAW_FINAL_POINT = true;
 	private static boolean DRAW_LINE = false;
 	private static boolean DRAW_ARROW = true;
@@ -100,14 +100,15 @@ public class TransparentWindow implements PreviewEventListener {
 					float y1;
 					float y2;
 					g.setColor(Color.MAGENTA);
-					if(!(Math.abs(b) > 800)){
+					if(!isVertical){
 						for(int x=0;x<this.getWidth()-1;x++){
 							y1 = a * x + b;
 							y2 = a * (x+1) + b;
 							g.drawLine((x-1)-getX(), Math.round(y1)-getY(), x-getX(), Math.round(y2)-getY());
 						}
-					}else{
-						g.drawLine( MouseInfo.getPointerInfo().getLocation().x, getY(), MouseInfo.getPointerInfo().getLocation().x, getHeight());
+					}else if(pointList.size()>0){
+						Point firstPoint = pointList.get(0);
+						g.drawLine( firstPoint.x, getY(), firstPoint.x, getHeight());
 					}
 				}
 			}
@@ -190,9 +191,10 @@ public class TransparentWindow implements PreviewEventListener {
 	}
 	
 	@Override
-	public void drawRegressionLine(float a, float b) {
+	public void drawRegressionLine(float a, float b, boolean isVertical) {
 		this.a = a;
 		this.b = b;
+		this.isVertical = isVertical;
 		drawRegressionLine=true;
 		w.repaint();
 	}

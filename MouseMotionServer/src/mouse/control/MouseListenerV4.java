@@ -77,7 +77,7 @@ public class MouseListenerV4 extends IMouseListener {
 	private void borderActions() {
 		double angleCur = Math.abs(Util.angle(center,current));
 		double anglePrec = Math.abs(Util.angle(center,prec));
-		//double angleOr = Math.abs(Util.angle(center,origin));
+		
 		//Log.v("BORDER MODE", "angle du courant " +angleCur+" angle de l'origine: " + angleOr);
 		
 		//Log.v("BORDER","signe: "+sign);
@@ -85,7 +85,9 @@ public class MouseListenerV4 extends IMouseListener {
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
 			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
-			previewEvent.drawRegressionLine((float)coefs[0], b);
+			double angleOr = Math.abs(Util.angle(center,origin));
+			boolean isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
+			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 		}
 		
 		anglePrec+=(360*nbTour);
