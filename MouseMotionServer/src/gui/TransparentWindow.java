@@ -129,7 +129,7 @@ public class TransparentWindow implements PreviewEventListener {
 			bounds = w.getGraphicsConfiguration().getBounds();
 		}
 		Toolkit kit = Toolkit.getDefaultToolkit();
-		cursorPreview = kit.createImage("Windows_Cursor.png").getScaledInstance(32, 32, Image.SCALE_DEFAULT);
+		cursorPreview = kit.createImage("Windows_Cursor.png").getScaledInstance(12, 19, Image.SCALE_DEFAULT);
 		w.setBounds(bounds);
 		w.setBackground(new Color(0,true));
 		new PreviewEvent().addPreviewEventListener(this);
