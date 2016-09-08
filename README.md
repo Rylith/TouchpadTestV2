@@ -50,8 +50,8 @@ On windows :
 
 ## How to use?
 
-- Be sur that the ip address of computer is accessible
-- Be sur that the bluetooth is activated on mobile and it is connected on the same network of computer
+- Be sure that the ip address of computer is accessible
+- Be sure that the bluetooth is activated on mobile and it is connected on the same network of computer
 - Launch "run_server_without_test_interface" or "run_server_with_test_interface"
 - With test interface go to Tools->Settings and get ip address
 - Launch application on mobile
@@ -68,7 +68,8 @@ The following description describes the different way to control the cursor when
  - 
  - 
  -
- - 
+ -
+ 
 ## Edit the application
 The application is build as [Eclipse](https://eclipse.org/downloads/) Project. You need the jdk if you want to modify the code or launch the application with eclipse.
 
