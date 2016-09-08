@@ -11,8 +11,6 @@ import org.libpointing.DisplayDevice;
 import org.libpointing.PointingDevice;
 import org.libpointing.TransferFunction;
 
-import network.Impl.Util;
-
 
 public class MouseControl {
 	
@@ -21,7 +19,7 @@ public class MouseControl {
 	private boolean pressed=false;
 	private static int COEF = 2;
 	private static boolean enablePreview = true;
-	private TransferFunction func;
+	private static TransferFunction func;
 	private static PreviewEvent previewEvent;
 	//Subdivision includes in R+*
 	private static double SUBDIVISION = 1;
@@ -35,9 +33,11 @@ public class MouseControl {
 		 try {
 				this.mouse = new Robot();
 				lastPoint=MouseInfo.getPointerInfo().getLocation();
-				DisplayDevice output = new DisplayDevice("any:");
-				PointingDevice input = new PointingDevice("any:");
-				func = new TransferFunction("system:", input, output);
+				if(func == null){
+					DisplayDevice output = new DisplayDevice("any:");
+					PointingDevice input = new PointingDevice("any:");
+					func = new TransferFunction("system:", input, output);
+				}
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
@@ -77,7 +77,7 @@ public class MouseControl {
 		if(n_y>=OwnEngine.height || n_y<=0){
 			n_x=current_point.x;
 		}*/
-		SUBDIVISION = Util.fluidity(dx,dy,testFluidity,multiFluidity);
+		//SUBDIVISION = Util.fluidity(dx,dy,testFluidity,multiFluidity);
 		//System.out.println("Subdivision: " + SUBDIVISION);
 		for(double i=(dx)/SUBDIVISION,j=(dy)/SUBDIVISION,k=0 ; k<=SUBDIVISION ; i+=((dx)/SUBDIVISION),j+=((dy/SUBDIVISION)),k++){
 			n_x=(int) (-i + current_point.x);
