@@ -95,8 +95,12 @@ Please consider to NOT commit your own modified classpath and/or your own modifi
 - git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface.bat
 - git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface.bat
 
-You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listener. However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
+You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listener. 
+
+However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
+
 To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in OptionInterface class or change the default listener in DeliverCallBackTest class.
+
 If you create new parameters and you want change them dynamically, you can add them in OptionInterface class.
 
 A branch of the application exists in order to implement a "cursor per user" program. You can contribute on it as well.
