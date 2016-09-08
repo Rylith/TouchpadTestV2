@@ -66,13 +66,14 @@ First of all, you need to compile the libpointing application:
 - Choose your position around the computer
 - You can now control the cursor with your watch !
 
-## Description of functionalities
+## Description of features
 
-The following describes the different way to control the cursor when you reach the edge of the watch 
- - "Accroissement Quadratique"
- - "Vitesse  = f(angle)"
- - "Blocage avant"
- - "Mapping direct angle -> déplacement"
+The following describes the different way to control the cursor when you reach the edge of the watch. It could be change dynamically with the option interface.
+ - "Accroissement Quadratique" :
+ - "Vitesse  = f(angle)" :
+ - "Blocage avant" :
+ - "Mapping direct angle -> déplacement" :
+ - A drag and drop application can be launch. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
  
 ## Edit the application
 
