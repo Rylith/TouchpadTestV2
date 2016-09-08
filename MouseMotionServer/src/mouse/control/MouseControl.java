@@ -17,7 +17,6 @@ public class MouseControl {
 	private Robot mouse;
 	private Point lastPoint = new Point();
 	private boolean pressed=false;
-	private static int COEF = 2;
 	private static boolean enablePreview = true;
 	private static TransferFunction func;
 	private static PreviewEvent previewEvent;
@@ -106,14 +105,6 @@ public class MouseControl {
 	public void release(){
 		mouse.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 		pressed=false;
-	}
-	
-	public static void setCoeff(int val){
-		COEF = val;
-	}
-	
-	public static int getCoeff(){
-		return COEF;
 	}
 	
 	public static void setMultiF(int val){

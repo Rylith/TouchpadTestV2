@@ -53,7 +53,7 @@ On windows :
 - Be sur that the ip address of computer is accessible
 - Be sur that the bluetooth is activated on mobile and it is connected on the same network of computer
 - Launch "run_server_without_test_interface" or "run_server_with_test_interface"
-- With test interface go to Tool->Settings and get ip address
+- With test interface go to Tools->Settings and get ip address
 - Launch application on mobile
 - Put the previously getting ip adress and a port (by default between 4444 and 4453)
 - Click to connect, a message tells you if you are connected to the server. Moreover the server print a message to indicate that the connexion is accepted
