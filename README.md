@@ -37,16 +37,16 @@ First of all, you need to compile the libpointing application:
 - Choose "Release x64" (if your system runs on a 64 bits architecture) and Generate->"Generate pointing"
 - You can close the project
 - Go to the directory : "libpointing\bindings\Java\Jar"
-- Launch "compile.bat" On some Windows system javac application is not in the Path. To add it, find your JDK installation directory (C:\Program Files\Java\jdk1.8.0_92\bin for example) and follow these [instructions](https://www.java.com/en/download/help/path.xml)
+- Launch "compile.bat" On some Windows system 'javac' application is not in the Path. To add it, find your JDK installation directory (C:\Program Files\Java\jdk1.8.0_92\bin for example) and follow these [instructions](https://www.java.com/en/download/help/path.xml)
 - Go to 'msvc' directory
-- Edit the libpointingJavaBindingDll.vcxproj (with [NotePad++](https://notepad-plus-plus.org/) for example) : Search "jdk1.8.0_91" (for example) and replace with your own version of JDK (jdk1.8.0_92 for example). If your JDK is for 32 bits Architecture and you are on a 64 bits architecture search "C:\Program Files\Java\jdk1.8.0_91" and replace with "C:\Program Files (x86)\Java\jdk1.8.0_92"
+- Edit the 'libpointingJavaBindingDll.vcxproj' file (with [NotePad++](https://notepad-plus-plus.org/) for example) : Search "jdk1.8.0_91" (for example) and replace with your own version of JDK (jdk1.8.0_92 for example). If your JDK is for 32 bits Architecture and you are on a 64 bits architecture search "C:\Program Files\Java\jdk1.8.0_91" and replace with "C:\Program Files (x86)\Java\jdk1.8.0_92"
 - Save the modifications and open the libpointingJavaBindingDll project with Visual Studio
 - Choose "Release x86" and Generate->"Generate libpointingJavaBindingDll"
 - Choose "Release x64" (if your system runs on a 64 bits architecture) and Generate->"Generate libpointingJavaBindingDll"
 - If everything is fine you have just generated the dll libraries in libpointing\bindings\Java\Jar\build\x86 and/or x64\Release
 - You can now generate the jar file with the script "makejar.bat" (Necessary only if you want to edit the code)
 - Open a terminal and test your java version with "java -version"
-- If your runtime environment is in 64 bits you can launch the computer application with the scripts in MouseMotionServer directory : "run_server_without_test_interface" or "run_server_with_test_interface" 
+- If your runtime environment is in 64 bits you can now launch the computer application with the scripts in MouseMotionServer directory : "run_server_without_test_interface" or "run_server_with_test_interface" 
 - Else edit the previous scripts and change 'x64' by 'x86'
 
 ### On Linux/OSX : 
@@ -95,6 +95,7 @@ Please consider to NOT commit your own modified classpath and/or your own modifi
 - git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface.bat
 
 You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listener. However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
+To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in OptionInterface class or change the default listener in DeliverCallBackTest class.
 If you create new parameters and you want change them dynamically, you can add them in OptionInterface class.
 
 A branch of the application exist in order to implement a "cursor per user" program. You can contribute on it as well.
