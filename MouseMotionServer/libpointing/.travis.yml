@@ -1,0 +1,74 @@
+# .travis.yml for libpointing
+#
+# Authors: Izzatbek Mukhanov
+# Copyright © Inria
+# http://libpointing.org/
+#
+# This software may be used and distributed according to the terms of
+# the GNU General Public License version 2 or any later version.
+#
+
+language: cpp
+
+os:
+    - linux
+    - osx
+
+dist: trusty
+sudo: required
+
+before_install:
+    - |
+      if [ $TRAVIS_OS_NAME == linux ] ; then
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test ;
+          sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa ;
+          sudo apt-get update -qq ;
+      elif [ $TRAVIS_OS_NAME == osx ] ; then
+          brew update ;
+      fi
+
+install:
+    - |
+      if [ $TRAVIS_OS_NAME == linux ] ; then
+          sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev qt5-default ;
+          sudo apt-get install -qq libudev-dev ;
+          sudo apt-get install -qq xorg-dev ;
+          sudo apt-get install -qq freeglut3-dev ;
+      elif [ $TRAVIS_OS_NAME == osx ] ; then
+          brew ls | grep -wq qt || brew install qt ;
+      fi
+    - git config --global user.email "libpointing@inria.fr"
+    - git config --global user.name "Travis CI"
+
+before_script:
+    - qmake
+
+script:
+    - make
+    - make check -s
+
+before_deploy:
+    - |
+      if [ $TRAVIS_OS_NAME == linux ] ; then
+          sudo pip install --upgrade pip
+          sudo pip install --upgrade requests ;
+          ./building-and-packaging/linux/create-deb ;
+      elif [ $TRAVIS_OS_NAME == osx ] ; then
+          ./building-and-packaging/mac/update_brew_port
+      fi
+
+deploy:
+    provider: releases
+    api_key: $GITHUB_API_KEY
+    file:
+        - "building-and-packaging/linux/debian/*.deb"
+        - "building-and-packaging/mac/*.tar.gz"
+        - "building-and-packaging/mac/Portfile"
+    file_glob: true
+    skip_cleanup: true
+    on:
+        tags: true
+        repo: INRIA/libpointing
+
+notifications:
+    email: false

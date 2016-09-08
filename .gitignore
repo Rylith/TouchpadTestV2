@@ -124,3 +124,6 @@ MouseMotionServer/libpointing-master
 MouseMotionServer/libpointing-master.zip
 MouseMotionServer/libpointing-v1.0.1-Win64-VS2015.zip
 MouseMotionServer/.classpath
+MouseMotionServer/lib/pointing.dll
+MouseMotionServer/run_server_without_test_interface.bat
+MouseMotionServer/run_server_with_test_interface.bat
