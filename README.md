@@ -55,7 +55,7 @@ First of all, you need to compile the libpointing application:
 ## How to use?
 
 - Be sure that the ip address of computer is accessible
-- Be sure that the bluetooth is activated on mobile and it is connected on the same network of computer
+- Be sure that the bluetooth is activated on mobile and it is connected on the same network as computer
 - Launch "run_server_without_test_interface" or "run_server_with_test_interface"
 - With test interface go to Tools->Settings and get ip address
 - Launch application on mobile
@@ -73,7 +73,7 @@ The following describes the different way to control the cursor when you reach t
  - "Vitesse  = f(angle)" :
  - "Blocage avant" :
  - "Mapping direct angle -> déplacement" :
- - A drag and drop application can be launch. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
+ - A drag and drop application can be launched. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
  
 ## Edit the application
 
@@ -86,3 +86,5 @@ Please consider to NOT commit your own modified classpath and/or your own modifi
 - git update-index --assume-unchanged MouseMotionServer\\.classpath
 - git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface
 - git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface
+
+You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listener. However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
