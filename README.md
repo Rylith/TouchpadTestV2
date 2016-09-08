@@ -1,6 +1,7 @@
 # Watch Mouse Controller
 
 The application allows the user to control the cursor with an Android device. It is a crossplatform application (untested on Mac OSX).
+External contributions as pull requests are welcome!
 
 ## Description
 
@@ -68,15 +69,18 @@ First of all, you need to compile the libpointing application:
 
 ## Description of features
 
-The following describes the different way to control the cursor when you reach the edge of the watch. It could be change dynamically with the option interface.
- - "Accroissement Quadratique" : 
- - "Vitesse  = f(angle)" : An angle increase is reflected by an increase of the speed. If the speed is not equal to 0, the cursor moves alone, without any user interactions with the watch.
- - "Blocage avant" : More you stay in border mode, more the cursor moves fast. (The function is actually ln(delta_t + 1)). delta_t is the difference between the current time and the time when system enters in "Border Mode".
+The following describes the different way to control the cursor when you reach the edge of the watch. It could be change dynamically with the option interface
+ 
+ - "Accroissement Quadratique" : The distance is calculated with the difference between the origin angle (angle when the system enter in "Border mode") and the current angle. More you open the angle, more the next movement will be big
+ - "Vitesse  = f(angle)" : An angle increase is reflected by an increase of the speed. If the speed is not equal to 0, the cursor moves alone, without any user interactions on the watch
+ - "Blocage avant" : More you stay in border mode, more the cursor moves fast. ( The function is actually ln(delta_t + 1) ). 'delta_t' is the difference between the current time and the time when system enters in "Border Mode"
  - "Mapping direct angle -> déplacement" : The distance is calculated with the difference between the current angle and the previous one. 
  - A drag and drop application can be launched. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
- - Adjust the area to enter in "Border Mode"(in % of watch screen)
- - To controle speed and sensibility in "Border Mode" you can adjust a coefficient that divide the calculated angle.
- - Allow a preview mode (enable by default) with different informations to draw. This mode draw information about the next position of cursor in "Border Mode" instead of move it. Drag outside the edge area valid the movement. Double click to remove it.
+ - Adjusts the area to enter in "Border Mode"(in % of watch screen)
+ - Adjusts the time to wait to enter in "Border Mode"
+ - Adjusts the speed with the time between two moves with "Vitesse  = f(angle)" and "Blocage avant" features
+ - To controle speed and sensibility in "Border Mode" you can adjust a coefficient that divide the calculated angle
+ - Allows a preview mode (enable by default) with different informations to draw. This mode draws informations about the next position of cursor in "Border Mode" instead of moving it. Drag outside the edge area valids the movement. Double click to remove it
  
 ## Edit the application
 
@@ -87,8 +91,10 @@ You have to add VM arguments as in the following example [here] (https://github.
 Please consider to NOT commit your own modified classpath and/or your own modified launcher scripts in your fork for a potential merge: 
 
 - git update-index --assume-unchanged MouseMotionServer\\.classpath
-- git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface
-- git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface
+- git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface.bat
+- git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface.bat
 
 You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listener. However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
 If you create new parameters and you want change them dynamically, you can add them in OptionInterface class.
+
+A branch of the application exist in order to implement a "cursor per user" program. You can contribute on it as well.
