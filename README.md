@@ -1,12 +1,12 @@
-# watch Mouse Controller
+# Watch Mouse Controller
 
-The application allows the user to control the cursor with an Android watch device. It is a crossplatform application (untested on Mac OSX).
+The application allows the user to control the cursor with an Android device. It is a crossplatform application (untested on Mac OSX).
 
 ## Description
 
 The program is in three parts :
 
-- watch application (Android SDK 20+)
+- Watch application (Android SDK 20+)
 - Mobile application (Android SDK 19+)
 - Computer application (Java 8)
 
@@ -29,7 +29,7 @@ First of all, you need to compile the libpointing application:
   
   If you want the lastest version of libpointing : With a terminal go in the libpointing directory and "git pull"
   
-On windows : 
+### On Windows 
 
 - Open the "pointing" project with Visual Studio in libpointing directory
 - Choose "Release x86" and Generate->"Generate pointing"
@@ -48,6 +48,10 @@ On windows :
 - If your runtime environment is in 64 bits you can launch the computer application with the scripts in MouseMotionServer directory : "run_server_without_test_interface" or "run_server_with_test_interface" 
 - Else edit the previous scripts and change x64 by x86
 
+### On Linux/OSX : 
+
+- See the installation guide of libpointing [here](https://github.com/INRIA/libpointing/wiki/Installation)
+
 ## How to use?
 
 - Be sure that the ip address of computer is accessible
@@ -64,19 +68,20 @@ On windows :
 
 ## Description of functionalities
 
-The following description describes the different way to control the cursor when you reach the edge of the watch 
+The following describes the different way to control the cursor when you reach the edge of the watch 
  - "Accroissement Quadratique"
  - "Vitesse  = f(angle)"
  - "Blocage avant"
  - "Mapping direct angle -> déplacement"
  
 ## Edit the application
+
 The server application is build as [Eclipse](https://eclipse.org/downloads/) project. You need the jdk if you want to modify the code or launch the application with Eclipse.
 
 You have to add VM arguments as in the following example [here] (https://github.com/INRIA/libpointing/wiki/Java) (same argument that in scripts) and add to the classpath the previous compiled jar of libpointing (libpointing.jar that you can find in "MouseMotionServer\libpointing\bindings\Java\Jar")
 
-Please consider to NOT commit your own modified classpath and/or your own modified launcher scripts with in your fork for a potential merge: 
+Please consider to NOT commit your own modified classpath and/or your own modified launcher scripts in your fork for a potential merge: 
 
-- git update-index --assume-unchanged MouseMotionServer\.classpath
+- git update-index --assume-unchanged MouseMotionServer\\.classpath
 - git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface
 - git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface
