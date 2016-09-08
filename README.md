@@ -37,7 +37,7 @@ First of all, you need to compile the libpointing application:
 - Choose "Release x64" (if your system runs on a 64 bits architecture) and Generate->"Generate pointing"
 - You can close the project
 - Go to the directory : "libpointing\bindings\Java\Jar"
-- Launch "compile.bat" On some Windows system 'javac' application is not in the Path. To add it, find your JDK installation directory (C:\Program Files\Java\jdk1.8.0_92\bin for example) and follow these [instructions](https://www.java.com/en/download/help/path.xml)
+- Launch "compile.bat" On some Windows system, 'javac' application is not in the Path. To add it, find your JDK installation directory (C:\Program Files\Java\jdk1.8.0_92\bin for example) and follow these [instructions](https://www.java.com/en/download/help/path.xml)
 - Go to 'msvc' directory
 - Edit the 'libpointingJavaBindingDll.vcxproj' file (with [NotePad++](https://notepad-plus-plus.org/) for example) : Search "jdk1.8.0_91" (for example) and replace with your own version of JDK (jdk1.8.0_92 for example). If your JDK is for 32 bits Architecture and you are on a 64 bits architecture search "C:\Program Files\Java\jdk1.8.0_91" and replace with "C:\Program Files (x86)\Java\jdk1.8.0_92"
 - Save the modifications and open the libpointingJavaBindingDll project with Visual Studio
