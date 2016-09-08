@@ -1,22 +1,22 @@
-# Wear Mouse Controller
+# watch Mouse Controller
 
-The application allows the user to control the cursor with an Android wear device. It is a crossplatform application (untested on Mac OSX).
+The application allows the user to control the cursor with an Android watch device. It is a crossplatform application (untested on Mac OSX).
 
 ## Description
 
 The program is in three parts :
 
-- Wear application (Android SDK 20+)
+- watch application (Android SDK 20+)
 - Mobile application (Android SDK 19+)
 - Computer application (Java 8)
 
-Mobile application is a bridge between wear and computer. In a near future, when the wear will can open directly sockets with the computer, the mobile will not be necessary anymore.
+Mobile application is a bridge between watch and computer. In a near future, when the watch will can open directly sockets with the computer, the mobile will not be necessary anymore.
 
-In addition to the move and click events, the program offers new and orginal way to reach a distant target. In fact, due to the size of a wear screen, users have to make a lot of movements. This application propose to solve this issue with a new mode when you reach the border of the wear device.
+In addition to the move and click events, the program offers new and orginal way to reach a distant target. In fact, due to the size of a watch screen, users have to make a lot of movements. This application propose to solve this issue with a new mode when you reach the edge of the watch device.
 
 ## Installation
 
-Mobile and wear parts are build as Android Studio Project. You can download Android Studio [here] (https://developer.android.com/studio/index.html).
+Mobile and watch parts are build as Android Studio Project. You can download Android Studio [here] (https://developer.android.com/studio/index.html).
 Import the projects and install them on the desired device.
 
 To install the computer application you need :
@@ -58,19 +58,25 @@ On windows :
 - Put the previously getting ip adress and a port (by default between 4444 and 4453)
 - Click to connect, a message tells you if you are connected to the server. Moreover the server print a message to indicate that the connexion is accepted
 - You can put your phone in your pocket
-- Launch wear application
+- Launch watch application
 - Choose your position around the computer
-- You can now control the cursor with your wear !
+- You can now control the cursor with your watch !
 
 ## Description of functionalities
 
-The following description describes the different way to control the cursor when you reach the border of the wear 
- - 
- - 
- -
- -
+The following description describes the different way to control the cursor when you reach the edge of the watch 
+ - "Accroissement Quadratique"
+ - "Vitesse  = f(angle)"
+ - "Blocage avant"
+ - "Mapping direct angle -> déplacement"
  
 ## Edit the application
-The application is build as [Eclipse](https://eclipse.org/downloads/) Project. You need the jdk if you want to modify the code or launch the application with eclipse.
+The server application is build as [Eclipse](https://eclipse.org/downloads/) project. You need the jdk if you want to modify the code or launch the application with Eclipse.
 
-You have to add VM arguments as in the following example [here] (https://github.com/INRIA/libpointing/wiki/Java) and add to the classpath the previous compiled jar of libpointing (libpointing.jar that you can find in "MouseMotionServer\libpointing\bindings\Java\Jar")
+You have to add VM arguments as in the following example [here] (https://github.com/INRIA/libpointing/wiki/Java) (same argument that in scripts) and add to the classpath the previous compiled jar of libpointing (libpointing.jar that you can find in "MouseMotionServer\libpointing\bindings\Java\Jar")
+
+Please consider to NOT commit your own modified classpath and/or your own modified launcher scripts with in your fork for a potential merge: 
+
+- git update-index --assume-unchanged MouseMotionServer\.classpath
+- git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface
+- git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface
