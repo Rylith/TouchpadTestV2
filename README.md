@@ -99,4 +99,4 @@ You can create your own listener by inheriting the Abstract Class IMouseListener
 To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in OptionInterface class or change the default listener in DeliverCallBackTest class.
 If you create new parameters and you want change them dynamically, you can add them in OptionInterface class.
 
-A branch of the application exist in order to implement a "cursor per user" program. You can contribute on it as well.
+A branch of the application exists in order to implement a "cursor per user" program. You can contribute on it as well.
