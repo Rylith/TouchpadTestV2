@@ -1,1 +1,1 @@
-java -Djava.library.path=lib -jar server_4444.jar "--test"
+"C:\Program Files\Java\jre1.8.0_92\bin\java" -Djava.library.path=lib -jar server_4444.jar "--test"
