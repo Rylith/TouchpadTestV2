@@ -1,0 +1,17 @@
+{
+  "name": "node-bindings",
+  "version": "1.0.0",
+  "description": "This folder is dedicated for libpointing Node.js bindings",
+  "main": "builder.js",
+  "devDependencies": {
+    "jshint": "latest"
+  },
+  "scripts": {
+    "install": "cd libpointing && npm install",
+    "build": "cd libpointing && node-gyp configure build",
+    "lint": "jshint *.js server/*.js client/*.js"
+  },
+  "author": "Izzat Mukhanov",
+  "license": "GPL-2.0",
+  "private": true
+}
