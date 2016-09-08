@@ -81,6 +81,7 @@ The following describes the different way to control the cursor when you reach t
  - Adjusts the speed with the time between two moves with "Vitesse  = f(angle)" and "Blocage avant" features
  - To controle speed and sensibility in "Border Mode" you can adjust a coefficient that divide the calculated angle
  - Allows a preview mode (enable by default) with different informations to draw. This mode draws informations about the next position of cursor in "Border Mode" instead of moving it. Drag outside the edge area valids the movement. Double click to remove it
+ - Allows to change the default port where the server will listen connections. In the launcher script just add an integer as argument for the program. The listened ports will be [integer, integer+10[ (4444-4453)
  
 ## Edit the application
 
