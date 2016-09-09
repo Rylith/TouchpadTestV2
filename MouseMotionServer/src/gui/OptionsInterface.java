@@ -17,7 +17,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.BoxLayout;
@@ -54,6 +54,7 @@ public class OptionsInterface extends JFrame{
 	private static final String prefixDRAWCONE = "Cone";
 	private static final String prefixDRAWPOINT = "Dernier Point";
 	private static final String prefixDRAWARROW = "Flèche";
+	private static final String prefixDRAWREGLINE = "Droite de regression";
 	private static final JTextArea text = new JTextArea();
 	private static final String prefixListLabel = "Choix du type de Souris: ";
 	private static final String suffixPercent="%";
@@ -112,16 +113,16 @@ public class OptionsInterface extends JFrame{
 	    labCombo.setFont(fontOptionTitle);
 	    labCombo.setAlignmentX(LEFT_ALIGNMENT);
 	    
-	    final JComboBox<String> combo = new JComboBox<String>();
-	    final Map<String,String> mouseChoice = new HashMap<String,String>();
+	    
+	    final Map<String,String> mouseChoice = new LinkedHashMap<String,String>();
+	    //Add your listener here
 	    mouseChoice.put(v1, "mouse.control.MouseListenerV1");//v1
 	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
-	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");
+	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");//V3
 	    mouseChoice.put(v4, "mouse.control.MouseListenerV4");//V4
-	    combo.addItem(v1);
-	    combo.addItem(v2);
-	    combo.addItem(v3);
-	    combo.addItem(v4);
+	    
+	    final JComboBox<?> combo = new JComboBox<>(mouseChoice.keySet().toArray());
+	   
 	    combo.addActionListener (new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
 				DeliverCallbackTest.defaultListener=mouseChoice.get(combo.getSelectedItem().toString());
@@ -145,6 +146,7 @@ public class OptionsInterface extends JFrame{
 	    final JCheckBox boxPreviewPath = new JCheckBox(prefixDRAWPATH);
 	    final JCheckBox boxPreviewArrow = new JCheckBox(prefixDRAWARROW);
 	    final JCheckBox boxPreviewCone = new JCheckBox(prefixDRAWCONE);
+	    final JCheckBox boxPreviewRegLine = new JCheckBox(prefixDRAWREGLINE);
 	    
 	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
 	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
@@ -222,7 +224,7 @@ public class OptionsInterface extends JFrame{
 	    sliderMultiFluidity.setMajorTickSpacing(1);
 	    
 	    JPanel boxPanel = new JPanel(new FlowLayout());
-	    //boxPreview.setAlignmentX(LEFT_ALIGNMENT);
+	    
 	    boxPreview.setSelected(MouseControl.isEnablePreview());
 	    
 	    boxPreviewArrow.setSelected(TransparentWindow.isDRAW_ARROW());
@@ -230,6 +232,7 @@ public class OptionsInterface extends JFrame{
 	    boxPreviewLine.setSelected(TransparentWindow.isDRAW_LINE());
 	    boxPreviewPath.setSelected(TransparentWindow.isDRAW_PATH());
 	    boxPreviewPoint.setSelected(TransparentWindow.isDRAW_FINAL_POINT());
+	    boxPreviewRegLine.setSelected(TransparentWindow.isDRAW_REGRESSION_LINE());
 	    
 	    boxPanel.setAlignmentX(LEFT_ALIGNMENT);
 	    boxPanel.add(boxPreview);
@@ -238,6 +241,7 @@ public class OptionsInterface extends JFrame{
 	    boxPanel.add(boxPreviewCone);
 	    boxPanel.add(boxPreviewLine);
 	    boxPanel.add(boxPreviewPath);
+	    boxPanel.add(boxPreviewRegLine);
 	    
 	    final JLabel labPercentScreen = new JLabel(prefixPercentScreen + sliderPercentScreen.getValue() + suffixPercent);
 	    labPercentScreen.setFont(fontOptionTitle);
@@ -378,6 +382,14 @@ public class OptionsInterface extends JFrame{
 			public void stateChanged(ChangeEvent arg0) {
 				TransparentWindow.setDRAW_FINAL_POINT(boxPreviewPoint.isSelected());
 				
+			}
+		});
+	    
+	    boxPreviewRegLine.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				TransparentWindow.setDRAW_REGRESSION_LINE(boxPreviewRegLine.isSelected());
 			}
 		});
 	    

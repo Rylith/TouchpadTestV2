@@ -25,6 +25,8 @@ public class MouseListenerV3 extends IMouseListener {
             isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
             if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
+				float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
+				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 			}
 			signDetermination();
 			start=Instant.now();

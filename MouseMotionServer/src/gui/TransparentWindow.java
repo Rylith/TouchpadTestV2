@@ -34,6 +34,7 @@ public class TransparentWindow implements PreviewEventListener {
 	private float b;
 	private boolean drawRegressionLine=false;
 	private boolean isVertical=false;
+	private static boolean DRAW_REGRESSION_LINE=true;
 	private static boolean DRAW_FINAL_POINT = true;
 	private static boolean DRAW_LINE = false;
 	private static boolean DRAW_ARROW = true;
@@ -201,7 +202,7 @@ public class TransparentWindow implements PreviewEventListener {
 		this.a = a;
 		this.b = b;
 		this.isVertical = isVertical;
-		drawRegressionLine=true;
+		drawRegressionLine=DRAW_REGRESSION_LINE;
 		w.repaint();
 	}
 
@@ -253,4 +254,13 @@ public class TransparentWindow implements PreviewEventListener {
 	public static void setDRAW_CONE(boolean dRAW_CONE) {
 		DRAW_CONE = dRAW_CONE;
 	}
+
+	public static boolean isDRAW_REGRESSION_LINE() {
+		return DRAW_REGRESSION_LINE;
+	}
+
+	public static void setDRAW_REGRESSION_LINE(boolean dRAW_REGRESSION_LINE) {
+		DRAW_REGRESSION_LINE = dRAW_REGRESSION_LINE;
+	}
+	
 }

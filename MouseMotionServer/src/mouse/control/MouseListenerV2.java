@@ -101,6 +101,8 @@ public class MouseListenerV2 extends IMouseListener{
 		//Calcul of coefficients for the straight line
 		if(reglin){
 			coefs = Util.regress(bufferY,bufferX);
+			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
+			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 		}
 		
 		//Detect when the current angle reaches 0
