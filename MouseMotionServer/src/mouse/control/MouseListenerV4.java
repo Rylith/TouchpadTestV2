@@ -138,7 +138,9 @@ public class MouseListenerV4 extends IMouseListener {
 	@Override
 	public void resetBuffers(float x,float y) {
 		//directSens=false;
-		nbTour=0;
+		if(!borderMode){
+			nbTour=0;
+		}
 		super.resetBuffers(x, y);
 	}
 

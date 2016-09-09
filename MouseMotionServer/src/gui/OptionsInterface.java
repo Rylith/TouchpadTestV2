@@ -64,6 +64,7 @@ public class OptionsInterface extends JFrame{
 	private static final String v2="Vitesse = f(angle)";
 	private static final String v3="Blocage avant";
 	private static final String v4="Mapping direct delta_angle -> delta_déplacement";
+	private static final String v5 ="Blocage avant avec changement de direction";
 	private Engine engine;
 	private boolean killProgramOnClose=false;
 	
@@ -120,6 +121,7 @@ public class OptionsInterface extends JFrame{
 	    mouseChoice.put(v2, "mouse.control.MouseListenerV2");//V2
 	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");//V3
 	    mouseChoice.put(v4, "mouse.control.MouseListenerV4");//V4
+	    mouseChoice.put(v5, "mouse.control.MouseListenerV5");//V5
 	    
 	    final JComboBox<?> combo = new JComboBox<>(mouseChoice.keySet().toArray());
 	   
