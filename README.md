@@ -13,7 +13,7 @@ The program is in three parts :
 
 Mobile application is a bridge between watch and computer. In a near future, when the watch will can open directly sockets with the computer, the mobile will not be necessary anymore.
 
-In addition to the move and click events, the program offers new and orginal way to reach a distant target. In fact, due to the size of a watch screen, users have to make a lot of movements. This application propose to solve this issue with a new mode when you reach the edge of the watch device.
+In addition to the move and click events, the program offers new and orginal way to reach a distant target. In fact, due to the size of a watch screen, users have to make a lot of movements. This application propose to solve this issue with a new mode when you reach the edge of the watch.
 
 ## Installation
 
@@ -32,7 +32,7 @@ First of all, you need to compile the libpointing application:
   
 ### On Windows 
 
-- Open the "pointing" project with Visual Studio in libpointing directory
+- Open the "pointing" project with Visual Studio in 'libpointing' directory
 - Choose "Release x86" and Generate->"Generate pointing"
 - Choose "Release x64" (if your system runs on a 64 bits architecture) and Generate->"Generate pointing"
 - You can close the project
@@ -46,7 +46,7 @@ First of all, you need to compile the libpointing application:
 - If everything is fine you have just generated the dll libraries in libpointing\bindings\Java\Jar\build\x86 and/or x64\Release
 - You can now generate the jar file with the script "makejar.bat" (Necessary only if you want to edit the code)
 - Open a terminal and test your java version with "java -version"
-- If your runtime environment is in 64 bits you can now launch the computer application with the scripts in MouseMotionServer directory : "run_server_without_test_interface" or "run_server_with_test_interface" 
+- If your runtime environment is in 64 bits you can now launch the computer application with the scripts in 'MouseMotionServer' directory : "run_server_without_test_interface" or "run_server_with_test_interface" 
 - Else edit the previous scripts and change 'x64' by 'x86'
 
 ### On Linux/OSX : 
@@ -56,7 +56,7 @@ First of all, you need to compile the libpointing application:
 ## How to use?
 
 - Be sure that the ip address of computer is accessible
-- Be sure that the bluetooth is activated on mobile and it is connected on the same network as computer
+- Be sure that the bluetooth is activated on mobile and it is connected on the same network as the computer
 - Launch "run_server_without_test_interface" or "run_server_with_test_interface"
 - With test interface go to Tools->Settings and get ip address
 - Launch application on mobile
@@ -78,7 +78,7 @@ The following describes the different way to control the cursor when you reach t
  - A drag and drop application can be launched. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
  - Adjusts the area to enter in "Border Mode"(in % of watch screen)
  - Adjusts the time to wait to enter in "Border Mode"
- - Adjusts the speed with the time between two moves with "Vitesse  = f(angle)" and "Blocage avant" features
+ - Adjusts the speed with the time between two moves calculation in "Vitesse  = f(angle)" and "Blocage avant" features
  - To controle speed and sensibility in "Border Mode" you can adjust a coefficient that divide the calculated angle
  - Allows a preview mode (enable by default) with different informations to draw. This mode draws informations about the next position of cursor in "Border Mode" instead of moving it. Drag outside the edge area valids the movement. Double click to remove it
  - Allows to change the default port where the server will listen connections. In the launcher script just add an integer as argument for the program. The listened ports will be [integer, integer+10[ (4444-4453)
@@ -95,12 +95,12 @@ Please consider to NOT commit your own modified classpath and/or your own modifi
 - git update-index --assume-unchanged MouseMotionServer\run_server_without_test_interface.bat
 - git update-index --assume-unchanged MouseMotionServer\run_server_with_test_interface.bat
 
-You can create your own listener by inheriting the Abstract Class IMouseListener. It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listeners. 
+You can create your own listener by inheriting the Abstract Class [IMouseListener](). It implements a lot of features as the way to enter and exit of "border mode" or the click and release action, the calcul of sign etc... You just have to implements your own onScroll method to describe the behaviour of your listener when a move action occured on the watch. You can take inspiration on the existing listeners. 
 
 However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
 
-To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in OptionInterface class or change the default listener in DeliverCallBackTest class.
+To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in [OptionInterface]() class or change the default listener in [DeliverCallBackTest]() class.
 
-If you create new parameters and you want change them dynamically, you can add them in OptionInterface class.
+If you create new parameters and you want change them dynamically, you can add them in [OptionInterface]() class.
 
 A branch of the application exists in order to implement a "cursor per user" program. You can contribute on it as well.
