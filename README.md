@@ -75,7 +75,7 @@ The following describes the different way to control the cursor when you reach t
  - "Vitesse  = f(angle)" : An angle increase is reflected by an increase of the speed. If the speed is not equal to 0, the cursor moves alone, without any user interactions on the watch
  - "Blocage avant" : More you stay in border mode, more the cursor moves fast. ( The function is actually ln(delta_t + 1) ). 'delta_t' is the difference between the current time and the time when system enters in "Border Mode"
  - "Mapping direct angle -> déplacement" : The distance is calculated with the difference between the current angle and the previous one. 
- - A drag and drop application can be launched. Allow the user to take pictures from an explorer and drop them into the application in order to test the different features.
+ - A drag and drop application can be launched. Allows the user to take pictures from an explorer and drop them into the application in order to test the different features.
  - Adjusts the area to enter in "Border Mode"(in % of watch screen)
  - Adjusts the time to wait to enter in "Border Mode"
  - Adjusts the speed with the time between two moves calculation in "Vitesse  = f(angle)" and "Blocage avant" features
@@ -86,7 +86,7 @@ The following describes the different way to control the cursor when you reach t
  
 ## Edit the application
 
-The server application is build as [Eclipse](https://eclipse.org/downloads/) project. You need the jdk if you want to modify the code or launch the application with Eclipse.
+The server application is build as [Eclipse](https://eclipse.org/downloads/) project. You need JDK 8 if you want to modify the code or launch the application with Eclipse.
 
 You have to add VM arguments as in the following example [here] (https://github.com/INRIA/libpointing/wiki/Java) (same argument that in scripts) and add to the classpath the previous compiled jar of libpointing (libpointing.jar that you can find in "MouseMotionServer\libpointing\bindings\Java\Jar")
 
@@ -100,7 +100,7 @@ You can create your own listener by inheriting the abstract class [IMouseListene
 
 However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
 
-The messages between watch and computer are send as csv(comma separate values) format. The minimal quantity of information that you have to put in your message is the name of event as the first (or only) value. See [DeliverCallBackTest](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/network/Impl/DeliverCallbackTest.java) class for the existing type of event. To create an event, just add it in switch and call the methods of your listener. The ',' is the separator for each value.
+The messages between watch and computer are send as csv(comma separate values) format. The minimal quantity of information that you have to put in your message is the name of event as the first (or only) value. See [DeliverCallBackTest](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/network/Impl/DeliverCallbackTest.java) class for the existing type of event. To create an event, just add it in switch and call the methods of your listener. Then, send the message in wear application. The ',' is the separator for each value.
 
 To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in [OptionsInterface](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/gui/OptionsInterface.java) class or change the default listener in [DeliverCallBackTest](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/network/Impl/DeliverCallbackTest.java) class.
 
