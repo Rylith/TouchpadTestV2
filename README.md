@@ -99,6 +99,8 @@ You can create your own listener by inheriting the abstract class [IMouseListene
 
 However every listnener is adapted to Round watch. In case of Square watch may be it will be usefull to reconsider the way to detect the edges.
 
+The messages between watch and computer are send as csv(comma separate values) format. The minimal quantity of information that you have to put in your message is the name of event as the first (or only) value. See [DeliverCallBackTest](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/network/Impl/DeliverCallbackTest.java) class for the existing type of event. To create an event, just add it in switch and call the methods of your listener. The ',' is the separator for each value.
+
 To use your own listener don't forget to add a title and the class name of your listener in "mouseChoice" map in [OptionsInterface](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/gui/OptionsInterface.java) class or change the default listener in [DeliverCallBackTest](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/network/Impl/DeliverCallbackTest.java) class.
 
 If you create new parameters and you want change them dynamically, you can add them in [OptionsInterface](https://github.com/Rylith/TouchpadTestV2/blob/master/MouseMotionServer/src/gui/OptionsInterface.java) class.
