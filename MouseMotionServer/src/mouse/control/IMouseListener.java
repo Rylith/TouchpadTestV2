@@ -46,7 +46,7 @@ public abstract class IMouseListener {
     protected ScheduledExecutorService task = Executors
             .newScheduledThreadPool(2);
     
-    protected static long TIMER_AFF = 500;
+    protected static long TIMER_AFF = 300;
     protected static long TIMER_WAIT_MOVEMENT_THREAD=50;
     protected TimerTask change_mode = new TimerTask() {
         @Override
@@ -123,6 +123,9 @@ public abstract class IMouseListener {
         	if(start != null)
         		System.out.println("Time between release and down: "+start.until(Instant.now(),ChronoUnit.MILLIS));
         	System.out.println("DOWN in border mode at : " + Instant.now().toEpochMilli());
+        	if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
+				timerExitBorderMode.cancel(false);
+			} 
         }
 	}
 	
