@@ -112,7 +112,7 @@ public class MouseListenerV4 extends IMouseListener {
 		if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
 			COEF= (float) (Math.abs(angleCur-anglePrec)/(DIVISION_COEF*a));
 		}else{
-			COEF=(float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
+			COEF= (float) Math.abs(angleCur-anglePrec)/DIVISION_COEF;
 		}
 		
 		//System.out.println("COEF : "+COEF);

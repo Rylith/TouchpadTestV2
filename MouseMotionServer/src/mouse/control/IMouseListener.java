@@ -131,7 +131,11 @@ public abstract class IMouseListener {
 	
 	/**Simulate a continue left click*/
 	public void press() {
-		mouse.press();
+		if(!mouse.isPressed()){
+			mouse.press();
+		}else{
+			mouse.release();
+		}
 	}
 	
 	/**Simulate the release of left click*/

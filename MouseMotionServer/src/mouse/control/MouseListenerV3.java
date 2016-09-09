@@ -13,6 +13,7 @@ public class MouseListenerV3 extends IMouseListener {
 	
 	private Future<?> future;
 	private Instant start;
+	private final double log2 = Math.log(2);
 	private TimerTask change_mode = new TimerTask() {
         @Override
         public void run() {
@@ -40,9 +41,9 @@ public class MouseListenerV3 extends IMouseListener {
 				//Logarithmic increase in function of time
 				double a;
 				if((a = Math.abs(coefs[0])) > 1 && !isVertical ){
-					COEF = (float) (Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0)/a);
+					COEF = (float) (Math.log1p(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0)/(a*log2));
 				}else{
-					COEF = (float) Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0);
+					COEF = (float) (Math.log(start.until(Instant.now(), ChronoUnit.MILLIS)*1.0 + 1.0)/log2);
 				}
 				
 				//System.out.println("coef: "+COEF);
