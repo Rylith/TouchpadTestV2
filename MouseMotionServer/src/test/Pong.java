@@ -30,16 +30,16 @@ public class Pong{
 			}
 			int port = portInitial;
 			
-			final Engine pong = new OwnEngine();
+			final Engine engine = new OwnEngine();
 			int i;
 			for(i=0; i< 10 ;i++){
-				/*Server contract =*/ pong.listen(port, new AcceptCallbackTest());
+				/*Server contract =*/ engine.listen(port, new AcceptCallbackTest());
 				System.out.println("Server is listening on port: "+ port);
 				Log.println("Server is listening on port: "+ port);
 				port++;
 			}
 			//pong.startEcho();
-			new Thread((OwnEngine)pong).start();
+			new Thread((OwnEngine)engine).start();
 			
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -51,10 +51,10 @@ public class Pong{
 							switch (arg) {
 							case TEST:
 								ApplicationInterface.createAndShowGUI(args);
-								ApplicationInterface.setEngine(pong);
+								ApplicationInterface.setEngine(engine);
 								break;
 							case OPTIONS:
-								new OptionsInterface(pong,true).createAndShowGUI();
+								new OptionsInterface(engine,true).createAndShowGUI();
 								break;
 							default:
 								break;
@@ -63,7 +63,7 @@ public class Pong{
 						}
 					}else{
 						//Default when arguments are empty
-						new OptionsInterface(pong,true).createAndShowGUI();
+						new OptionsInterface(engine,true).createAndShowGUI();
 					}
 				}	
 				//GraphicalInterface.showOnScreen(0, graph);
