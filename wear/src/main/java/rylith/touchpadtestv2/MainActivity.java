@@ -278,6 +278,9 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
                 case (MotionEvent.ACTION_UP):
                     sendMessage(MainActivity.WEAR_DATA_PATH, "RELEASE");
                     break;
+                case (MotionEvent.ACTION_POINTER_DOWN):
+                    sendMessage(MainActivity.WEAR_DATA_PATH, "PRESS");
+                    break;
                 default:
 
             }
