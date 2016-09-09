@@ -15,7 +15,6 @@ public class MouseListenerV5 extends IMouseListener {
 	private Future<?> future;
 	private Instant start;
 	private final double log2 = Math.log(2);
-	//private double defaultCoef;
 	private int nbTour=0;
 	
 	private TimerTask change_mode = new TimerTask() {
@@ -29,7 +28,6 @@ public class MouseListenerV5 extends IMouseListener {
             isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
             if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
-				//defaultCoef = coefs[0];
 				float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
 				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 			}
@@ -112,8 +110,8 @@ public class MouseListenerV5 extends IMouseListener {
 			}
 			angleCur+=(360*nbTour);
 			
-			COEF = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
-			coefs[0]+=COEF;
+			float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
+			coefs[0]+=deviation;
 			float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
 			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 			
