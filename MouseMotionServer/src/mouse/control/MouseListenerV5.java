@@ -52,7 +52,9 @@ public class MouseListenerV5 extends IMouseListener {
 				}
 				
 				//System.out.println("coef: "+COEF);
-				calculateDistanceBorderMode();
+				synchronized (coefs) {
+					calculateDistanceBorderMode();
+				}
 				mouse.motion(dist_x,dist_y,preview);
 				try {
 					sleep(TIMER_WAIT_MOVEMENT_THREAD);
@@ -111,10 +113,12 @@ public class MouseListenerV5 extends IMouseListener {
 			angleCur+=(360*nbTour);
 			
 			float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
-			coefs[0]+=deviation;
-			float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
-			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
-			
+			synchronized (coefs) {
+				coefs[0]+=deviation;
+				lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
+				float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
+				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
+			}
 		}else{
 			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
 				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
