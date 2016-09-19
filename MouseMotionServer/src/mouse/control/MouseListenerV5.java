@@ -29,6 +29,9 @@ public class MouseListenerV5 extends IMouseListener {
             if(reglin){
 				coefs = Util.regress(bufferY,bufferX);
 				float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
+				coefs[1]=b;
+				lastPointOnstraightLineX = mouse.getLastPoint().x;
+				lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
 				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 			}
 			signDetermination();
@@ -114,9 +117,15 @@ public class MouseListenerV5 extends IMouseListener {
 			
 			float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
 			synchronized (coefs) {
+				epsY=0;
 				coefs[0]+=deviation;
-				lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
+				//lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
 				float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
+				coefs[1]=b;
+				y = (float) (coefs[0]*mouse.getLastPoint().x +coefs[1]);
+				mouse.moveTo(mouse.getLastPoint().x, Math.round(y),preview);
+				lastPointOnstraightLineY=y;
+				lastPointOnstraightLineX = mouse.getLastPoint().x;
 				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
 			}
 		}else{
@@ -148,5 +157,4 @@ public class MouseListenerV5 extends IMouseListener {
 		//Log.println("release");
 		
 	}
-
 }

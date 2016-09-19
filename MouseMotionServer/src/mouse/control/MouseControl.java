@@ -144,4 +144,14 @@ public class MouseControl {
 	public Point getLastPoint(){
 		return lastPoint;
 	}
+
+	public void moveTo(int x, int y, boolean preview) {
+		if(!preview || !enablePreview){
+			mouse.mouseMove(x, y);
+		}else{
+			previewEvent.setPreview(x, y);
+		}
+		lastPoint.x=x;
+		lastPoint.y=y;
+	}
 }
