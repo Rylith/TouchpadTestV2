@@ -297,4 +297,8 @@ public abstract class IMouseListener {
 	public static long getTimerMovement(){
 		return TIMER_WAIT_MOVEMENT_THREAD;
 	}
+
+	public void removePreview() {
+		previewEvent.removePreview();
+	}
 }

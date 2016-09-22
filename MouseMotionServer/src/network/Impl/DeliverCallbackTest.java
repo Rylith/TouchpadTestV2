@@ -95,6 +95,7 @@ public class DeliverCallbackTest implements DeliverCallback {
 	public void setListener(String className){
 		try {
 			Class<?> cl = Class.forName(className);
+			listener.removePreview();
 			listener = (IMouseListener) cl.newInstance();
 			listener.setKey(key);
 			listener.setChannel(channel);
