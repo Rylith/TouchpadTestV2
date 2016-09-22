@@ -23,11 +23,7 @@ public class MouseListenerV3 extends IMouseListener {
             preview=true;
             angleOr = Math.abs(Util.angle(center,origin));
             isVertical = angleOr > 80 && angleOr < 100 || angleOr< 280 && angleOr>260;
-            if(reglin){
-				coefs = Util.regress(bufferY,bufferX);
-				float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
-				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
-			}
+            calcRegLine();
 			signDetermination();
 			start=Instant.now();
 			future = task.submit(movement);
@@ -83,7 +79,6 @@ public class MouseListenerV3 extends IMouseListener {
 			bufferX.add(x);
 			bufferY.add(y);
 			lastPointOnstraightLineX=x;
-			lastPointOnstraightLineY=y;
 			borderMode=false;
 			validPreview();
 			reglin=true;

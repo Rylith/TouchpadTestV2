@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Util {
 
-  /** Read a signed 32bit value */
+/** Read a signed 32bit value */
   static public int readInt32(byte bytes[], int offset) {
     int val;
     val = ((bytes[offset] & 0xFF) << 24);
@@ -72,10 +72,9 @@ public class Util {
 	            }
 	            double a = xybar / xxbar;
 	            double b = ybar - a * xbar;
-	            //System.out.println("Equation: "+ a+"*x+"+b);
+	            System.out.println("Equation: "+ a+"*x+"+b);
 	            coefs[0]=a;
 	            coefs[1]=b;
-
 	            // analyze results
 
 	            //int df = length - 2;
@@ -98,6 +97,73 @@ public class Util {
 	        }
 	        //System.out.println("FIN REG LINE");
 	        return coefs;
+	    }
+	    
+	    public static double[] resistantLine(List<Float> bufferY,List<Float> bufferX){
+	    	double[] coefs = new double[2];
+	    	int length = bufferX.size();
+	    	//Left
+	    	double[] ml=new double[2];
+	    	//middle
+	    	double[] mm=new double[2];
+	    	//Right
+	    	double[] mr=new double[2];
+	    	//System.out.println("modulo: "+length%3);
+	    	switch(length%3){
+	    	case 0:
+	    		//n=length/3
+	    		//Repartition (n,n,n)
+	    		//Medians for X
+	    		ml[0]=median(bufferX, 0, length/3);
+	    		mm[0]=median(bufferX, length/3, 2*length/3);
+	    		mr[0]=median(bufferX, 2*length/3, length);
+	    		//Medians for Y
+	    		ml[1]=median(bufferY, 0, length/3);
+	    		mm[1]=median(bufferY, length/3, 2*length/3);
+	    		mr[1]=median(bufferY, 2*length/3, length);
+	    		break;
+	    	case 1:
+	    		//Repartition (n,n+1,n)
+	    		//Medians for X
+	    		ml[0]=median(bufferX, 0, length/3);
+	    		mm[0]=median(bufferX, length/3, (2*length/3)+1);
+	    		mr[0]=median(bufferX, 2*length/3+1, length);
+	    		//Medians for Y
+	    		ml[1]=median(bufferY, 0, length/3);
+	    		mm[1]=median(bufferY, length/3, (2*length/3)+1);
+	    		mr[1]=median(bufferY, 2*length/3+1, length);
+	    		break;
+	    	case 2:
+	    		//Repartition (n+1,n,n+1)
+	    		//Medians for X
+	    		ml[0]=median(bufferX, 0, length/3+1);
+	    		mm[0]=median(bufferX, (length/3)+1, (2*length/3));
+	    		mr[0]=median(bufferX, (2*length/3), length);
+	    		//Medians for Y
+	    		ml[1]=median(bufferY, 0, length/3+1);
+	    		mm[1]=median(bufferY, (length/3)+1, (2*length/3));
+	    		mr[1]=median(bufferY, (2*length/3), length);
+	    		break;
+	    	}
+	    	coefs[0] = (mr[1] - ml[1])/(mr[0] - ml[0]);
+	    	coefs[1] = ((ml[1] + mr[1] + mm[1]) - coefs[0]*(ml[0] + mm[0] + mr[0]))/3.0;
+	    	System.out.println("Equation resistantLine: "+ coefs[0]+"*x+"+coefs[1]);
+	    	return coefs;
+	    }
+	    
+	    public static double median(List<Float> m, int offset, int length){
+	    	int size = length-offset;
+	    	//System.out.println("median size : "+size);
+	    	int middle = size/2;
+	    	double median;
+	    	if((size & 1 ) == 1){
+	    		median = m.get(offset+middle);
+	    		//System.out.println("median size impair : "+median);
+	    	}else{
+	    		median = (m.get(offset+middle)+m.get(offset+middle-1))/2.0;
+	    		//System.out.println("median size pair : "+median);
+	    	}
+	    	return median;
 	    }
 
 

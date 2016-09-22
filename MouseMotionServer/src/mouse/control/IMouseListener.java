@@ -247,7 +247,17 @@ public abstract class IMouseListener {
 			dist_y = Math.round(sign*(COEF));
 		}
 	}
-
+	
+	protected void calcRegLine(){
+		if(reglin){
+			//coefs = Util.regress(bufferY,bufferX);
+			coefs = Util.resistantLine(bufferY, bufferX);
+			lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX + coefs[1]);
+			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
+			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
+		}
+	}
+	
 	public void setChannel(Channel channel) {
 		this.channel=channel;
 	}

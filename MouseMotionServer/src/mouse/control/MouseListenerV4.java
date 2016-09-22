@@ -32,7 +32,6 @@ public class MouseListenerV4 extends IMouseListener {
 				bufferX.add(x);
 				bufferY.add(y);
 				lastPointOnstraightLineX=x;
-				lastPointOnstraightLineY=y;
 				reglin=true;
 				validPreview();
 				preview=false;
@@ -83,11 +82,7 @@ public class MouseListenerV4 extends IMouseListener {
 		
 		//Log.v("BORDER","signe: "+sign);
 		//Calcul of coefficients for the regression line
-		if(reglin){
-			coefs = Util.regress(bufferY,bufferX);
-			float b = (float) (mouse.getLastPoint().y - coefs[0] * mouse.getLastPoint().x);
-			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
-		}
+		calcRegLine();
 		
 		anglePrec+=(360*nbTour);
 		//Detect when the current angle reaches 0
