@@ -118,6 +118,7 @@ public class MouseListenerV5 extends IMouseListener {
 			
 			float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
 			synchronized (coefs) {
+				epsX=0;
 				epsY=0;
 				coefs[0]+=deviation;
 				//lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
