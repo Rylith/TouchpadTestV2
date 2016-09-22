@@ -73,8 +73,9 @@ The following describes the different way to control the cursor when you reach t
  
  - "Accroissement Quadratique" : The distance is calculated with the difference between the origin angle (angle when the system enter in "Border mode") and the current angle. More you open the angle, more the next movement will be big
  - "Vitesse  = f(angle)" : An angle increase is reflected by an increase of the speed. If the speed is not equal to 0, the cursor moves alone, without any user interactions on the watch
- - "Blocage avant" : More you stay in border mode, more the cursor moves fast. ( The function is actually ln(delta_t + 1) ). 'delta_t' is the difference between the current time and the time when system enters in "Border Mode"
+ - "Blocage avant" : More you stay in border mode, more the cursor moves fast. ( The function is actually log2(delta_t + 1) ). 'delta_t' is the difference between the current time and the time when system enters in "Border Mode"
  - "Mapping direct angle -> déplacement" : The distance is calculated with the difference between the current angle and the previous one. 
+ - "Blocage avant avec changement de direction" : More you stay in border mode, more the cursor moves fast. If you turn around the edge of the watch, you change the direction of the cursor.
  - A drag and drop application can be launched. Allows the user to take pictures from an explorer and drop them into the application in order to test the different features.
  - Adjusts the area to enter in "Border Mode"(in % of watch screen)
  - Adjusts the time to wait to enter in "Border Mode"
