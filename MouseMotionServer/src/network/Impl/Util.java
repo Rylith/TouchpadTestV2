@@ -72,7 +72,7 @@ public class Util {
 	            }
 	            double a = xybar / xxbar;
 	            double b = ybar - a * xbar;
-	            System.out.println("Equation: "+ a+"*x+"+b);
+	            //System.out.println("Equation: "+ a+"*x+"+b);
 	            coefs[0]=a;
 	            coefs[1]=b;
 	            // analyze results
@@ -147,7 +147,7 @@ public class Util {
 	    	}
 	    	coefs[0] = (mr[1] - ml[1])/(mr[0] - ml[0]);
 	    	coefs[1] = ((ml[1] + mr[1] + mm[1]) - coefs[0]*(ml[0] + mm[0] + mr[0]))/3.0;
-	    	System.out.println("Equation resistantLine: "+ coefs[0]+"*x+"+coefs[1]);
+	    	//System.out.println("Equation resistantLine: "+ coefs[0]+"*x+"+coefs[1]);
 	    	return coefs;
 	    }
 	    
