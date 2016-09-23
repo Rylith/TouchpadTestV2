@@ -139,10 +139,6 @@ public class TransparentWindow implements PreviewEventListener {
 		new PreviewEvent().addPreviewEventListener(this);
 		w.setVisible(true);
 	}
-	
-	public JFrame getFrame() {
-		return w;
-	}
 
 	private void drawArrow(Graphics g, int x1, int y1, int x2, int y2,int lenght){
 		Graphics2D g2 = (Graphics2D) g.create();
