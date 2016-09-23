@@ -155,8 +155,8 @@ public class Util {
 	    public static double median(List<Float> m, int offset, int length){
 	    	int size = length-offset;
 	    	List<Float> sortList = m.subList(offset, length);
-	    	System.out.println("median size : "+size);
-	    	System.out.println("Sortlist size : " + sortList.size());
+	    	//System.out.println("median size : "+size);
+	    	//System.out.println("Sortlist size : " + sortList.size());
 	    	Collections.sort(sortList);
 	    	int middle = size/2;
 	    	double median;
