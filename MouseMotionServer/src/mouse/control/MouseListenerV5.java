@@ -95,7 +95,6 @@ public class MouseListenerV5 extends IMouseListener {
 				lastPointOnstraightLineX=x;
 				reglin=true;
 				validPreview();
-				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
 				if(moveOutBorderArea >= 5){
