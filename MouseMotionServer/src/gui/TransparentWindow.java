@@ -112,7 +112,7 @@ public class TransparentWindow implements PreviewEventListener {
 						for(int x=0;x<this.getWidth()-1;x++){
 							y1 = a * x + b;
 							y2 = a * (x+1) + b;
-							g2.drawLine((x-1)-getX(), Math.round(y1)-getY(), x-getX(), Math.round(y2)-getY());
+							g2.drawLine(x-getX(), Math.round(y1)-getY(), (x+1)-getX(), Math.round(y2)-getY());
 						}
 					}else if(pointList.size()>0){
 						Point firstPoint = pointList.get(0);
