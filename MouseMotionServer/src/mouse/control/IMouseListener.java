@@ -133,11 +133,13 @@ public abstract class IMouseListener {
 	
 	/**Simulate a continue left click*/
 	public void press() {
-		if(!mouse.isPressed()){
+		/*if(!mouse.isPressed()){
 			mouse.press();
 		}else{
 			mouse.release();
-		}
+		}*/
+		sendFeedBack();
+		unvalidPreview();
 	}
 	
 	/**Simulate the release of left click*/
@@ -164,16 +166,16 @@ public abstract class IMouseListener {
 	
 	/**Simulation of double click*/
 	public void doubleClick() {
-		sendFeedBack();
+		//sendFeedBack();
 		//click();
 		//click();
-    	unvalidPreview();
-    	/*
+    	//unvalidPreview();
+    	
 		if(mouse.isPressed()){
 			mouse.release();
 		}else{
-			press();
-		}*/
+			mouse.press();
+		}
 	}
 	
 	protected void validPreview(){
