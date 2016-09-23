@@ -1,6 +1,7 @@
 package network.Impl;
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.List;
 
 public class Util {
@@ -153,14 +154,17 @@ public class Util {
 	    
 	    public static double median(List<Float> m, int offset, int length){
 	    	int size = length-offset;
-	    	//System.out.println("median size : "+size);
+	    	List<Float> sortList = m.subList(offset, length);
+	    	System.out.println("median size : "+size);
+	    	System.out.println("Sortlist size : " + sortList.size());
+	    	Collections.sort(sortList);
 	    	int middle = size/2;
 	    	double median;
 	    	if((size & 1 ) == 1){
-	    		median = m.get(offset+middle);
+	    		median = sortList.get(middle);
 	    		//System.out.println("median size impair : "+median);
 	    	}else{
-	    		median = (m.get(offset+middle)+m.get(offset+middle-1))/2.0;
+	    		median = (sortList.get(middle)+sortList.get(middle-1))/2.0;
 	    		//System.out.println("median size pair : "+median);
 	    	}
 	    	return median;
