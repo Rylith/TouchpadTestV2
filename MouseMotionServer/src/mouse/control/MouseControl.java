@@ -55,7 +55,7 @@ public class MouseControl {
 			current_point=lastPoint;
 		}
 		
-		if(preview != prevPreview && preview && enablePreview){
+		if(preview != prevPreview && preview){
 			previewEvent.setPreview(current_point.x, current_point.y);
 		}
 		prevPreview=preview;
