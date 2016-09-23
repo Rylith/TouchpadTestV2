@@ -61,13 +61,15 @@ public abstract class IMouseListener {
         }
     };
     
+    protected int moveOutBorderArea=0;
     protected ScheduledFuture<?> timerExitBorderMode;
-    protected static long TIMER_EXIT_MODE = 160;
+    protected static long TIMER_EXIT_MODE = 300;
     protected TimerTask exitBorderMode = new TimerTask() {
         @Override
         public void run() {
             borderMode = false;
             sign = 0;
+            moveOutBorderArea=0;
             System.out.println("EXIT BORDER MODE at : "+ Instant.now().toEpochMilli());
             //Log.println("Appel au thread de changement de mode: "+ borderMode);
             sendFeedBack();

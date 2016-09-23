@@ -38,12 +38,24 @@ public class MouseListenerV4 extends IMouseListener {
 				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
-				if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
+				
+				/*if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
 					timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
+				}*/
+				if(moveOutBorderArea >= 5){
+					borderMode = false;
+		            sign = 0;
+		            sendFeedBack();
+		            moveOutBorderArea=0;
+				}else{
+					moveOutBorderArea++;
+					borderActions();
 				}
-				borderActions();	
+				
 			}
 		}else{
+			//The movements outside the area must be contigus to exit the mode
+			moveOutBorderArea=0;
 			if(start != null){
 				System.out.println("DRAG : Time between release and scroll: "+ start.until(Instant.now(),ChronoUnit.MILLIS));
 			}

@@ -57,12 +57,19 @@ public class MouseListenerV2 extends IMouseListener{
 				COEF=1;
 			}else{
 				//To delay when the bordermode finish (prevent some false detection)
-				if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
-					timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
-				}
-				borderActions();	
+				if(moveOutBorderArea >= 5){
+					borderMode = false;
+		            sign = 0;
+		            sendFeedBack();
+		            moveOutBorderArea=0;
+				}else{
+					moveOutBorderArea++;
+					borderActions();
+				}	
 			}
 		}else{
+			//The movements outside the area must be contigus to exit the mode
+			moveOutBorderArea=0;
 			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
 				timerExitBorderMode.cancel(false);
 			} 

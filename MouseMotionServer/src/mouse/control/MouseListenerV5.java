@@ -87,55 +87,42 @@ public class MouseListenerV5 extends IMouseListener {
 			if(timerChangeMode != null){
 				timerChangeMode.cancel(false);
 			}
-			dist_x= Math.round(distanceX);
-			dist_y= Math.round(distanceY);
-			bufferX.add(x);
-			bufferY.add(y);
-			lastPointOnstraightLineX=x;
-			lastPointOnstraightLineY=y;
-			borderMode=false;
-			validPreview();
-			reglin=true;
-		}else if(borderMode){
-			double angleCur = Math.abs(Util.angle(center,current));
-			double anglePrec = Math.abs(Util.angle(center,prec));
-			
-			anglePrec+=(360*nbTour);
-			//Detect when the current angle reaches 0
-			if( anglePrec>(270+(360*nbTour)) && (angleCur+(360*nbTour))<(90+(360*nbTour)) ){
-				nbTour++;
-				//System.out.println(nbTour);
-				//System.out.println("Sens direct: "+angleCur);
-			}
-			
-			if((anglePrec<(90+(360*nbTour)) && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
-				nbTour--;
-				//System.out.println(nbTour);
-				//System.out.println("One tour or more: " + angleCur);
-					
-			}
-			angleCur+=(360*nbTour);
-			
-			float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
-			synchronized (coefs) {
-				epsX=0;
-				epsY=0;
-				coefs[0]+=deviation;
-				//lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
-				float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
-				coefs[1]=b;
-				y = (float) (coefs[0]*mouse.getLastPoint().x +coefs[1]);
-				mouse.moveTo(mouse.getLastPoint().x, Math.round(y),preview);
-				lastPointOnstraightLineY=y;
-				lastPointOnstraightLineX = mouse.getLastPoint().x;
-				previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
+			if(!borderMode){
+				dist_x= Math.round(distanceX);
+				dist_y= Math.round(distanceY);
+				bufferX.add(x);
+				bufferY.add(y);
+				lastPointOnstraightLineX=x;
+				reglin=true;
+				validPreview();
+				COEF=1;
+			}else{
+				//To delay when the bordermode finish (prevent some false detection)
+				if(moveOutBorderArea >= 5){
+					borderMode = false;
+		            sign = 0;
+		            sendFeedBack();
+		            moveOutBorderArea=0;
+				}else{
+					moveOutBorderArea++;
+					borderActions();
+				}	
 			}
 		}else{
-			if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
-				timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
+			//The movements outside the area must be contigus to exit the mode
+			moveOutBorderArea=0;
+			if(timerExitBorderMode != null && !timerExitBorderMode.isCancelled()){
+				timerExitBorderMode.cancel(false);
+			} 
+			if(borderMode){
+				borderActions();
+			}else{
+				if(timerChangeMode == null || timerChangeMode.isCancelled() || timerChangeMode.isDone()){
+					timerChangeMode = task.schedule(change_mode, TIMER_AFF, TimeUnit.MILLISECONDS);
+				}
+				dist_x= Math.round(distanceX)/*0*/;
+				dist_y= Math.round(distanceY)/*0*/;
 			}
-			dist_x= Math.round(distanceX)/*0*/;
-			dist_y= Math.round(distanceY)/*0*/;
 		}
 		
 		prec=current;
@@ -158,5 +145,41 @@ public class MouseListenerV5 extends IMouseListener {
 		}
 		//Log.println("release");
 		
+	}
+	
+	private void borderActions(){
+		double angleCur = Math.abs(Util.angle(center,current));
+		double anglePrec = Math.abs(Util.angle(center,prec));
+		
+		anglePrec+=(360*nbTour);
+		//Detect when the current angle reaches 0
+		if( anglePrec>(270+(360*nbTour)) && (angleCur+(360*nbTour))<(90+(360*nbTour)) ){
+			nbTour++;
+			//System.out.println(nbTour);
+			//System.out.println("Sens direct: "+angleCur);
+		}
+		
+		if((anglePrec<(90+(360*nbTour)) && (angleCur+(360*nbTour))>(270+(360*nbTour)))){
+			nbTour--;
+			//System.out.println(nbTour);
+			//System.out.println("One tour or more: " + angleCur);
+				
+		}
+		angleCur+=(360*nbTour);
+		
+		float deviation = (float) (angleCur-anglePrec)/(DIVISION_COEF*10);
+		synchronized (coefs) {
+			epsX=0;
+			epsY=0;
+			coefs[0]+=deviation;
+			//lastPointOnstraightLineY = (float) (coefs[0]*lastPointOnstraightLineX +coefs[1]);
+			float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
+			coefs[1]=b;
+			float y = (float) (coefs[0]*mouse.getLastPoint().x +coefs[1]);
+			mouse.moveTo(mouse.getLastPoint().x, Math.round(y),preview);
+			lastPointOnstraightLineY=y;
+			lastPointOnstraightLineX = mouse.getLastPoint().x;
+			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);
+		}
 	}
 }
