@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import gui.Log;
 import gui.OptionsInterface;
 import gui.TransparentWindowsOnAllMonitors;
+import gui.ApplicationInterface;
 import gui.InterfaceGame;
 import network.Impl.AcceptCallbackTest;
 import network.Impl.OwnEngine;
@@ -14,6 +15,7 @@ import network.Interface.Engine;
 
 public class Pong{
 	
+	private static final String GAME="--game";
 	private static final String TEST="--test";
 	private static final String OPTIONS="--options";
 	
@@ -49,10 +51,12 @@ public class Pong{
 					if(args !=null && args.length != 0){
 						for(String arg : args){
 							switch (arg) {
-							case TEST:
-								//ApplicationInterface.createAndShowGUI(args);
-								//ApplicationInterface.setEngine(engine);
+							case GAME: 
 								new InterfaceGame();
+								break;
+							case TEST:
+								ApplicationInterface.createAndShowGUI(args);
+								ApplicationInterface.setEngine(engine);
 								break;
 							case OPTIONS:
 								new OptionsInterface(engine,true).createAndShowGUI();

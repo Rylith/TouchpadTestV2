@@ -171,12 +171,22 @@ public class ApplicationInterface extends JFrame {
             frame = new JInternalFrame(name);
             frame.addInternalFrameListener(this);
             //listModel.add(listModel.size(), this);
-            listViews.get(index).getItems().add(this);
-            listTitle.get(index).setExpanded(true);
-            
-            Rectangle rect = rectList.get(index);
-            int x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
-            int y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
+            if(listViews != null){
+            	listViews.get(index).getItems().add(this);
+            }
+            if(listTitle != null){
+            	listTitle.get(index).setExpanded(true);
+            }
+            int x_size;
+            int y_size;
+            if(rectList != null){
+            	Rectangle rect = rectList.get(index);
+            	x_size = (int) Math.round(rect.getWidth()*PERCENT_X_FRAME_SIZE);
+            	y_size = (int) Math.round(rect.getHeight()*PERCENT_Y_FRAME_SIZE);
+            }else{
+            	x_size = 200;
+            	y_size = 300;
+            }
             Image pic;
             try {
                 //BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -198,14 +208,17 @@ public class ApplicationInterface extends JFrame {
             frame.addMouseMotionListener(drag);
             frame.addMouseListener(drag);
             frame.getContentPane().add(im);
-            dp.add(frame);
+            if(dp !=null ){
+            	dp.add(frame);
+            }
             if (DEMO) {
                 frame.setSize(300, 200);
             } else {
             	setInternalFrameSize(pic, frame);
             }
-            
-            this.positon(index);
+            if(rectPoint != null){
+            	this.positon(index);
+            }
             frame.setBorder(null);
             bi.setNorthPane(null);
             frame.show();
@@ -243,7 +256,9 @@ public class ApplicationInterface extends JFrame {
             try {
                 frame.toFront();
                 frame.setSelected(true);
-            } catch (java.beans.PropertyVetoException e) {}
+            } catch (java.beans.PropertyVetoException e) {
+            	
+            }
         }
          
         public void actionPerformed(java.awt.event.ActionEvent ae) {
