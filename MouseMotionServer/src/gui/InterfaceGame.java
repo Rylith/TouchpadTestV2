@@ -100,6 +100,7 @@ public class InterfaceGame extends JFrame{
                 return;
             }
             th = im.getTransferHandler();
+            im.setOpaque(false);
             BasicInternalFrameUI bi = (BasicInternalFrameUI)frame.getUI();
             DragListener drag = new DragListener(this);
             frame.addMouseMotionListener(drag);
@@ -112,6 +113,7 @@ public class InterfaceGame extends JFrame{
             	setInternalFrameSize(image, frame);
             }
             frame.setBorder(null);
+            frame.setBackground(new Color(0,true));
             bi.setNorthPane(null);
             frame.show();
             SwingUtilities.invokeLater(new Runnable() {
