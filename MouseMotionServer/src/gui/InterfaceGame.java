@@ -59,6 +59,8 @@ public class InterfaceGame extends JFrame{
 	private final static int OFFSETY=30;
 	private static Font scoreFont;
 	private static final float COEF_FONT_SIZE = 0.03f;
+	private static final String RESOURCE_DIR = "resources/game/";
+	private Image background;
 	/**
 	 * 
 	 */
@@ -191,6 +193,8 @@ public class InterfaceGame extends JFrame{
 		 }
 		Toolkit kit = Toolkit.getDefaultToolkit();
         Image img = kit.createImage("watch_2-512.png");
+        background = kit.createImage(RESOURCE_DIR+"background/room-bedroom-background-cartoon-mickey-mouse-wallpaper-wallpaper-41tgHg-clipart.jpg");
+        background=background.getScaledInstance(virtualBounds.width, virtualBounds.height, Image.SCALE_DEFAULT);
 		setIconImage(img);
 		setBounds(virtualBounds);
 		setUndecorated(true);
@@ -227,7 +231,7 @@ public class InterfaceGame extends JFrame{
 
 	private void initComponents(){
 		try {
-			scoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("resources/game/font/neuropol-x-free.regular.ttf"));
+			scoreFont = Font.createFont(Font.TRUETYPE_FONT, new File(RESOURCE_DIR+"font/neuropol-x-free.regular.ttf"));
 			scoreFont = scoreFont.deriveFont(Font.PLAIN,1080*COEF_FONT_SIZE);
 	        GraphicsEnvironment ge =
 	            GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -240,9 +244,10 @@ public class InterfaceGame extends JFrame{
 			 * 
 			 */
 			private static final long serialVersionUID = 6513125228446990633L;
-
+			
 			@Override
 			public void paint(Graphics g) {
+				g.drawImage(background, 0, 0, null);
 				super.paint(g);
 				chrono.paint(g);
 				g.setColor(Color.red);
@@ -265,6 +270,7 @@ public class InterfaceGame extends JFrame{
 				}
 			}
 		};
+		dp.setOpaque(false);
 		chest = new Rectangle(0,this.getHeight()/3,getWidth(),this.getHeight()/3);
 		loadAndPutElements();
 		chrono= new Chrono(dp, 120, 0, 10, OFFSETY);
@@ -284,7 +290,9 @@ public class InterfaceGame extends JFrame{
 		});
 			int length = listOfFiles.length;
 			int cpt = rand.nextInt(length);
-			
+			boolean upperLeftContained;
+    		boolean bottomRightContained;
+    		
 		    for(int i = 0; i<length ;i++){
 		    	while(listOfFiles[cpt] == null){
 		    		cpt = rand.nextInt(length);
@@ -293,20 +301,56 @@ public class InterfaceGame extends JFrame{
 		    		Doc pict = new Doc(listOfFiles[cpt]);
 		    		topDocs.add(pict);
 		    		allPics.add(pict);
-		    		rand.nextInt();
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
-		    		rand.nextInt();
 		    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
-		    		topDocs.get(topDocs.size()-1).frame.setLocation(x,y);
+		    		int bottomRightX = x+pict.frame.getWidth();
+		    		int bottomRightY = y+pict.frame.getHeight();
+		    		boolean contained=true;
+		    		while(contained){
+		    			contained=false;
+		    			x = rand.nextInt(chest.width-pict.frame.getWidth());
+			    		y = rand.nextInt(chest.y-pict.frame.getHeight());
+			    		bottomRightX = x+pict.frame.getWidth();
+			    		bottomRightY = y+pict.frame.getHeight();
+		    			for(Doc doc : topDocs){
+		    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+		    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
+		    				if(upperLeftContained || bottomRightContained){
+		    					contained=true;
+		    				}
+		    			}
+		    			//System.out.println("Picture : " + pict + " at x, y, xb, yb : "+ x+", "+y+", "+bottomRightX+", "+bottomRightY);
+		    			//System.out.println(contained);
+		    			
+		    		}
+		    		pict.frame.setLocation(x,y);
 		    		up=false;
 		    	}else{
 		    		Doc pict = new Doc(listOfFiles[cpt]);
 		    		botDocs.add(pict);
 		    		allPics.add(pict);
-		    		rand.nextInt();
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
-		    		rand.nextInt();
 		    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
+		    		int bottomRightX = x+pict.frame.getWidth();
+		    		int bottomRightY = y+pict.frame.getHeight();
+		    		boolean contained=true;
+		    		while(contained){
+		    			contained=false;
+		    			x = rand.nextInt(chest.width-pict.frame.getWidth());
+			    		y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
+			    		bottomRightX = x+pict.frame.getWidth();
+			    		bottomRightY = y+pict.frame.getHeight();
+		    			for(Doc doc : botDocs){
+		    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+		    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
+		    				if(upperLeftContained || bottomRightContained){
+		    					contained=true;
+		    				}
+		    			}
+		    			//System.out.println("Picture : " + pict + " at x, y, xb, yb : "+ x+", "+y+", "+bottomRightX+", "+bottomRightY);
+		    			//System.out.println(contained);
+		    			
+		    		}
 		    		pict.frame.setLocation(x,y);
 		    		up=true;
 		    	}
@@ -345,6 +389,8 @@ public class InterfaceGame extends JFrame{
 		topDocs.clear();
 		int length = allPics.size();
 		int cpt = rand.nextInt(length);
+		boolean upperLeftContained;
+		boolean bottomRightContained;
 		List<Doc> tempPict = new ArrayList<>(allPics);
 		
 		for(int i = 0; i<length ;i++){
@@ -354,15 +400,54 @@ public class InterfaceGame extends JFrame{
 	    		topDocs.add(pict);
 	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 	    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
+	    		int bottomRightX = x+pict.frame.getWidth();
+	    		int bottomRightY = y+pict.frame.getHeight();
+	    		boolean contained=true;
+	    		while(contained){
+	    			contained=false;
+	    			x = rand.nextInt(chest.width-pict.frame.getWidth());
+		    		y = rand.nextInt(chest.y-pict.frame.getHeight());
+		    		bottomRightX = x+pict.frame.getWidth();
+		    		bottomRightY = y+pict.frame.getHeight();
+	    			for(Doc doc : topDocs){
+	    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+	    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
+	    				if(upperLeftContained || bottomRightContained){
+	    					contained=true;
+	    				}
+	    			}
+	    			//System.out.println("Picture : " + pict + " at x, y, xb, yb : "+ x+", "+y+", "+bottomRightX+", "+bottomRightY);
+	    			//System.out.println(contained);
+	    			
+	    		}
 	    		pict.frame.setLocation(x,y);
 	    		tempPict.remove(cpt);
 	    		up=false;
 	    	}else{
 	    		Doc pict = tempPict.get(cpt);
 	    		botDocs.add(pict);
-	    		allPics.add(pict);
 	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 	    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
+	    		int bottomRightX = x+pict.frame.getWidth();
+	    		int bottomRightY = y+pict.frame.getHeight();
+	    		boolean contained=true;
+	    		while(contained){
+	    			contained=false;
+	    			x = rand.nextInt(chest.width-pict.frame.getWidth());
+		    		y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
+		    		bottomRightX = x+pict.frame.getWidth();
+		    		bottomRightY = y+pict.frame.getHeight();
+	    			for(Doc doc : botDocs){
+	    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+	    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
+	    				if(upperLeftContained || bottomRightContained){
+	    					contained=true;
+	    				}
+	    			}
+	    			//System.out.println("Picture : " + pict + " at x, y, xb, yb : "+ x+", "+y+", "+bottomRightX+", "+bottomRightY);
+	    			//System.out.println(contained);
+	    			
+	    		}
 	    		pict.frame.setLocation(x,y);
 	    		tempPict.remove(cpt);
 	    		up=true;
