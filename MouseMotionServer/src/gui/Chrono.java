@@ -78,7 +78,7 @@ public class Chrono implements Runnable {
 		/* Si le chronometre est en fonctionnment mais a ete suspendu, 
 	 * il recommence a tourne r*/ 
 	public synchronized  void reprendre() { 
-		if (enFonctionnement() && !continuer) {  
+		if ((deroulement!=null) && (deroulement.isAlive()) && !continuer) {  
 			momentDebut +=  System.currentTimeMillis() - momentSuspension;
 			continuer = true;
 			notifyAll();
@@ -119,10 +119,10 @@ public class Chrono implements Runnable {
 		}
 	}
 
-	/* Retourne true si le chronometre est en fonctionnement,  eventuellement suspendu 
+	/* Retourne true si le chronometre est en fonctionnement,  
 	 * et false si le chronometre n'est pas demarre, ou bien a ete arrete, ou bien a fini de tourner*/
 	public boolean enFonctionnement() {
-		return (deroulement!=null) && (deroulement.isAlive());
+		return (deroulement!=null) && (deroulement.isAlive()) && continuer;
 	}
 
 	/* Dessine le chronometre selon le temps pendant lequel il a tourne  depuis qu'il a ete mis en fonctionnement */

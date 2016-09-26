@@ -52,6 +52,7 @@ public class InterfaceGame extends JFrame{
 	private Rectangle chest;
 	private List<Doc> topDocs = new ArrayList<>();
 	private List<Doc> botDocs = new ArrayList<>();
+	private List<Doc> allPics = new ArrayList<>();
 	private boolean up=true;
 	private final Random rand = new Random();
 	private final static boolean DEMO = false;
@@ -163,10 +164,13 @@ public class InterfaceGame extends JFrame{
             if (e.getID() == KeyEvent.KEY_PRESSED) {
             	if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
     				System.exit(0);
-    			}
-    			if(e.getKeyCode() == KeyEvent.VK_SPACE){
+    			}else if(e.getKeyCode() == KeyEvent.VK_SPACE){
     				chooseElements();
     				chrono.demarrer();
+    			}else if(e.getKeyCode() == KeyEvent.VK_R){
+    				reset();
+    			}else if(e.getKeyCode() == KeyEvent.VK_P){
+    				pause();
     			}
             }
             return false;
@@ -288,14 +292,20 @@ public class InterfaceGame extends JFrame{
 		    	if(up){
 		    		Doc pict = new Doc(listOfFiles[cpt]);
 		    		topDocs.add(pict);
+		    		allPics.add(pict);
+		    		rand.nextInt();
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
+		    		rand.nextInt();
 		    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
 		    		topDocs.get(topDocs.size()-1).frame.setLocation(x,y);
 		    		up=false;
 		    	}else{
 		    		Doc pict = new Doc(listOfFiles[cpt]);
 		    		botDocs.add(pict);
+		    		allPics.add(pict);
+		    		rand.nextInt();
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
+		    		rand.nextInt();
 		    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
 		    		pict.frame.setLocation(x,y);
 		    		up=true;
@@ -317,6 +327,48 @@ public class InterfaceGame extends JFrame{
 			}
 		}
 		return inChest;
+	}
+	
+	private void pause(){
+		if(chrono.enFonctionnement()){
+			chrono.suspendre();
+		}else{
+			chrono.reprendre();
+		}
+	}
+	
+	private void reset(){
+		selectedObj = null;
+		score = 0;
+		chrono.arreter();
+		botDocs.clear();
+		topDocs.clear();
+		int length = allPics.size();
+		int cpt = rand.nextInt(length);
+		List<Doc> tempPict = new ArrayList<>(allPics);
+		
+		for(int i = 0; i<length ;i++){
+			cpt = rand.nextInt(tempPict.size());
+			if(up){
+				Doc pict = tempPict.get(cpt);
+	    		topDocs.add(pict);
+	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
+	    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
+	    		pict.frame.setLocation(x,y);
+	    		tempPict.remove(cpt);
+	    		up=false;
+	    	}else{
+	    		Doc pict = tempPict.get(cpt);
+	    		botDocs.add(pict);
+	    		allPics.add(pict);
+	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
+	    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
+	    		pict.frame.setLocation(x,y);
+	    		tempPict.remove(cpt);
+	    		up=true;
+	    	}
+		}
+		
 	}
 	
 	private void chooseElements(){
