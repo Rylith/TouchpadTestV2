@@ -96,10 +96,12 @@ public class DragListener extends MouseInputAdapter {
     @Override
     public void mouseDragged(MouseEvent me)
     {
-        Component component = me.getComponent();
-        location = component.getLocation(location);
-        int x = location.x - pressed.getX() + me.getX();
-        int y = location.y - pressed.getY() + me.getY();
-        component.setLocation(x, y);
+    	if(rectList != null){
+    		Component component = me.getComponent();
+        	location = component.getLocation(location);
+        	int x = location.x - pressed.getX() + me.getX();
+        	int y = location.y - pressed.getY() + me.getY();
+        	component.setLocation(x, y);
+        }
      }
 }

@@ -1,8 +1,12 @@
 package gui;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -19,6 +23,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,6 +55,9 @@ public class InterfaceGame extends JFrame{
 	private boolean up=true;
 	private final Random rand = new Random();
 	private final static boolean DEMO = false;
+	private final static int OFFSETY=30;
+	private static Font scoreFont;
+	private static final float COEF_FONT_SIZE = 0.03f;
 	/**
 	 * 
 	 */
@@ -214,6 +222,15 @@ public class InterfaceGame extends JFrame{
 	}
 
 	private void initComponents(){
+		try {
+			scoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("resources/game/font/neuropol-x-free.regular.ttf"));
+			scoreFont = scoreFont.deriveFont(Font.PLAIN,1080*COEF_FONT_SIZE);
+	        GraphicsEnvironment ge =
+	            GraphicsEnvironment.getLocalGraphicsEnvironment();
+	        ge.registerFont(scoreFont);
+	} catch (FontFormatException | IOException e) {	
+		e.printStackTrace();
+	}
 		dp = new JDesktopPane(){
 			/**
 			 * 
@@ -224,18 +241,29 @@ public class InterfaceGame extends JFrame{
 			public void paint(Graphics g) {
 				super.paint(g);
 				chrono.paint(g);
+				g.setColor(Color.red);
+				Font temp = g.getFont();
+				g.setFont(scoreFont);
+				g.drawString("Score: " + score, 0, 65);
+				g.drawString("Score: " + score, 0, getHeight()-OFFSETY+15);
+				g.setFont(temp);
 				g.setColor(Color.black);
-				g.drawString("Score: " + score, 0, 20);
-				g.drawString("Score: " + score, 0, getHeight()-30);
 				g.drawRect(chest.x, chest.y, chest.width, chest.height);
 				if(selectedObj != null){
-					g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth(), getY(), selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
+					Graphics2D g2 = (Graphics2D) g;
+					BasicStroke line = new BasicStroke(3.0f);
+					g2.setStroke(line);
+					g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, getY(), selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
+					g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, getY()+1, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
+				
+					g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, chest.y+chest.height+1, selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
+					g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, chest.y+chest.height+2, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
 				}
 			}
 		};
 		chest = new Rectangle(0,this.getHeight()/3,getWidth(),this.getHeight()/3);
 		loadAndPutElements();
-		chrono= new Chrono(dp, 120, 0, 10, 12);
+		chrono= new Chrono(dp, 120, 0, 10, OFFSETY);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(dp, BorderLayout.CENTER);
 		
