@@ -61,6 +61,7 @@ public class InterfaceGame extends JFrame{
 	private static final float COEF_FONT_SIZE = 0.03f;
 	private static final String RESOURCE_DIR = "resources/game/";
 	private Image background;
+	private Image backgroundChest;
 	/**
 	 * 
 	 */
@@ -248,6 +249,9 @@ public class InterfaceGame extends JFrame{
 			@Override
 			public void paint(Graphics g) {
 				g.drawImage(background, 0, 0, null);
+				if(backgroundChest != null ){
+					g.drawImage(backgroundChest, chest.x,chest.y,chest.width,chest.height, null);
+				}
 				super.paint(g);
 				chrono.paint(g);
 				g.setColor(Color.red);
@@ -272,6 +276,11 @@ public class InterfaceGame extends JFrame{
 		};
 		dp.setOpaque(false);
 		chest = new Rectangle(0,this.getHeight()/3,getWidth(),this.getHeight()/3);
+		try {
+			backgroundChest = ImageIO.read(new File(RESOURCE_DIR+"background/background_chest.jpg")).getScaledInstance(chest.width, chest.height, Image.SCALE_DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		loadAndPutElements();
 		chrono= new Chrono(dp, 120, 0, 10, OFFSETY);
 		getContentPane().setLayout(new BorderLayout());
@@ -299,7 +308,6 @@ public class InterfaceGame extends JFrame{
 		    	}
 		    	if(up){
 		    		Doc pict = new Doc(listOfFiles[cpt]);
-		    		topDocs.add(pict);
 		    		allPics.add(pict);
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 		    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
@@ -313,7 +321,7 @@ public class InterfaceGame extends JFrame{
 			    		bottomRightX = x+pict.frame.getWidth();
 			    		bottomRightY = y+pict.frame.getHeight();
 		    			for(Doc doc : topDocs){
-		    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+		    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x >= x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
 		    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
 		    				if(upperLeftContained || bottomRightContained){
 		    					contained=true;
@@ -323,11 +331,11 @@ public class InterfaceGame extends JFrame{
 		    			//System.out.println(contained);
 		    			
 		    		}
+		    		topDocs.add(pict);
 		    		pict.frame.setLocation(x,y);
 		    		up=false;
 		    	}else{
 		    		Doc pict = new Doc(listOfFiles[cpt]);
-		    		botDocs.add(pict);
 		    		allPics.add(pict);
 		    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 		    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
@@ -351,6 +359,7 @@ public class InterfaceGame extends JFrame{
 		    			//System.out.println(contained);
 		    			
 		    		}
+		    		botDocs.add(pict);
 		    		pict.frame.setLocation(x,y);
 		    		up=true;
 		    	}
@@ -397,7 +406,7 @@ public class InterfaceGame extends JFrame{
 			cpt = rand.nextInt(tempPict.size());
 			if(up){
 				Doc pict = tempPict.get(cpt);
-	    		topDocs.add(pict);
+	    		
 	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 	    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
 	    		int bottomRightX = x+pict.frame.getWidth();
@@ -420,12 +429,13 @@ public class InterfaceGame extends JFrame{
 	    			//System.out.println(contained);
 	    			
 	    		}
+	    		topDocs.add(pict);
 	    		pict.frame.setLocation(x,y);
 	    		tempPict.remove(cpt);
 	    		up=false;
 	    	}else{
 	    		Doc pict = tempPict.get(cpt);
-	    		botDocs.add(pict);
+	    		
 	    		int x = rand.nextInt(chest.width-pict.frame.getWidth());
 	    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
 	    		int bottomRightX = x+pict.frame.getWidth();
@@ -448,6 +458,7 @@ public class InterfaceGame extends JFrame{
 	    			//System.out.println(contained);
 	    			
 	    		}
+	    		botDocs.add(pict);
 	    		pict.frame.setLocation(x,y);
 	    		tempPict.remove(cpt);
 	    		up=true;
