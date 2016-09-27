@@ -94,7 +94,7 @@ public class OptionsInterface extends JFrame{
 	    this.setSize(1000, 1000);
 	    this.setLocationRelativeTo(null);
 	    Toolkit kit = Toolkit.getDefaultToolkit();
-        Image img = kit.createImage("Evolution Cursor.png");
+        Image img = kit.createImage("resources/cursor/img/Evolution Cursor.png");
 		this.setIconImage(img);
 	    if(killProgramOnClose){
 	    	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

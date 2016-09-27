@@ -440,7 +440,7 @@ public class ApplicationInterface extends JFrame {
  
         ApplicationInterface test = new ApplicationInterface();
         Toolkit kit = Toolkit.getDefaultToolkit();
-        Image img = kit.createImage("watch_2-512.png");
+        Image img = kit.createImage("resources/icon/watch_2-512.png");
 		test.setIconImage(img);
         test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         if (DEMO) {

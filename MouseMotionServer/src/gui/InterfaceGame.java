@@ -201,7 +201,7 @@ public class InterfaceGame extends JFrame{
 			 
 		 }
 		Toolkit kit = Toolkit.getDefaultToolkit();
-        Image img = kit.createImage("watch_2-512.png");
+        Image img = kit.createImage("resources/icon/watch_2-512.png");
         background = kit.createImage(RESOURCE_DIR+"background/room-bedroom-background-cartoon-mickey-mouse-wallpaper-wallpaper-41tgHg-clipart.jpg");
         background=background.getScaledInstance(virtualBounds.width, virtualBounds.height, Image.SCALE_DEFAULT);
 		setIconImage(img);
