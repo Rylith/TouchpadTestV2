@@ -44,7 +44,7 @@ public class MouseListenerV1 extends IMouseListener{
 		            moveOutBorderArea=0;
 				}else{
 					moveOutBorderArea++;
-					borderActions();
+					//borderActions();
 				}	
 			}
 		}else{

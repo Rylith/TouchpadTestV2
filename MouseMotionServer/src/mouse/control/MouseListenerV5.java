@@ -104,7 +104,7 @@ public class MouseListenerV5 extends IMouseListener {
 		            moveOutBorderArea=0;
 				}else{
 					moveOutBorderArea++;
-					borderActions();
+					//borderActions();
 				}	
 			}
 		}else{
@@ -175,7 +175,9 @@ public class MouseListenerV5 extends IMouseListener {
 			float b = (float) (MouseInfo.getPointerInfo().getLocation().y - coefs[0] * MouseInfo.getPointerInfo().getLocation().x);
 			coefs[1]=b;
 			float y = (float) (coefs[0]*mouse.getLastPoint().x +coefs[1]);
-			mouse.moveTo(mouse.getLastPoint().x, Math.round(y),preview);
+			if(!isVertical){
+				mouse.moveTo(mouse.getLastPoint().x, Math.round(y),preview);
+			}
 			lastPointOnstraightLineY=y;
 			lastPointOnstraightLineX = mouse.getLastPoint().x;
 			previewEvent.drawRegressionLine((float)coefs[0], b, isVertical);

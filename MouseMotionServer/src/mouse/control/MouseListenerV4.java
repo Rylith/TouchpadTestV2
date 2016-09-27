@@ -42,14 +42,14 @@ public class MouseListenerV4 extends IMouseListener {
 				/*if(timerExitBorderMode == null || timerExitBorderMode.isCancelled() || timerExitBorderMode.isDone()){
 					timerExitBorderMode = task.schedule(exitBorderMode, TIMER_EXIT_MODE, TimeUnit.MILLISECONDS);
 				}*/
-				if(moveOutBorderArea >= 5){
+				if(moveOutBorderArea >= 3){
 					borderMode = false;
 		            sign = 0;
 		            sendFeedBack();
 		            moveOutBorderArea=0;
 				}else{
 					moveOutBorderArea++;
-					borderActions();
+					//borderActions();
 				}
 				
 			}
