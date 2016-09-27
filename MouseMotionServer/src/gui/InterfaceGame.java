@@ -485,6 +485,7 @@ public class InterfaceGame extends JFrame{
 			}
 			up=true;
 		}
+		selectedObj.select();
 		if(topDocs.size() == 0 && botDocs.size() == 0){
 			chrono.suspendre();
 			selectedObj=null;
