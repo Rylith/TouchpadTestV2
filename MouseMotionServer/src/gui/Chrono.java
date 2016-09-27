@@ -24,6 +24,7 @@ public class Chrono implements Runnable {
 	private int offsetY;
 	private Font font;
 	private static final float COEF_FONT_SIZE = 0.03f;
+	private static final ChronoEvent chronoEvent = new ChronoEvent();
 
 	/* - proprietaire donne le composant devant contenir l'image du chronometre.
 	 * - duree donne le temps en secondes mis pour que le chronometre fasse un tour complet,
@@ -62,6 +63,8 @@ public class Chrono implements Runnable {
 				exc.printStackTrace();
 			}
 		}
+		this.tempsEcoule = this.duree;
+		chronoEvent.start(this);
 		deroulement = new Thread(this);
 		deroulement.start();
 	}
@@ -117,6 +120,7 @@ public class Chrono implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		chronoEvent.stop(this);
 	}
 
 	/* Retourne true si le chronometre est en fonctionnement,  

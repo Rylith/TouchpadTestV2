@@ -62,6 +62,8 @@ public class InterfaceGame extends JFrame{
 	private static final String RESOURCE_DIR = "resources/game/";
 	private Image background;
 	private Image backgroundChest;
+	private static enum State{RUN,PAUSE,STOP,BEGIN};
+	private State state = State.BEGIN;
 	/**
 	 * 
 	 */
@@ -168,8 +170,14 @@ public class InterfaceGame extends JFrame{
             	if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
     				System.exit(0);
     			}else if(e.getKeyCode() == KeyEvent.VK_SPACE){
-    				chooseElements();
-    				chrono.demarrer();
+    				if(state == State.STOP){
+    					reset();
+    					chooseElements();
+    					chrono.demarrer();
+    				}else if(state == State.BEGIN){
+    					chooseElements();
+    					chrono.demarrer();
+    				}
     			}else if(e.getKeyCode() == KeyEvent.VK_R){
     				reset();
     			}else if(e.getKeyCode() == KeyEvent.VK_P){
@@ -210,6 +218,18 @@ public class InterfaceGame extends JFrame{
 				
 			}
 		});
+		new ChronoEvent().addChronoEventListener(new ChronoEventListener() {
+			
+			@Override
+			public void stop(Chrono chrono) {
+				state = State.STOP;
+			}
+			
+			@Override
+			public void start(Chrono chrono) {
+				state = State.RUN;
+			}
+		});
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventDispatcher(new MyDispatcher());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -236,10 +256,10 @@ public class InterfaceGame extends JFrame{
 			scoreFont = scoreFont.deriveFont(Font.PLAIN,1080*COEF_FONT_SIZE);
 	        GraphicsEnvironment ge =
 	            GraphicsEnvironment.getLocalGraphicsEnvironment();
-	        ge.registerFont(scoreFont);
-	} catch (FontFormatException | IOException e) {	
-		e.printStackTrace();
-	}
+		        ge.registerFont(scoreFont);
+		} catch (FontFormatException | IOException e) {	
+			e.printStackTrace();
+		}
 		dp = new JDesktopPane(){
 			/**
 			 * 
@@ -248,11 +268,14 @@ public class InterfaceGame extends JFrame{
 			
 			@Override
 			public void paint(Graphics g) {
+				
 				g.drawImage(background, 0, 0, null);
 				if(backgroundChest != null ){
 					g.drawImage(backgroundChest, chest.x,chest.y,chest.width,chest.height, null);
 				}
-				super.paint(g);
+				if(state == State.RUN || state == State.STOP || state == State.BEGIN){
+					super.paint(g);
+				}
 				chrono.paint(g);
 				g.setColor(Color.red);
 				Font temp = g.getFont();
@@ -262,15 +285,17 @@ public class InterfaceGame extends JFrame{
 				g.setFont(temp);
 				g.setColor(Color.black);
 				g.drawRect(chest.x, chest.y, chest.width, chest.height);
-				if(selectedObj != null){
-					Graphics2D g2 = (Graphics2D) g;
-					BasicStroke line = new BasicStroke(3.0f);
-					g2.setStroke(line);
-					g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, getY(), selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
-					g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, getY()+1, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
-				
-					g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, chest.y+chest.height+1, selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
-					g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, chest.y+chest.height+2, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
+				if(state == State.RUN || state == State.STOP || state == State.BEGIN){
+					if(selectedObj != null){
+						Graphics2D g2 = (Graphics2D) g;
+						BasicStroke line = new BasicStroke(3.0f);
+						g2.setStroke(line);
+						g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, getY(), selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
+						g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, getY()+1, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
+						
+						g2.drawRect(getWidth()-selectedObj.frame.getWidth()-2, chest.y+chest.height+1, selectedObj.frame.getWidth()+1,selectedObj.frame.getHeight()+1);
+						g.drawImage(selectedObj.image, getWidth()-selectedObj.frame.getWidth()-1, chest.y+chest.height+2, selectedObj.frame.getWidth(),selectedObj.frame.getHeight(), null);
+					}
 				}
 			}
 		};
@@ -370,9 +395,9 @@ public class InterfaceGame extends JFrame{
 	
 	private boolean putInChest(Doc doc){
 		boolean inChest = false;
-		if(selectedObj !=null){
+		if(selectedObj != null && state == State.RUN){
 			if(selectedObj.equals(doc)){
-				score+=100;
+				score+=(100+doc.frame.getWidth()/doc.frame.getHeight());
 				int offsetX = rand.nextInt(getWidth()-selectedObj.frame.getWidth());
 				int offsetY = rand.nextInt(getHeight()/3-selectedObj.frame.getHeight());
 				selectedObj.frame.setLocation(chest.x+offsetX, chest.y+offsetY);
@@ -385,15 +410,18 @@ public class InterfaceGame extends JFrame{
 	private void pause(){
 		if(chrono.enFonctionnement()){
 			chrono.suspendre();
-		}else{
+			state = State.PAUSE;
+		}else if(state == State.PAUSE){
 			chrono.reprendre();
+			state = State.RUN;
 		}
 	}
 	
 	private void reset(){
 		selectedObj = null;
 		score = 0;
-		chrono.arreter();
+		chrono.suspendre();
+		state=State.BEGIN;
 		botDocs.clear();
 		topDocs.clear();
 		int length = allPics.size();
@@ -411,6 +439,7 @@ public class InterfaceGame extends JFrame{
 	    		int y = rand.nextInt(chest.y-pict.frame.getHeight());
 	    		int bottomRightX = x+pict.frame.getWidth();
 	    		int bottomRightY = y+pict.frame.getHeight();
+	    		//Algo to avoid recovery
 	    		boolean contained=true;
 	    		while(contained){
 	    			contained=false;
@@ -440,6 +469,7 @@ public class InterfaceGame extends JFrame{
 	    		int y = chest.y+chest.height+rand.nextInt(getHeight()-(chest.height+chest.y)-pict.frame.getHeight());
 	    		int bottomRightX = x+pict.frame.getWidth();
 	    		int bottomRightY = y+pict.frame.getHeight();
+	    		//Algo to avoid recovery
 	    		boolean contained=true;
 	    		while(contained){
 	    			contained=false;
@@ -448,7 +478,9 @@ public class InterfaceGame extends JFrame{
 		    		bottomRightX = x+pict.frame.getWidth();
 		    		bottomRightY = y+pict.frame.getHeight();
 	    			for(Doc doc : botDocs){
+	    				//top Left point inside another pic
 	    				upperLeftContained = x>=doc.frame.getLocation().x && x<=doc.frame.getLocation().x+doc.frame.getWidth() && y>=doc.frame.getLocation().y && y<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x>=x && doc.frame.getLocation().x<=bottomRightX && doc.frame.getLocation().y >= y && doc.frame.getLocation().y<=bottomRightY );
+	    				//bottom right inside another pic
 	    				bottomRightContained = bottomRightX>=doc.frame.getLocation().x && bottomRightX<=doc.frame.getLocation().x+doc.frame.getWidth() && bottomRightY>=doc.frame.getLocation().y && bottomRightY<=(doc.frame.getLocation().y+doc.frame.getHeight()) || (doc.frame.getLocation().x+doc.frame.getWidth()>=x && (doc.frame.getLocation().x+doc.frame.getWidth())<=bottomRightX && doc.frame.getLocation().y + doc.frame.getHeight() >=y &&  doc.frame.getLocation().y + doc.frame.getHeight()<=bottomRightY );
 	    				if(upperLeftContained || bottomRightContained){
 	    					contained=true;
@@ -469,25 +501,28 @@ public class InterfaceGame extends JFrame{
 	
 	private void chooseElements(){
 		if(up){
+			//first select event
 			if(selectedObj != null){
 				botDocs.remove(selectedObj);
 			}
 			if(!topDocs.isEmpty()){
 				selectedObj=topDocs.get(rand.nextInt(topDocs.size()));
+				selectedObj.select();
 			}
 			up=false;
 		}else{
+			//first select event
 			if(selectedObj != null){
 				topDocs.remove(selectedObj);
 			}
 			if(!botDocs.isEmpty()){
 				selectedObj=botDocs.get(rand.nextInt(botDocs.size()));
+				selectedObj.select();
 			}
 			up=true;
 		}
-		selectedObj.select();
 		if(topDocs.size() == 0 && botDocs.size() == 0){
-			chrono.suspendre();
+			chrono.arreter();
 			selectedObj=null;
 		}
 		dp.repaint();
