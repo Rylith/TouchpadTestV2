@@ -1,0 +1,1 @@
+java -Djava.library.path=libpointing\bindings\Java\Jar\build\x64\Release -jar server_4444.jar --game --options
