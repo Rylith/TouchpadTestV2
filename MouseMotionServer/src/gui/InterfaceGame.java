@@ -397,7 +397,7 @@ public class InterfaceGame extends JFrame{
 		boolean inChest = false;
 		if(selectedObj != null && state == State.RUN){
 			if(selectedObj.equals(doc)){
-				score+=(100+doc.frame.getWidth()/doc.frame.getHeight());
+				score+=(100-((doc.frame.getWidth()*doc.frame.getHeight())/10000));
 				int offsetX = rand.nextInt(getWidth()-selectedObj.frame.getWidth());
 				int offsetY = rand.nextInt(getHeight()/3-selectedObj.frame.getHeight());
 				selectedObj.frame.setLocation(chest.x+offsetX, chest.y+offsetY);
@@ -500,10 +500,14 @@ public class InterfaceGame extends JFrame{
 	}
 	
 	private void chooseElements(){
-		if(up){
+		if((up || botDocs.isEmpty()) && !topDocs.isEmpty()){
 			//first select event
 			if(selectedObj != null){
-				botDocs.remove(selectedObj);
+				if(botDocs.isEmpty()){
+					topDocs.remove(selectedObj);
+				}else{
+					botDocs.remove(selectedObj);
+				}
 			}
 			if(!topDocs.isEmpty()){
 				selectedObj=topDocs.get(rand.nextInt(topDocs.size()));
@@ -513,7 +517,11 @@ public class InterfaceGame extends JFrame{
 		}else{
 			//first select event
 			if(selectedObj != null){
-				topDocs.remove(selectedObj);
+				if(topDocs.isEmpty()){
+					botDocs.remove(selectedObj);
+				}else{
+					topDocs.remove(selectedObj);
+				}
 			}
 			if(!botDocs.isEmpty()){
 				selectedObj=botDocs.get(rand.nextInt(botDocs.size()));
