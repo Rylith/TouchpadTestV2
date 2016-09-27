@@ -44,10 +44,8 @@ public class OptionsInterface extends JFrame{
 	private static final long serialVersionUID = -9002852749853545258L;
 	private static final String prefixPercentScreen = "Taille marge bord: ";
 	private static final String prefixTimerAFF = "Temps pour changer de mode: ";
-	private static final String prefixTimerMovement = "Temps entre deux déplacements (V2 et V3):  ";
-	private static final String prefixDivisionCoef = "Coefficient diviseur de l'angle gérant la distance de déplacement en Border Mode (V1, V2, V4): ";
-	private static final String prefixTestFuildity = "Distance minimale pour activer le sous découpage: ";
-	private static final String prefixMultiFluidity = "Coefficient multiplicateur pour la valeur de sous découpage: ";
+	private static final String prefixTimerMovement = "Temps entre deux déplacements (V2, V3, V5):  ";
+	private static final String prefixDivisionCoef = "Coefficient diviseur de l'angle gérant la distance de déplacement en Border Mode (V1, V2, V4, V5): ";
 	private static final String prefixPreview = "Activation prévisualisation en Border Mode";
 	private static final String prefixDRAWLINE = "Ligne";
 	private static final String prefixDRAWPATH = "Chemin parcouru";
@@ -59,7 +57,7 @@ public class OptionsInterface extends JFrame{
 	private static final String prefixListLabel = "Choix du type de Souris: ";
 	private static final String suffixPercent="%";
 	private static final String suffixMS="ms";
-	private static final String suffixPixel= "px";
+	//private static final String suffixPixel= "px";
 	private static final String v1="Accroissement Quadratique";
 	private static final String v2="Vitesse = f(angle)";
 	private static final String v3="Blocage avant";
@@ -140,8 +138,6 @@ public class OptionsInterface extends JFrame{
 	    final JSlider sliderTimerAff = new JSlider();
 	    final JSlider sliderTimerMovement = new JSlider();
 	    final JSlider sliderDivisionCOEF = new JSlider();
-	    final JSlider sliderTestFluidity = new JSlider();
-	    final JSlider sliderMultiFluidity = new JSlider();
 	    final JCheckBox boxPreview = new JCheckBox(prefixPreview);
 	    final JCheckBox boxPreviewPoint = new JCheckBox(prefixDRAWPOINT);
 	    final JCheckBox boxPreviewLine = new JCheckBox(prefixDRAWLINE);
@@ -204,27 +200,6 @@ public class OptionsInterface extends JFrame{
 	    sliderDivisionCOEF.setMajorTickSpacing(10);
 	    
 	    
-	    //sliderTestFluidity.setPreferredSize(new Dimension(400,100));
-	    sliderTestFluidity.setAlignmentX(LEFT_ALIGNMENT);
-	    sliderTestFluidity.setMinimum(1);
-	    sliderTestFluidity.setMaximum(30);
-	    sliderTestFluidity.setValue(MouseControl.getTestF());
-	    sliderTestFluidity.setPaintTicks(true);
-	    sliderTestFluidity.setPaintLabels(true);
-	    sliderTestFluidity.setMinorTickSpacing(1);
-	    sliderTestFluidity.setMajorTickSpacing(1);
-	    
-	    
-	    //sliderMultiFluidity.setPreferredSize(new Dimension(400,100));
-	    sliderMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
-	    sliderMultiFluidity.setMinimum(1);
-	    sliderMultiFluidity.setMaximum(10);
-	    sliderMultiFluidity.setValue(MouseControl.getMultiF());
-	    sliderMultiFluidity.setPaintTicks(true);
-	    sliderMultiFluidity.setPaintLabels(true);
-	    sliderMultiFluidity.setMinorTickSpacing(1);
-	    sliderMultiFluidity.setMajorTickSpacing(1);
-	    
 	    JPanel boxPanel = new JPanel(new FlowLayout());
 	    
 	    boxPreview.setSelected(MouseControl.isEnablePreview());
@@ -260,15 +235,6 @@ public class OptionsInterface extends JFrame{
 	    final JLabel labDivCoefControl = new JLabel(prefixDivisionCoef + spinnerDivisionCOEF.getValue());
 	    labDivCoefControl.setFont(fontOptionTitle);
 	    labDivCoefControl.setAlignmentX(LEFT_ALIGNMENT);
-	    //labDivCoefControl.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labTestFluidity = new JLabel(prefixTestFuildity + sliderTestFluidity.getValue()+suffixPixel);
-	    labTestFluidity.setFont(fontOptionTitle);
-	    //labTestFluidity.setPreferredSize(new Dimension(400, 50));
-	    final JLabel labMultiFluidity = new JLabel(prefixMultiFluidity + sliderMultiFluidity.getValue());
-	    labMultiFluidity.setFont(fontOptionTitle);
-	    labMultiFluidity.setAlignmentX(LEFT_ALIGNMENT);
-	    //labMultiFluidity.setPreferredSize(new Dimension(400, 50));
-	    
 	    final JLabel labEnablePreview = new JLabel(prefixPreview);
 	    labEnablePreview.setFont(fontOptionTitle);
 	    labEnablePreview.setAlignmentX(LEFT_ALIGNMENT);
@@ -317,22 +283,6 @@ public class OptionsInterface extends JFrame{
 			}
 		});
 	    
-	    sliderTestFluidity.addChangeListener(new ChangeListener(){
-			@Override
-			public void stateChanged(ChangeEvent arg0) {
-				MouseControl.setTestF(sliderTestFluidity.getValue());
-				labTestFluidity.setText(prefixTestFuildity + MouseControl.getTestF()+suffixPixel);
-				
-			}
-	    });
-	    
-	    sliderMultiFluidity.addChangeListener(new ChangeListener(){
-			@Override
-			public void stateChanged(ChangeEvent arg0) {
-				MouseControl.setMultiF(sliderMultiFluidity.getValue());
-				labMultiFluidity.setText(prefixMultiFluidity + MouseControl.getMultiF());
-			}
-	    });
 	    
 	    boxPreview.addChangeListener(new ChangeListener() {
 			
@@ -423,12 +373,6 @@ public class OptionsInterface extends JFrame{
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labDivCoefControl);
 	    boxpan.add(southEastCOEF);
-	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
-	    boxpan.add(labTestFluidity);
-	    boxpan.add(sliderTestFluidity);
-	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
-	    boxpan.add(labMultiFluidity);
-	    boxpan.add(sliderMultiFluidity);
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labEnablePreview);
 	    boxpan.add(boxPanel);

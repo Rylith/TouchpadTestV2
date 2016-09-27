@@ -24,10 +24,6 @@ public class MouseControl {
 	private static double SUBDIVISION = 1;
 	private boolean prevPreview = false;
 	
-	//Parameters for the fluidity method
-	private static int testFluidity = 6;
-	private static int multiFluidity =2;
-	
 	public MouseControl(){
 		 try {
 				this.mouse = new Robot();
@@ -107,21 +103,6 @@ public class MouseControl {
 		pressed=false;
 	}
 	
-	public static void setMultiF(int val){
-		multiFluidity = val;
-	}
-	
-	public static int getMultiF(){
-		return multiFluidity;
-	}
-	
-	public static void setTestF(int val){
-		testFluidity = val;
-	}
-	
-	public static int getTestF(){
-		return testFluidity;
-	}
 
 	public boolean isPressed() {
 		return pressed;
