@@ -128,3 +128,4 @@ MouseMotionServer/lib/pointing.dll
 MouseMotionServer/run_server_without_test_interface.bat
 MouseMotionServer/run_server_with_test_interface.bat
 MouseMotionServer/libpointing/bindings/Java/Jar/msvc/libpointingJavaBindingDll.vcxproj
+MouseMotionServer/logs

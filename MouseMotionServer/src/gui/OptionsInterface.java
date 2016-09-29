@@ -53,6 +53,8 @@ public class OptionsInterface extends JFrame{
 	private static final String prefixDRAWPOINT = "Dernier Point";
 	private static final String prefixDRAWARROW = "Flèche";
 	private static final String prefixDRAWREGLINE = "Droite de regression";
+	private static final String prefixPolarArea = "Découpage Polaire";
+	private static final String prefixPiloteOptions = "Option pour le pilote";
 	private static final JTextArea text = new JTextArea();
 	private static final String prefixListLabel = "Choix du type de Souris: ";
 	private static final String suffixPercent="%";
@@ -63,6 +65,7 @@ public class OptionsInterface extends JFrame{
 	private static final String v3="Blocage avant";
 	private static final String v4="Mapping direct delta_angle -> delta_déplacement";
 	private static final String v5 ="Blocage avant avec changement de direction";
+	private static final String vPilote ="Pilote listener";
 	private Engine engine;
 	private boolean killProgramOnClose=false;
 	
@@ -120,6 +123,7 @@ public class OptionsInterface extends JFrame{
 	    mouseChoice.put(v3, "mouse.control.MouseListenerV3");//V3
 	    mouseChoice.put(v4, "mouse.control.MouseListenerV4");//V4
 	    mouseChoice.put(v5, "mouse.control.MouseListenerV5");//V5
+	    mouseChoice.put(vPilote, "mouse.control.PiloteListener");//Pilote Listener
 	    
 	    final JComboBox<?> combo = new JComboBox<>(mouseChoice.keySet().toArray());
 	   
@@ -145,6 +149,7 @@ public class OptionsInterface extends JFrame{
 	    final JCheckBox boxPreviewArrow = new JCheckBox(prefixDRAWARROW);
 	    final JCheckBox boxPreviewCone = new JCheckBox(prefixDRAWCONE);
 	    final JCheckBox boxPreviewRegLine = new JCheckBox(prefixDRAWREGLINE);
+	    final JCheckBox boxPiloteDrawPolare = new JCheckBox(prefixPolarArea);
 	    
 	    SpinnerNumberModel modelDivisionCOEF = new SpinnerNumberModel(IMouseListener.getDIVISION_COEF(),0.1,100,0.1);
 	    final JSpinner spinnerDivisionCOEF = new JSpinner(modelDivisionCOEF);
@@ -210,6 +215,7 @@ public class OptionsInterface extends JFrame{
 	    boxPreviewPath.setSelected(TransparentWindow.isDRAW_PATH());
 	    boxPreviewPoint.setSelected(TransparentWindow.isDRAW_FINAL_POINT());
 	    boxPreviewRegLine.setSelected(TransparentWindow.isDRAW_REGRESSION_LINE());
+	    boxPiloteDrawPolare.setSelected(PiloteWindow.isPolarZone());
 	    
 	    boxPanel.setAlignmentX(LEFT_ALIGNMENT);
 	    boxPanel.add(boxPreview);
@@ -238,6 +244,9 @@ public class OptionsInterface extends JFrame{
 	    final JLabel labEnablePreview = new JLabel(prefixPreview);
 	    labEnablePreview.setFont(fontOptionTitle);
 	    labEnablePreview.setAlignmentX(LEFT_ALIGNMENT);
+	    final JLabel labPiloteDrawPolar = new JLabel(prefixPiloteOptions);
+	    labPiloteDrawPolar.setFont(fontOptionTitle);
+	    labPiloteDrawPolar.setAlignmentX(LEFT_ALIGNMENT);
 	    
 	    sliderPercentScreen.addChangeListener(new ChangeListener(){
 			@Override
@@ -345,6 +354,14 @@ public class OptionsInterface extends JFrame{
 			}
 		});
 	    
+	    boxPiloteDrawPolare.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				PiloteWindow.setPolarZone(boxPiloteDrawPolare.isSelected());
+			}
+		});
+	    
 	    JPanel pan = new JPanel();
 	    JPanel southEastList = new JPanel(new BorderLayout());
 	    JPanel southEastCOEF = new JPanel(new BorderLayout());
@@ -376,6 +393,9 @@ public class OptionsInterface extends JFrame{
 	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
 	    boxpan.add(labEnablePreview);
 	    boxpan.add(boxPanel);
+	    boxpan.add(new JSeparator(SwingConstants.HORIZONTAL));
+	    boxpan.add(labPiloteDrawPolar);
+	    boxpan.add(boxPiloteDrawPolare);
 	    
 	    JScrollPane scroll = new JScrollPane (text, 
 	    		   JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

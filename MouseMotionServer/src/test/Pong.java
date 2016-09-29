@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import gui.Log;
 import gui.OptionsInterface;
+import gui.PiloteWindow;
 import gui.TransparentWindowsOnAllMonitors;
 import gui.ApplicationInterface;
 import gui.InterfaceGame;
@@ -18,6 +19,7 @@ public class Pong{
 	private static final String GAME="--game";
 	private static final String TEST="--test";
 	private static final String OPTIONS="--options";
+	private static final String PILOTE = "--pilote";
 	
 	public static void main(final String[] args) {
 		try {
@@ -51,6 +53,9 @@ public class Pong{
 					if(args !=null && args.length != 0){
 						for(String arg : args){
 							switch (arg) {
+							case PILOTE:
+								new PiloteWindow();
+								break;
 							case GAME: 
 								new InterfaceGame();
 								break;
