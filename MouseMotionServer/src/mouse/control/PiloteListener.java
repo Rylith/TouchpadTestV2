@@ -6,7 +6,7 @@ import network.Impl.Util;
 
 public class PiloteListener extends IMouseListener {
 	
-	private static final AngleEvent event = new AngleEvent();
+	private static final WatchInfoEvent event = new WatchInfoEvent();
 	
 	@Override
 	public float onScroll(float x, float y, float distanceX, float distanceY) {
@@ -26,6 +26,12 @@ public class PiloteListener extends IMouseListener {
 	
 	@Override
 	public void doubleClick() {
+	}
+	
+	@Override
+	public void setCenter(int x, int y) {
+		super.setCenter(x, y);
+		event.sendWatchScreenSize(x, y);
 	}
 	
 	
