@@ -23,7 +23,7 @@ import mouse.control.WatchInfoEventListener;
 
 public class PiloteWindow extends JFrame {
 	
-	private static final boolean DEBUG=true;
+	private static final boolean DEBUG=false;
 	private Rectangle bounds;
 	private double radius;
 	private static boolean polarZone = false;
